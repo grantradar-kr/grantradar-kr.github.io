@@ -113,6 +113,10 @@ def page(title: str, description: str, body: str, prefix: str, extra_head: str =
         f'<a href="{prefix}about.html">서비스 소개</a>'
         f'</nav>'
     )
+    ads_head = (
+        f'<meta name="google-adsense-account" content="{ADSENSE_CLIENT}" />\n'
+        f'<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE_CLIENT}" crossorigin="anonymous"></script>\n'
+    )
     footer_links = (
         f'<div class="links">'
         f'<a href="{prefix}index.html">홈</a>'
@@ -137,7 +141,7 @@ def page(title: str, description: str, body: str, prefix: str, extra_head: str =
 <meta property="og:locale" content="ko_KR" />
 <meta name="twitter:card" content="summary" />
 <link rel="icon" type="image/png" sizes="192x192" href="{prefix}icons/icon-192.png" />
-<style>{STYLE}</style>
+{ads_head}<style>{STYLE}</style>
 {extra_head}</head>
 <body>
 <header class="site"><div class="wrap"><a class="brand" href="{prefix}index.html">{BRAND}<small>{BRAND_EN}</small></a>{nav}</div></header>
