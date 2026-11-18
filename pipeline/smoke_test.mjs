@@ -31,6 +31,8 @@ global.localStorage = window.localStorage
 global.location = window.location
 global.HTMLInputElement = window.HTMLInputElement
 global.SVGElement = window.SVGElement
+// Supabase 설정이 들어간 빌드에서도 실시간 클라이언트 생성이 실패하지 않도록 넘긴다.
+global.WebSocket = window.WebSocket
 global.DocumentFragment = window.DocumentFragment
 global.requestAnimationFrame = (cb) => setTimeout(() => cb(Date.now()), 0)
 global.cancelAnimationFrame = (id) => clearTimeout(id)
@@ -93,3 +95,5 @@ if (!text.includes('보조금 레이더') || text.length < 500) {
   process.exit(3)
 }
 console.log('OK — 런타임 오류 없이 렌더되었습니다.')
+// Supabase 타이머 등으로 이벤트 루프가 남을 수 있어 명시적으로 종료한다.
+process.exit(0)

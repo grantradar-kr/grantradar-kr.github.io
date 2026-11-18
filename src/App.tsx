@@ -70,6 +70,7 @@ export default function App() {
 
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showAuth, setShowAuth] = useState(false)
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin')
   const [legal, setLegal] = useState<LegalKind | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const [cloud, setCloud] = useState<CloudStatus>({ state: supabaseEnabled ? 'guest' : 'disabled' })
@@ -184,6 +185,11 @@ export default function App() {
   const detailSaved = detailId ? saved.find((entry) => entry.id === detailId) : undefined
 
   // ---------------- 핸들러 ----------------
+  const openAuth = useCallback((mode: 'signin' | 'signup' = 'signin') => {
+    setAuthMode(mode)
+    setShowAuth(true)
+  }, [])
+
   const navigate = (next: Route) => {
     routeRef.current = next
     setRoute(next)
@@ -274,7 +280,7 @@ export default function App() {
         route={route}
         updatedLabel={meta ? relativeUpdated(meta.generated_at) : undefined}
         onOpenProfile={() => setShowOnboarding(true)}
-        onOpenAuth={() => setShowAuth(true)}
+        onOpenAuth={openAuth}
       />
 
       <main className="mx-auto max-w-5xl px-4 pb-28 pt-4 sm:pb-16">
@@ -334,7 +340,7 @@ export default function App() {
             savedCount={saved.length}
             canInstall={Boolean(installEvent)}
             onEditProfile={() => setShowOnboarding(true)}
-            onOpenAuth={() => setShowAuth(true)}
+            onOpenAuth={openAuth}
             onOpenGuides={() => navigate('guides')}
             onOpenAbout={() => navigate('about')}
             onOpenLegal={(kind) => setLegal(kind)}
@@ -408,6 +414,7 @@ export default function App() {
 
       <AuthModal
         open={showAuth}
+        initialMode={authMode}
         onClose={() => setShowAuth(false)}
         cloud={cloud}
         savedCount={saved.length}

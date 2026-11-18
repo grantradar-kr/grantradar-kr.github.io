@@ -1,6 +1,10 @@
 /**
  * 사용자 흐름 테스트 (jsdom) — 카드 열기 · 저장 · 저장함 · 둘러보기 · 설정 이동을 실제 DOM 클릭으로 확인한다.
  *   npm run build && node pipeline/ui_flow_test.mjs
+ *
+ * 상단 로그인·회원가입 노출은 비로그인(guest) 상태에서만 검사하므로,
+ * Supabase 설정이 들어간 빌드로 돌려야 한다(운영 빌드와 동일한 조건).
+ *   VITE_SUPABASE_URL=https://example.supabase.co VITE_SUPABASE_ANON_KEY=test-anon-key npm run build
  */
 import { JSDOM } from 'jsdom'
 import fs from 'node:fs'
@@ -21,6 +25,8 @@ Object.assign(global, {
   Element: window.Element,
   Node: window.Node,
   SVGElement: window.SVGElement,
+  // Supabase 실시간 클라이언트가 생성 시 WebSocket 생성자를 찾는다 — jsdom 의 것을 넘긴다(연결은 하지 않음).
+  WebSocket: window.WebSocket,
   Event: window.Event,
   CustomEvent: window.CustomEvent,
   MutationObserver: window.MutationObserver,
@@ -87,6 +93,43 @@ if (startBtn) {
 check('조건 저장 후 추천 화면', bodyText().includes('완벽 일치') || bodyText().includes('내 조건 추천'))
 check('온보딩 닫힘', !bodyText().includes('내 보조금 보기'))
 
+// 2-b) 상단 로그인 · 회원가입 버튼 (비로그인 게스트 상태)
+const header = window.document.querySelector('header')
+const headerSignin = header?.querySelector('[aria-label="로그인"]')
+const headerSignup = header?.querySelector('[aria-label="회원가입"]')
+check('상단에 로그인·회원가입 버튼 동시 노출', Boolean(headerSignin && headerSignup))
+check('회원가입 버튼 강조 스타일(brand 배경)', (headerSignup?.getAttribute('class') ?? '').includes('bg-brand-700'))
+
+// 모달의 제출 버튼 라벨 = 현재 탭 (btn-primary)
+const submitLabel = () => {
+  const btn = [...window.document.querySelectorAll('button')].find((el) =>
+    (el.getAttribute('class') ?? '').includes('btn-primary'),
+  )
+  return btn ? (btn.textContent ?? '').trim() : null
+}
+const closeModal = () => window.document.querySelector('button[aria-label="닫기"]')?.click()
+
+headerSignup?.click()
+await sleep(350)
+check('회원가입 클릭 → 회원가입 탭으로 열림', submitLabel() === '회원가입')
+check('가입 선택 안내 문구 유지', bodyText().includes('가입은 선택이에요') && bodyText().includes('로그인 없이도'))
+closeModal()
+await sleep(300)
+check('계정 모달 닫힘(가입 강제 없음)', submitLabel() === null)
+check('닫은 뒤에도 추천 화면 유지', bodyText().includes('완벽 일치') || bodyText().includes('내 조건 추천'))
+
+headerSignin?.click()
+await sleep(350)
+check('로그인 클릭 → 로그인 탭으로 열림', submitLabel() === '로그인')
+const signupTab = [...window.document.querySelectorAll('button')].find(
+  (el) => (el.getAttribute('class') ?? '').includes('flex-1') && (el.textContent ?? '').trim() === '회원가입',
+)
+signupTab?.click()
+await sleep(250)
+check('탭 전환으로 회원가입 모드 진입', submitLabel() === '회원가입')
+closeModal()
+await sleep(300)
+
 // 3) 카드 열기 → 상세 모달
 const card = window.document.querySelector('article')
 card?.click()
@@ -121,6 +164,7 @@ window.location.hash = '#/settings'
 window.dispatchEvent(new window.Event('hashchange'))
 await sleep(500)
 check('설정 화면', bodyText().includes('내 조건') && bodyText().includes('개인정보처리방침'))
+check('설정 계정카드에 로그인·회원가입 병렬 노출', Boolean(window.document.querySelector('[aria-label="설정에서 로그인"]') && window.document.querySelector('[aria-label="설정에서 회원가입"]')))
 
 // 8) 프로필 저장 여부
 const profile = JSON.parse(window.localStorage.getItem('grantradar.profile.v1') ?? 'null')
@@ -157,3 +201,5 @@ check('광고 슬롯 미설정 시 빈 ins 없음', window.document.querySelecto
 console.log(errors.length ? `런타임 오류 ${errors.length}건: ${errors[0]}` : '런타임 오류 없음')
 if (errors.length || failures) process.exit(1)
 console.log('모든 사용자 흐름 통과')
+// Supabase 자동 갱신·리얼타임 타이머가 남으면 프로세스가 끝나지 않으므로 명시적으로 종료한다.
+process.exit(0)

@@ -1,21 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Modal, { ModalHeader } from './Modal'
 import { signInWithEmail, signOut, signUpWithEmail, supabaseEnabled, type CloudStatus } from '../lib/supabase'
 
 interface Props {
   open: boolean
+  /** 열릴 때 활성화할 탭 — 상단 '회원가입' 버튼은 signup 으로 바로 연다. */
+  initialMode?: 'signin' | 'signup'
   onClose: () => void
   cloud: CloudStatus
   savedCount: number
   onAfterAuth: () => void
 }
 
-export default function AuthModal({ open, onClose, cloud, savedCount, onAfterAuth }: Props) {
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin')
+export default function AuthModal({ open, initialMode = 'signin', onClose, cloud, savedCount, onAfterAuth }: Props) {
+  const [mode, setMode] = useState<'signin' | 'signup'>(initialMode)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+
+  // 열릴 때마다 요청받은 탭으로 맞추고, 지난 안내 메시지는 지운다.
+  useEffect(() => {
+    if (!open) return
+    setMode(initialMode)
+    setMessage(null)
+  }, [open, initialMode])
 
   const submit = async () => {
     setBusy(true)
@@ -44,7 +53,7 @@ export default function AuthModal({ open, onClose, cloud, savedCount, onAfterAut
         title={cloud.state === 'signed-in' ? '계정 · 클라우드 동기화' : '계정 만들기 · 로그인'}
         subtitle={
           supabaseEnabled
-            ? '로그인하면 내 조건과 저장한 보조금이 기기를 바꿔도 유지됩니다.'
+            ? '가입은 선택이에요 — 로그인 없이도 모든 기능을 그대로 쓸 수 있고, 기기를 바꿔도 내 조건·저장 목록을 유지할 때만 필요합니다.'
             : '현재는 서버에 연결되지 않아 이 기기에만 저장됩니다. 로그인 없이도 모든 기능을 쓸 수 있어요.'
         }
         onClose={onClose}

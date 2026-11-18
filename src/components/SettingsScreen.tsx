@@ -14,7 +14,7 @@ interface Props {
   savedCount: number
   canInstall: boolean
   onEditProfile: () => void
-  onOpenAuth: () => void
+  onOpenAuth: (mode?: 'signin' | 'signup') => void
   onOpenGuides: () => void
   onOpenAbout: () => void
   onOpenLegal: (kind: LegalKind) => void
@@ -97,13 +97,36 @@ export default function SettingsScreen({
             cloud.state === 'signed-in'
               ? `${cloud.email} · 로그인됨`
               : supabaseEnabled
-                ? '로그인하면 기기를 바꿔도 조건·저장 목록이 유지됩니다'
+                ? '가입은 선택이에요 — 로그인하면 기기를 바꿔도 조건·저장 목록이 유지됩니다'
                 : '현재는 이 기기에만 저장됩니다 (서버 미연결). 로그인 없이 모든 기능 사용 가능'
           }
           action={
-            <button type="button" onClick={onOpenAuth} className="btn-soft px-3 py-1.5 text-[12px]">
-              {cloud.state === 'signed-in' ? '계정' : '로그인'}
-            </button>
+            cloud.state === 'signed-in' ? (
+              <button type="button" onClick={() => onOpenAuth('signin')} className="btn-soft px-3 py-1.5 text-[12px]">
+                계정
+              </button>
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  aria-label="설정에서 로그인"
+                  onClick={() => onOpenAuth('signin')}
+                  className="btn-ghost px-2.5 py-1.5 text-[12px]"
+                >
+                  로그인
+                </button>
+                <button
+                  type="button"
+                  aria-label="설정에서 회원가입"
+                  onClick={() => onOpenAuth('signup')}
+                  className="btn-primary px-2.5 py-1.5 text-[12px]"
+                  disabled={!supabaseEnabled}
+                  title={supabaseEnabled ? undefined : '서버 연결 후 사용할 수 있습니다'}
+                >
+                  회원가입
+                </button>
+              </div>
+            )
           }
         />
         {canInstall ? (
