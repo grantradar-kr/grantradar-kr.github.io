@@ -1,0 +1,63 @@
+name: Deploy PWA to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Type-check & build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_ADSENSE_CLIENT: ${{ secrets.VITE_ADSENSE_CLIENT }}
+          VITE_ADSENSE_SLOT: ${{ secrets.VITE_ADSENSE_SLOT }}
+          VITE_APP_VERSION: ${{ github.ref_name }}-${{ github.run_number }}
+        run: npm run build
+
+      - name: Ensure data files exist
+        run: |
+          test -f dist/data/policies.json || (echo "::error::dist/data/policies.json 없음 — 수집 워크플로를 먼저 실행하세요"; exit 1)
+          ls -lh dist/data
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,66 @@
+name: Update policy data (매일 06:00 / 18:00 KST)
+
+on:
+  schedule:
+    # UTC 기준. 21:00 UTC = 06:00 KST, 09:00 UTC = 18:00 KST
+    - cron: '0 21 * * *'
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '캐시 무시하고 새로 수집'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: policy-data
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Collect policies (온통청년 · 복지로 · 기업마당 · K-Startup · 보조금24)
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: |
+          python3 pipeline/collect_policies.py || {
+            echo "::warning::수집 중 오류가 발생했습니다. 기존 데이터를 유지합니다.";
+            exit 0;
+          }
+
+      - name: Show result summary
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          meta = json.loads(pathlib.Path('public/data/meta.json').read_text(encoding='utf-8'))
+          print(f"총 {meta['total']:,}건 · 소스별 {meta['by_source']}")
+          print(f"마감임박 {meta['counts']['urgent7']:,}건 · 상시 {meta['counts']['always']:,}건")
+          print(f"파일 크기 {pathlib.Path('public/data/policies.json').stat().st_size/1048576:.2f} MB")
+          PY
+
+      - name: Commit & push (변경분만)
+        run: |
+          git config user.name "grantradar-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/data/policies.json public/data/meta.json
+          if git diff --cached --quiet; then
+            echo "변경된 데이터 없음 — 커밋 생략"
+          else
+            git commit -m "data: 보조금 레이더 정책 데이터 자동 갱신 ($(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M KST'))"
+            git push
+          fi
