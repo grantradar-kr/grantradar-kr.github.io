@@ -28,6 +28,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
       - name: Setup Python
@@ -61,10 +62,32 @@ jobs:
           git add public/data/policies.json public/data/meta.json
           if git diff --cached --quiet; then
             echo "변경된 데이터 없음 — 커밋 생략"
-          else
-            git commit -m "data: 보조금 레이더 정책 데이터 자동 갱신 ($(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M KST'))"
-            git push
+            exit 0
           fi
+          git commit -m "data: 보조금 레이더 정책 데이터 자동 갱신 ($(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M KST'))"
+
+          # 수집에 12~20분 걸리는 사이 원격 main 이 앞서 있을 수 있으므로,
+          # 커밋 후 푸시 직전에 원격 변경분을 반영한다 (non-fast-forward / fetch first 방지).
+          # 충돌할 때는 방금 수집한 public/data/* 가 최신이므로 merge 에서 현재 커밋(-X ours)을 우선하고,
+          # UI 등 나머지 변경은 그대로 합쳐진다.
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "::warning::rebase 충돌 — 방금 수집한 데이터를 우선해 merge 로 복구합니다."
+              git rebase --abort || true
+              git merge --no-edit -X ours origin/main
+            fi
+            if git push origin HEAD:main; then
+              echo "푸시 성공 (시도 ${attempt}회)"
+              break
+            fi
+            if [ "${attempt}" = "3" ]; then
+              echo "::error::3회 재시도 후에도 푸시에 실패했습니다."
+              exit 1
+            fi
+            echo "::warning::푸시 실패 (시도 ${attempt}회) — 원격 변경분을 다시 반영하고 재시도합니다."
+            sleep 10
+          done
 
       # GITHUB_TOKEN 으로 만든 push 는 다른 워크플로우를 트리거하지 않으므로,
       # 배포 워크플로우(deploy-pages.yml)를 명시적으로 호출해 사이트에 반영한다.
