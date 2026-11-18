@@ -12,11 +12,11 @@ interface Props {
   meta: Meta | null
   cloud: CloudStatus
   savedCount: number
-  adsEnabled: boolean
   canInstall: boolean
   onEditProfile: () => void
   onOpenAuth: () => void
-  onToggleAds: (enabled: boolean) => void
+  onOpenGuides: () => void
+  onOpenAbout: () => void
   onOpenLegal: (kind: LegalKind) => void
   onClearData: () => void
   onInstall: () => void
@@ -40,11 +40,11 @@ export default function SettingsScreen({
   meta,
   cloud,
   savedCount,
-  adsEnabled,
   canInstall,
   onEditProfile,
   onOpenAuth,
-  onToggleAds,
+  onOpenGuides,
+  onOpenAbout,
   onOpenLegal,
   onClearData,
   onInstall,
@@ -118,19 +118,20 @@ export default function SettingsScreen({
           />
         ) : null}
         <Row
-          label="광고 표시"
-          value={adsEnabled ? '광고·제휴 영역을 표시합니다 (운영 비용 충당)' : '광고를 표시하지 않습니다'}
+          label="가이드·도움말"
+          value="소득기준 계산법, 서류 체크리스트, 신청 순서를 직접 정리한 글"
           action={
-            <button
-              type="button"
-              role="switch"
-              aria-checked={adsEnabled}
-              onClick={() => onToggleAds(!adsEnabled)}
-              className={`relative h-6 w-11 rounded-full transition ${adsEnabled ? 'bg-brand-600' : 'bg-slate-300'}`}
-            >
-              <span
-                className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition ${adsEnabled ? 'left-[22px]' : 'left-0.5'}`}
-              />
+            <button type="button" onClick={onOpenGuides} className="text-[12px] font-bold text-brand-700">
+              보기
+            </button>
+          }
+        />
+        <Row
+          label="서비스 소개"
+          value="데이터 출처·수집 주기·추천 계산 방식·운영 문의"
+          action={
+            <button type="button" onClick={onOpenAbout} className="text-[12px] font-bold text-brand-700">
+              보기
             </button>
           }
         />

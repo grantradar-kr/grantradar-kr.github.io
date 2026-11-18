@@ -14,6 +14,7 @@ interface HeaderProps {
 const NAV: { key: Route; label: string }[] = [
   { key: 'home', label: '추천' },
   { key: 'browse', label: '둘러보기' },
+  { key: 'guides', label: '가이드' },
   { key: 'saved', label: '저장함' },
   { key: 'settings', label: '설정' },
 ]

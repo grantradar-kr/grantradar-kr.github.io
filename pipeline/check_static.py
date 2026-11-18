@@ -229,8 +229,75 @@ def check_data() -> None:
     notes.append(f"정책 {len(items):,}건 · 소스 {dict(sources)} · {size_mb:.2f} MB")
     for axis in AXES:
         notes.append(f"  {axis}: {dict(coverage[axis].most_common(10))}")
-    if size_mb > 10:
-        fail(f"policies.json 이 10MB 를 넘습니다 ({size_mb:.1f} MB)")
+    # 보조금24 병합으로 건수가 늘어 10MB 를 넘는 것이 정상 범위가 되었다.
+    # 10MB 초과는 경고, 20MB 초과는 실패로 둔다(모바일 로딩·서비스워커 캐시 한계).
+    if size_mb > 20:
+        fail(f"policies.json 이 20MB 를 넘습니다 ({size_mb:.1f} MB) — 수집 범위를 줄이세요")
+    elif size_mb > 10:
+        warn(f"policies.json 이 10MB 를 넘습니다 ({size_mb:.1f} MB) — gzip 전송량·캐시 크기 확인")
+    if (PUBLIC / "ads.txt").exists():
+        notes.append("ads.txt 존재")
+    else:
+        warn("public/ads.txt 없음 — build_content.py 를 실행하세요")
+
+
+# ---------------------------------------------------------------- 6) 편집 콘텐츠
+CONTENT = SRC / "content"
+
+
+def check_content() -> None:
+    """가이드·약관 JSON 과 그것으로 만든 정적 HTML 이 함께 있는지 확인한다."""
+    guides_path = CONTENT / "guides.json"
+    legal_path = CONTENT / "legal.json"
+    if not guides_path.exists():
+        fail("src/content/guides.json 없음")
+        return
+    data = json.loads(guides_path.read_text(encoding="utf-8"))
+    guides = data.get("guides", [])
+    if len(guides) < 6:
+        fail(f"가이드가 {len(guides)}편뿐입니다 (최소 6편 필요)")
+    slugs = set()
+    for guide in guides:
+        slug = guide.get("slug", "")
+        if not slug:
+            fail("가이드 slug 누락")
+            continue
+        if slug in slugs:
+            fail(f"가이드 slug 중복: {slug}")
+        slugs.add(slug)
+        body = " ".join(
+            [guide.get("lead", ""), guide.get("summary", "")]
+            + [p for s in guide.get("sections", []) for p in (s.get("paragraphs") or []) + (s.get("bullets") or [])]
+            + [block for item in guide.get("faq", []) for block in (item.get("q", ""), item.get("a", ""))]
+        )
+        length = len(re.sub(r"\s", "", body))
+        if length < 1000:
+            fail(f"가이드 본문이 짧습니다: {slug} ({length:,}자)")
+        page = PUBLIC / "guides" / f"{slug}.html"
+        if not page.exists():
+            fail(f"정적 가이드 페이지 없음: public/guides/{slug}.html (build_content.py 실행)")
+        elif page.stat().st_size < 4000:
+            fail(f"정적 가이드 페이지가 너무 작습니다: {slug}")
+    for name in ("guides/index.html", "about.html", "privacy.html", "terms.html", "sitemap.xml", "ads.txt"):
+        if not (PUBLIC / name).exists():
+            fail(f"정적 페이지 없음: public/{name}")
+    if legal_path.exists():
+        legal = json.loads(legal_path.read_text(encoding="utf-8"))
+        for key in ("privacy", "terms"):
+            if not legal.get(key, {}).get("sections"):
+                fail(f"legal.json {key} 섹션 비어 있음")
+        privacy_text = json.dumps(legal.get("privacy", {}), ensure_ascii=False)
+        for keyword in ("AdSense", "애드핏", "쿠키"):
+            if keyword not in privacy_text:
+                fail(f"개인정보처리방침에 '{keyword}' 안내가 없습니다")
+    index = (APP / "index.html").read_text(encoding="utf-8")
+    for keyword in ("ADSENSE_META", "ADSENSE_SCRIPT"):
+        if keyword not in index:
+            warn(f"index.html 에 {keyword} 자리표시자가 없습니다")
+    ads = (PUBLIC / "ads.txt").read_text(encoding="utf-8") if (PUBLIC / "ads.txt").exists() else ""
+    if ads and "google.com, pub-" not in ads:
+        fail("ads.txt 형식 확인 필요")
+    notes.append(f"콘텐츠 검사 완료 — 가이드 {len(guides)}편")
 
 
 def main() -> int:
@@ -241,6 +308,7 @@ def main() -> int:
     check_imports()
     check_assets()
     check_data()
+    check_content()
 
     for line in notes:
         print(f"  {line}")

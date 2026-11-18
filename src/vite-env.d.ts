@@ -5,6 +5,10 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_ANON_KEY?: string
   readonly VITE_ADSENSE_CLIENT?: string
   readonly VITE_ADSENSE_SLOT?: string
+  readonly VITE_ADFIT_UNIT?: string
+  readonly VITE_ADFIT_WIDTH?: string
+  readonly VITE_ADFIT_HEIGHT?: string
+  readonly VITE_AD_NETWORK?: string
   readonly VITE_ADMOB_ANDROID_BANNER?: string
   readonly VITE_ADMOB_IOS_BANNER?: string
   readonly VITE_SHOW_AD_PLACEHOLDER?: string

@@ -31,6 +31,9 @@ Object.assign(global, {
   cancelAnimationFrame: (id) => clearTimeout(id),
 })
 
+// jsdom 은 scrollTo 를 구현하지 않아 콘솔 경고가 난다 — 앱 동작과 무관하므로 대체한다.
+window.scrollTo = () => {}
+
 global.fetch = async (input) => {
   const url = String(input)
   const file = path.join(distDir, url.replace(/^https?:\/\/[^/]+\//, '').replace(/^\.\//, ''))
@@ -122,6 +125,34 @@ check('설정 화면', bodyText().includes('내 조건') && bodyText().includes(
 // 8) 프로필 저장 여부
 const profile = JSON.parse(window.localStorage.getItem('grantradar.profile.v1') ?? 'null')
 check('프로필 로컬 저장', Boolean(profile && profile.done && profile.birthYear))
+
+// 9) 가이드 목록
+window.location.hash = '#/guides'
+window.dispatchEvent(new window.Event('hashchange'))
+await sleep(600)
+check('가이드 목록', bodyText().includes('신청 전에 읽는 보조금 가이드') && bodyText().includes('기준중위소득'))
+
+// 10) 가이드 상세
+const guideCard = [...window.document.querySelectorAll('button')].find((el) =>
+  (el.textContent ?? '').includes('기준중위소득·소득분위'),
+)
+guideCard?.click()
+await sleep(700)
+check('가이드 상세 본문', bodyText().includes('기준중위소득은 ‘중간 사람의 소득’이다') && bodyText().includes('2027년'))
+check('가이드 표·출처 노출', bodyText().includes('가구원 수별 기준중위소득') && bodyText().includes('출처와 확인일'))
+
+// 11) 서비스 소개
+window.location.hash = '#/about'
+window.dispatchEvent(new window.Event('hashchange'))
+await sleep(600)
+check('서비스 소개', bodyText().includes('보조금 레이더는 이렇게 만들어집니다') && bodyText().includes('sasolution.edu@gmail.com'))
+
+// 12) 광고: 설정 토글 없음 / 슬롯 ID 미설정 시 <ins> 미렌더
+window.location.hash = '#/settings'
+window.dispatchEvent(new window.Event('hashchange'))
+await sleep(400)
+check('광고 끄기 토글 제거', !bodyText().includes('광고 표시'))
+check('광고 슬롯 미설정 시 빈 ins 없음', window.document.querySelectorAll('ins.adsbygoogle').length === 0)
 
 console.log(errors.length ? `런타임 오류 ${errors.length}건: ${errors[0]}` : '런타임 오류 없음')
 if (errors.length || failures) process.exit(1)

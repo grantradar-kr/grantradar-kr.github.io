@@ -117,8 +117,10 @@ DATA_GO_KR_KEY=발급키 python3 pipeline/collect_policies.py                   
 |---|---|
 | **추천(home)** | 내 조건 일치율 순 추천 · 판정 탭(완벽 일치/조건 확인/마감 임박) · 분야 필터 · 검색. 카드마다 일치율·사유·D-day |
 | **둘러보기(browse)** | 로그인 없이 분야·생애주기별 전체 목록 (SEO·비회원 유입·AdSense 심사용) |
+| **가이드(guides)** | 직접 작성한 심층 가이드 8편(`#/guides`, `#/guides/<slug>`) — 소득기준 계산, 중복 수혜, 서류 체크리스트, 신청 순서 |
+| **서비스 소개(about)** | 데이터 출처·수집 주기·추천 계산 방식·편집 원칙·운영 문의 |
 | **저장함(saved)** | 저장한 공고 + 신청 전 체크리스트 진행률 |
-| **설정(settings)** | 내 조건 수정, 계정·동기화 상태, 광고 on/off, 데이터 기준·소스별 건수, 내 데이터 내보내기/삭제, 약관 |
+| **설정(settings)** | 내 조건 수정, 계정·동기화 상태, 가이드·서비스 소개 링크, 데이터 기준·소스별 건수, 내 데이터 내보내기/삭제, 약관 |
 | **상세 모달** | 일치율 근거(이유/확인 필요), 대상 조건 칩, 지원 내용, 체크리스트, 공고 원문 서류, 공식 신청 링크, 공유 |
 
 ### 일치율 엔진 (`src/lib/matcher.ts`)
@@ -152,9 +154,17 @@ npm run preview
 VITE_SUPABASE_URL=https://xxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOi...
 
-# AdSense (선택 — 승인 후)
-VITE_ADSENSE_CLIENT=ca-pub-0000000000000000
-VITE_ADSENSE_SLOT=1234567890
+# AdSense (게시자 ID 는 기본값이 코드에 내장되어 있다)
+VITE_ADSENSE_CLIENT=ca-pub-3631676636047500
+# 광고 단위 ID — 승인 후 AdSense 콘솔에서 생성해 넣는다(비우면 <ins> 슬롯 미렌더)
+VITE_ADSENSE_SLOT=
+
+# 카카오 애드핏 (선택)
+VITE_ADFIT_UNIT=
+VITE_ADFIT_WIDTH=320
+VITE_ADFIT_HEIGHT=100
+# auto | adsense | adfit | none
+VITE_AD_NETWORK=auto
 VITE_SHOW_AD_PLACEHOLDER=false
 
 # 앱 버전 표기
@@ -223,11 +233,42 @@ App Store 심사 시 “정부 공식 앱이 아님”을 스토어 설명과 �
 
 | 위치 | 형태 | 상태 |
 |---|---|---|
-| 웹 | Google AdSense (`AdSlot`, `VITE_ADSENSE_CLIENT`/`SLOT`) | 승인 후 자동 표시 |
+| 웹 | Google AdSense (`AdSlot`, `VITE_ADSENSE_CLIENT`/`SLOT`) | 게시자 ID 기본값 내장 · 광고 단위 ID 입력 시 `<ins>` 슬롯 표시 |
+| 웹 | 카카오 애드핏 (`VITE_ADFIT_UNIT`/`WIDTH`/`HEIGHT`) | 단위 ID 입력 시 AdSense 대신 사용 |
 | 앱 | AdMob 배너 (`@capacitor-community/admob` 연결 지점) | 플러그인 추가 후 네이티브 배너 |
-| 공통 | 설정에서 광고 on/off, 승인 전에는 영역 자체를 렌더하지 않음 | 기본 off |
+| 공통 | 광고 표시는 상시. 설정에서 끄는 스위치는 없다. 단위 ID 가 없으면 아무것도 렌더하지 않아 빈 박스가 생기지 않는다 | 적용 |
 
-AdSense 승인을 위해서는 **콘텐츠가 있는 공개 페이지**가 필요합니다. `#/browse`(분야별 전체 목록)와 공고 상세가 그 역할을 하며, `index.html` 의 `<noscript>` 블록과 JSON-LD, `robots` 메타로 검색 유입 기반을 마련했습니다.
+- **게시자 ID 기본값**: `ca-pub-3631676636047500`. `index.html` 의 `<!--ADSENSE_META-->`·`<!--ADSENSE_SCRIPT-->` 자리를 빌드 시 치환해
+  `<meta name="google-adsense-account">` 와 공식 스크립트를 넣는다(환경변수 `VITE_ADSENSE_CLIENT` 가 있으면 그 값 우선).
+- **ads.txt**: `public/ads.txt` 에 `google.com, pub-3631676636047500, DIRECT, f08c47fec0942fa0` 가 들어 있고,
+  `python3 pipeline/build_content.py`(또는 `npm run build` 의 prebuild)가 `VITE_ADSENSE_CLIENT` 기준으로 다시 생성한다.
+- **광고 단위(슬롯)**: 승인 후 AdSense 콘솔에서 광고 단위를 만들고 `VITE_ADSENSE_SLOT`(빌드 시) 또는 `public/ad-config.json`(빌드 없이)에 넣는다.
+  값이 비어 있으면 `<ins>` 를 렌더하지 않고, `index.html` 의 자동 광고·소유권 스니펫만 동작한다.
+- **네트워크 우선순위**: `VITE_AD_NETWORK` = `auto`(기본) → AdSense(게시자+슬롯) → AdFit(단위) 순으로 하나만 사용한다. 두 스크립트를 동시에 넣지 않는다.
+
+### 빌드 없이 광고 설정 바꾸기 (`public/ad-config.json`)
+
+```json
+{ "adfitUnit": "DAN-xxxxx", "adfitWidth": 320, "adfitHeight": 100 }
+```
+
+`AdSlot` 이 마운트될 때 한 번 읽는다. 워크플로 시크릿을 건드리지 않고 애드핏 단위를 붙일 때 사용한다.
+
+### 콘텐츠·SEO 산출물
+
+`python3 pipeline/build_content.py` 가 `src/content/*.json` 하나로 앱 화면과 **자바스크립트 없이 읽히는 정적 페이지**를 함께 만든다.
+
+| 생성물 | 내용 |
+|---|---|
+| `public/guides/<slug>.html` (8편) | 가이드 전문 + 표 + FAQ + 출처. Article 구조화 데이터 포함 |
+| `public/guides/index.html` | 가이드 목록 |
+| `public/about.html` | 서비스 소개·데이터 출처·편집 원칙·운영 문의 |
+| `public/privacy.html` · `terms.html` | 개인정보처리방침(AdSense·애드핏 쿠키, 거부 방법 포함)·이용약관 |
+| `public/sitemap.xml` · `robots.txt` | Googlebot · Mediapartners-Google · AdsBot-Google 허용, `/data/` 차단 |
+| `public/ads.txt` | AdSense 게시자 인증 |
+
+AdSense 심사에서 문제가 되는 ‘목록·외부 링크 위주’ 구성을 피하기 위해, 모든 가이드는 자체 작성 본문(편당 1,400~2,200 한글 자)과
+기준일·출처를 갖는다. `pipeline/check_static.py` 가 가이드 수·본문 길이·정적 페이지 존재·방침 내 광고 고지를 검사한다.
 
 ---
 
@@ -243,7 +284,8 @@ AdSense 승인을 위해서는 **콘텐츠가 있는 공개 페이지**가 필�
 ## 7. 검증 (자체 테스트)
 
 ```bash
-python3 pipeline/check_static.py      # JSON/YAML 파싱 · 괄호 · import · 자산 · 데이터 일관성
+python3 pipeline/build_content.py     # 가이드·약관 정적 HTML + sitemap·robots·ads.txt 생성
+python3 pipeline/check_static.py      # JSON/YAML 파싱 · 괄호 · import · 자산 · 데이터 일관성 · 콘텐츠
 npx tsc --noEmit -p tsconfig.json     # TypeScript 타입 검사
 npx vite build                        # 프로덕션 빌드
 npx esbuild src/lib/matcher.ts --bundle --format=esm --outfile=pipeline/.cache/matcher.bundle.mjs
@@ -252,12 +294,16 @@ node pipeline/smoke_test.mjs          # jsdom 렌더 스모크 테스트
 node pipeline/ui_flow_test.mjs        # 온보딩→추천→상세→체크리스트→저장함→둘러보기→설정 흐름
 ```
 
-2026-11-18 실행 결과: 정적 검사 **오류 0건**, 타입 검사·빌드 통과, 7개 페르소나에서 성별·지역 하드 필터 오탐 **0건**,
-jsdom 사용자 흐름 **11개 항목 전부 통과**.
+2026-11-18 재검증 결과: 정적 검사 **오류 0건**(경고 1건 — 12.9MB 데이터 규모), 타입 검사·빌드 통과,
+jsdom 렌더 스모크 통과, 사용자 흐름 **11개 항목 전부 통과**.
+
+> 이 환경에는 Node 가 기본 설치되어 있지 않아 검증 시 `PATH=/workspace/.local/node/bin:$PATH` 로 Node 20 을 사용했습니다.
 
 ## 8. 알려진 한계
 
 - 태그는 제목·요약·공고 코드 기반 **자동 분류**입니다. 소득·재산·가구원 수 같은 세부 자격은 공고 원문 확인이 필요합니다.
+- 가이드의 금액·기준은 작성 시점(2026-11-18) 고시·공고 기준입니다. 제도 변경 시 본문과 정적 페이지를 함께 갱신해야 합니다(`src/content/guides.json` 수정 후 `npm run content`).
+- 광고 단위(슬롯) ID 를 넣기 전까지는 `<ins>` 슬롯이 렌더되지 않고, `index.html` 의 자동 광고·소유권 스니펫만 동작합니다.
 - 복지로는 목록 API가 9건/페이지 고정이라 전체 수집에 시간이 걸립니다(청크 캐시로 완화).
 - 지자체 공고는 동명 정책이 많아, 같은 제목이라도 지역이 다르면 별도 항목으로 유지합니다.
 - 광고·Supabase는 설정 전까지 완전히 비활성이며, 그 상태에서도 앱 기능은 동일합니다.

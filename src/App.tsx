@@ -5,6 +5,8 @@ import HomeScreen from './components/HomeScreen'
 import PublicDirectory from './components/PublicDirectory'
 import SavedScreen from './components/SavedScreen'
 import SettingsScreen from './components/SettingsScreen'
+import GuidesScreen from './components/GuidesScreen'
+import AboutScreen from './components/AboutScreen'
 import PolicyDetailModal from './components/PolicyDetailModal'
 import OnboardingModal from './components/OnboardingModal'
 import AuthModal from './components/AuthModal'
@@ -39,12 +41,17 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
-function parseHash(): { route: Route; policyId: string | null } {
+function parseHash(): { route: Route; policyId: string | null; guideSlug: string | null } {
   const raw = window.location.hash.replace(/^#\/?/, '')
   const [head, ...rest] = raw.split('/')
-  if (head === 'policy' && rest.length) return { route: 'home', policyId: decodeURIComponent(rest.join('/')) }
-  if (head === 'browse' || head === 'saved' || head === 'settings') return { route: head, policyId: null }
-  return { route: 'home', policyId: null }
+  if (head === 'policy' && rest.length) return { route: 'home', policyId: decodeURIComponent(rest.join('/')), guideSlug: null }
+  if (head === 'guides') {
+    const slug = rest.length ? decodeURIComponent(rest.join('/')) : null
+    return { route: 'guides', policyId: null, guideSlug: slug }
+  }
+  if (head === 'about') return { route: 'about', policyId: null, guideSlug: null }
+  if (head === 'browse' || head === 'saved' || head === 'settings') return { route: head, policyId: null, guideSlug: null }
+  return { route: 'home', policyId: null, guideSlug: null }
 }
 
 export default function App() {
@@ -59,6 +66,7 @@ export default function App() {
 
   const [route, setRoute] = useState<Route>(() => parseHash().route)
   const [detailId, setDetailId] = useState<string | null>(() => parseHash().policyId)
+  const [guideSlug, setGuideSlug] = useState<string | null>(() => parseHash().guideSlug)
 
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showAuth, setShowAuth] = useState(false)
@@ -108,6 +116,7 @@ export default function App() {
         routeRef.current = parsed.route
         setRoute(parsed.route)
       }
+      setGuideSlug(parsed.guideSlug)
       setDetailId(parsed.policyId)
     }
     window.addEventListener('hashchange', onHashChange)
@@ -179,7 +188,17 @@ export default function App() {
     routeRef.current = next
     setRoute(next)
     setDetailId(null)
+    setGuideSlug(null)
     window.location.hash = `#/${next}`
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const openGuide = (slug: string) => {
+    routeRef.current = 'guides'
+    setRoute('guides')
+    setGuideSlug(slug)
+    setDetailId(null)
+    window.location.hash = `#/guides/${encodeURIComponent(slug)}`
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -218,17 +237,11 @@ export default function App() {
     })
   }
 
-  const handleToggleAds = (enabled: boolean) => {
-    const next = { ...settings, adsEnabled: enabled }
-    setSettings(next)
-    saveSettings(next)
-  }
-
   const handleClearData = () => {
     clearLocalData()
     setProfile(DEFAULT_PROFILE)
     setSaved([])
-    setSettings((prev) => ({ ...prev, adsEnabled: false }))
+    setSettings((prev) => ({ ...prev }))
     notify('이 기기에 저장된 데이터를 모두 지웠습니다.')
   }
 
@@ -284,9 +297,10 @@ export default function App() {
             meta={meta}
             loading={loading}
             savedIds={savedIds}
-            adsEnabled={settings.adsEnabled}
             onOpenPolicy={openPolicy}
             onToggleSave={handleToggleSave}
+            onOpenGuides={() => navigate('guides')}
+            onOpenGuide={openGuide}
           />
         ) : route === 'saved' ? (
           <SavedScreen
@@ -297,17 +311,32 @@ export default function App() {
             onGoHome={() => navigate('home')}
             onOpenProfile={() => setShowOnboarding(true)}
           />
+        ) : route === 'guides' ? (
+          <GuidesScreen
+            slug={guideSlug}
+            onOpenGuide={openGuide}
+            onBackToGuides={() => {
+              routeRef.current = 'guides'
+              setRoute('guides')
+              setGuideSlug(null)
+              window.location.hash = '#/guides'
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
+            onGoHome={() => navigate('home')}
+          />
+        ) : route === 'about' ? (
+          <AboutScreen onOpenGuides={() => navigate('guides')} onOpenGuide={openGuide} />
         ) : route === 'settings' ? (
           <SettingsScreen
             profile={profile}
             meta={meta}
             cloud={cloud}
             savedCount={saved.length}
-            adsEnabled={settings.adsEnabled}
             canInstall={Boolean(installEvent)}
             onEditProfile={() => setShowOnboarding(true)}
             onOpenAuth={() => setShowAuth(true)}
-            onToggleAds={handleToggleAds}
+            onOpenGuides={() => navigate('guides')}
+            onOpenAbout={() => navigate('about')}
             onOpenLegal={(kind) => setLegal(kind)}
             onClearData={handleClearData}
             onInstall={() => void handleInstall()}
@@ -320,10 +349,11 @@ export default function App() {
             profile={profile}
             savedIds={savedIds}
             loading={loading}
-            adsEnabled={settings.adsEnabled}
             onOpenPolicy={openPolicy}
             onToggleSave={handleToggleSave}
             onEditProfile={() => setShowOnboarding(true)}
+            onOpenGuides={() => navigate('guides')}
+            onOpenGuide={openGuide}
           />
         )}
 
@@ -334,6 +364,12 @@ export default function App() {
             최종 자격·신청은 공식 사이트에서 확인하세요.
           </p>
           <div className="mt-2 flex flex-wrap gap-3">
+            <a href="#/about" className="font-semibold hover:text-brand-700">
+              서비스 소개
+            </a>
+            <a href="#/guides" className="font-semibold hover:text-brand-700">
+              가이드
+            </a>
             <button type="button" onClick={() => setLegal('privacy')} className="font-semibold hover:text-brand-700">
               개인정보처리방침
             </button>
@@ -344,6 +380,9 @@ export default function App() {
               분야별 전체 보기
             </a>
           </div>
+          <p className="mt-2 text-ink-300">
+            문의 <a href="mailto:sasolution.edu@gmail.com" className="underline hover:text-brand-700">sasolution.edu@gmail.com</a>
+          </p>
         </footer>
       </main>
 

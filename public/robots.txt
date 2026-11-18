@@ -1,5 +1,17 @@
+# 보조금 레이더 (GrantRadar KR) — 민간 정보 매칭 서비스
 User-agent: *
 Allow: /
 Disallow: /data/
 
-# 보조금 레이더 (GrantRadar KR) — 민간 정보 매칭 서비스
+# 검색엔진 (콘텐츠 본문·가이드 수집 허용)
+User-agent: Googlebot
+Allow: /
+
+# Google AdSense 광고 심사 크롤러
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+Sitemap: https://grantradar-kr.github.io/sitemap.xml

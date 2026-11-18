@@ -35,6 +35,7 @@ global.DocumentFragment = window.DocumentFragment
 global.requestAnimationFrame = (cb) => setTimeout(() => cb(Date.now()), 0)
 global.cancelAnimationFrame = (id) => clearTimeout(id)
 global.IS_REACT_ACT_ENVIRONMENT = false
+window.scrollTo = () => {}
 
 // fetch 스텁: public/data 파일을 실제로 읽어 응답
 global.fetch = async (input) => {

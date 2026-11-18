@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import PolicyCard from './PolicyCard'
 import AdSlot from './AdSlot'
+import GuideTeaser from './GuideTeaser'
 import { DOMAINS, LIFE_STAGES } from '../lib/labels'
 import { deadlineText } from '../lib/data'
 import type { DomainKey, Judgement, LifeStage, Meta, Policy } from '../lib/types'
@@ -10,9 +11,10 @@ interface Props {
   meta: Meta | null
   loading: boolean
   savedIds: Set<string>
-  adsEnabled: boolean
   onOpenPolicy: (policyId: string) => void
   onToggleSave: (policyId: string) => void
+  onOpenGuides: () => void
+  onOpenGuide: (slug: string) => void
 }
 
 const NEUTRAL: Judgement = { score: 0, verdict: 'low', urgent: false, reasons: [], gaps: [] }
@@ -22,7 +24,16 @@ function urgencyOf(policy: Policy): Judgement {
   return { ...NEUTRAL, urgent }
 }
 
-export default function PublicDirectory({ policies, meta, loading, savedIds, adsEnabled, onOpenPolicy, onToggleSave }: Props) {
+export default function PublicDirectory({
+  policies,
+  meta,
+  loading,
+  savedIds,
+  onOpenPolicy,
+  onToggleSave,
+  onOpenGuides,
+  onOpenGuide,
+}: Props) {
   const [domain, setDomain] = useState<DomainKey | 'all'>('all')
   const [life, setLife] = useState<LifeStage | 'all'>('all')
   const [query, setQuery] = useState('')
@@ -204,7 +215,7 @@ export default function PublicDirectory({ policies, meta, loading, savedIds, ads
                 />
                 {index === 8 ? (
                   <div className="sm:col-span-2 xl:col-span-3">
-                    <AdSlot enabled={adsEnabled} label="광고" />
+                    <AdSlot label="광고" />
                   </div>
                 ) : null}
               </div>
@@ -217,6 +228,8 @@ export default function PublicDirectory({ policies, meta, loading, savedIds, ads
           ) : null}
         </>
       )}
+
+      <GuideTeaser onOpenGuides={onOpenGuides} onOpenGuide={onOpenGuide} />
 
       <section className="rounded-2xl bg-white px-4 py-4 text-[11.5px] leading-relaxed text-ink-400 ring-1 ring-slate-100">
         <h3 className="mb-1 text-[12.5px] font-extrabold text-ink-700">보조금 레이더는 이렇게 데이터를 모읍니다</h3>

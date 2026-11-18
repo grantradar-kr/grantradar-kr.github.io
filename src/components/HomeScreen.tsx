@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import PolicyCard from './PolicyCard'
 import AdSlot from './AdSlot'
+import GuideTeaser from './GuideTeaser'
 import { DOMAINS } from '../lib/labels'
 import { filterScored, sortScored, summarize, type SortKey } from '../lib/matcher'
 import type { DomainKey, Meta, Profile, ScoredPolicy, Verdict } from '../lib/types'
@@ -12,10 +13,11 @@ interface Props {
   profile: Profile
   savedIds: Set<string>
   loading: boolean
-  adsEnabled: boolean
   onOpenPolicy: (policyId: string) => void
   onToggleSave: (policyId: string) => void
   onEditProfile: () => void
+  onOpenGuides: () => void
+  onOpenGuide: (slug: string) => void
 }
 
 const VERDICT_TABS: { key: Verdict | 'all'; label: string }[] = [
@@ -30,10 +32,11 @@ export default function HomeScreen({
   profile,
   savedIds,
   loading,
-  adsEnabled,
   onOpenPolicy,
   onToggleSave,
   onEditProfile,
+  onOpenGuides,
+  onOpenGuide,
 }: Props) {
   const [query, setQuery] = useState('')
   const [verdict, setVerdict] = useState<Verdict | 'all'>('all')
@@ -199,6 +202,8 @@ export default function HomeScreen({
       </div>
 
       {/* 목록 */}
+      <GuideTeaser onOpenGuides={onOpenGuides} onOpenGuide={onOpenGuide} />
+
       <div className="flex items-baseline justify-between pt-1">
         <h2 className="text-[14px] font-extrabold text-ink-900">
           {profile.done ? '내 조건 추천' : '전체 보조금'}{' '}
@@ -251,7 +256,7 @@ export default function HomeScreen({
                 />
                 {index === 5 ? (
                   <div className="sm:col-span-2 xl:col-span-3">
-                    <AdSlot enabled={adsEnabled} label="광고" />
+                    <AdSlot label="광고" />
                   </div>
                 ) : null}
               </div>

@@ -21,6 +21,16 @@ const ITEMS: { key: Route; label: string; icon: JSX.Element }[] = [
     ),
   },
   {
+    key: 'guides',
+    label: '가이드',
+    icon: (
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.9">
+        <path d="M5 4.5h9.5A2.5 2.5 0 0 1 17 7v12.5H7.5A2.5 2.5 0 0 1 5 17V4.5Z" strokeLinejoin="round" />
+        <path d="M8 8.5h6M8 12h6" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
     key: 'saved',
     label: '저장함',
     icon: (

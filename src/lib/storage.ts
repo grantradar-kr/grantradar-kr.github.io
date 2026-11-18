@@ -9,12 +9,11 @@ const KEYS = {
 } as const
 
 export interface AppSettings {
-  adsEnabled: boolean
   lastRoute?: string
   hideOnboarding?: boolean
 }
 
-const DEFAULT_SETTINGS: AppSettings = { adsEnabled: true }
+const DEFAULT_SETTINGS: AppSettings = {}
 
 function read<T>(key: string, fallback: T): T {
   if (typeof window === 'undefined') return fallback

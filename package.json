@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "python3 pipeline/build_content.py",
     "build": "tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview --port 4173",
     "data": "python3 pipeline/collect_policies.py",
@@ -17,7 +18,8 @@
     "verify:static": "python3 pipeline/check_static.py",
     "test:smoke": "node pipeline/smoke_test.mjs",
     "test:ui": "node pipeline/ui_flow_test.mjs",
-    "test:matcher": "node pipeline/verify_matcher.mjs"
+    "test:matcher": "node pipeline/verify_matcher.mjs",
+    "content": "python3 pipeline/build_content.py"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.0",
