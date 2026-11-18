@@ -11,16 +11,21 @@ work/grant_radar_app/
 ├── pipeline/                 # 실시간 정책 수집 파이프라인 (Python, 표준 라이브러리만 사용)
 │   ├── collect_policies.py   # 온통청년·복지로·기업마당·K-Startup(+보조금24) 수집 → public/data
 │   ├── make_brand_assets.py  # 앱 아이콘·OG 이미지 생성 (PIL)
+│   ├── build_content.py      # 가이드·약관 정적 HTML + sitemap·robots·ads.txt 생성
 │   └── fonts/                # 나눔고딕 (이미지 생성용)
 ├── public/
 │   ├── data/policies.json    # 앱이 읽는 정책 데이터 (자동 생성)
 │   ├── data/meta.json        # 소스별 건수·분포 통계 (자동 생성)
+│   ├── guides/               # 정적 가이드 8편 + 목록 (build_content.py 생성)
+│   ├── about.html · privacy.html · terms.html   # 서비스 소개·방침·약관 (정적)
+│   ├── sitemap.xml · robots.txt · ads.txt
 │   ├── icons/                # 192/512/maskable/애플터치 아이콘
 │   ├── manifest.json         # PWA 매니페스트
 │   ├── sw.js                 # 서비스 워커 (앱 셸 + 데이터 캐시)
 │   └── og-cover.png          # SNS 공유 카드 (1200×630)
 ├── src/
-│   ├── lib/                  # types, labels, matcher(일치율 엔진), storage, supabase, data, share
+│   ├── content/              # guides.json · legal.json — 앱 화면과 정적 HTML 의 공통 원본
+│   ├── lib/                  # types, labels, matcher(일치율 엔진), storage, supabase, data, share, guides, legal
 │   ├── components/           # 화면 + 모달 + 광고 슬롯
 │   ├── App.tsx               # 라우팅·상태 오케스트레이션
 │   └── main.tsx              # 엔트리 + SW 등록
