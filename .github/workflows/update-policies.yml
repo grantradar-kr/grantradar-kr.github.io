@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # 갱신 후 Pages 배포 워크플로우를 트리거하기 위해 필요
 
 concurrency:
   group: policy-data
@@ -64,3 +65,11 @@ jobs:
             git commit -m "data: 보조금 레이더 정책 데이터 자동 갱신 ($(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M KST'))"
             git push
           fi
+
+      # GITHUB_TOKEN 으로 만든 push 는 다른 워크플로우를 트리거하지 않으므로,
+      # 배포 워크플로우(deploy-pages.yml)를 명시적으로 호출해 사이트에 반영한다.
+      - name: Trigger Pages deploy (갱신 데이터를 라이브 사이트에 반영)
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy-pages.yml --ref main
