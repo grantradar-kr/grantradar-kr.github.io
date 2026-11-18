@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /data/
+
+# 보조금 레이더 (GrantRadar KR) — 민간 정보 매칭 서비스

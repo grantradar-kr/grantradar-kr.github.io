@@ -1,0 +1,26 @@
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+.env
+.env.*
+!.env.example
+
+# 파이프라인 캐시
+pipeline/.cache/
+__pycache__/
+*.pyc
+
+# Capacitor / 네이티브 빌드 산출물
+android/.gradle/
+android/app/build/
+android/local.properties
+android/app/release.keystore
+ios/App/Pods/
+ios/App/build/
+ios/DerivedData/
+
+# OS
+.DS_Store
+Thumbs.db

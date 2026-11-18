@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-canvas text-ink-900 font-sans antialiased;
+    padding-bottom: env(safe-area-inset-bottom);
+    overscroll-behavior-y: none;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: #b9f2df;
+    color: #043a2f;
+  }
+
+  :focus-visible {
+    outline: 2px solid #12b98d;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl bg-white shadow-card ring-1 ring-slate-100;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-semibold ring-1 transition;
+  }
+
+  .chip-idle {
+    @apply bg-white text-ink-500 ring-slate-200 hover:bg-slate-50;
+  }
+
+  .chip-active {
+    @apply bg-brand-700 text-white ring-brand-700 shadow-sm;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-700 text-white hover:bg-brand-800 active:scale-[0.99];
+  }
+
+  .btn-ghost {
+    @apply btn bg-white text-ink-700 ring-1 ring-slate-200 hover:bg-slate-50;
+  }
+
+  .btn-soft {
+    @apply btn bg-brand-50 text-brand-800 ring-1 ring-brand-100 hover:bg-brand-100;
+  }
+
+  .section-title {
+    @apply text-[15px] font-extrabold tracking-tight text-ink-900;
+  }
+
+  .modal-panel {
+    @apply w-full max-w-2xl rounded-t-3xl bg-white shadow-pop sm:rounded-3xl;
+  }
+
+  .skeleton {
+    @apply animate-pulse rounded-lg bg-slate-200/70;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "grant-radar-kr",
+  "private": true,
+  "version": "0.1.0",
+  "description": "보조금 레이더 (GrantRadar KR) — 전국민 생애주기·상황별 정부 보조금 실시간 매칭 PWA/Capacitor 앱",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview --port 4173",
+    "data": "python3 pipeline/collect_policies.py",
+    "data:cache": "python3 pipeline/collect_policies.py --use-cache",
+    "cap:sync": "npm run build && npx cap sync",
+    "android": "npm run build && npx cap sync android && npx cap open android",
+    "ios": "npm run build && npx cap sync ios && npx cap open ios",
+    "android:apk": "npm run build && npx cap sync android && cd android && ./gradlew assembleDebug",
+    "verify:static": "python3 pipeline/check_static.py",
+    "test:smoke": "node pipeline/smoke_test.mjs",
+    "test:ui": "node pipeline/ui_flow_test.mjs",
+    "test:matcher": "node pipeline/verify_matcher.mjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@supabase/supabase-js": "^2.45.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.0",
+    "@types/node": "^20.16.5",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.2",
+    "autoprefixer": "^10.4.20",
+    "jsdom": "^24.1.3",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
