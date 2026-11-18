@@ -38,7 +38,7 @@ export default function Header({ profile, cloud, route, onOpenProfile, onOpenAut
             width={36}
             height={36}
           />
-          <div className="min-w-0 leading-tight">
+          <div className="hidden min-w-0 leading-tight min-[360px]:block">
             <div className="truncate text-[14.5px] font-extrabold tracking-tight text-ink-900 sm:text-[15.5px]">
               보조금 레이더
             </div>
