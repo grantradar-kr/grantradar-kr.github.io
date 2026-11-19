@@ -161,7 +161,13 @@ def ad_unit() -> str:
     )
 
 
-def page(title: str, description: str, body: str, prefix: str, extra_head: str = "", og_type: str = "article") -> str:
+def page(title: str, description: str, body: str, prefix: str, extra_head: str = "", og_type: str = "article", canonical: str = "") -> str:
+    canonical_head = ""
+    if canonical:
+        canonical_head = (
+            f'<link rel="canonical" href="{esc(canonical)}" />\n'
+            f'<meta property="og:url" content="{esc(canonical)}" />\n'
+        )
     nav = (
         f'<nav class="top">'
         f'<a href="{prefix}index.html">홈</a>'
@@ -192,7 +198,7 @@ def page(title: str, description: str, body: str, prefix: str, extra_head: str =
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(description)}" />
 <meta name="robots" content="index, follow, max-image-preview:large" />
-<meta property="og:type" content="{esc(og_type)}" />
+{canonical_head}<meta property="og:type" content="{esc(og_type)}" />
 <meta property="og:site_name" content="{BRAND}" />
 <meta property="og:title" content="{esc(title)}" />
 <meta property="og:description" content="{esc(description)}" />
@@ -330,7 +336,7 @@ def guide_page(guide: dict) -> str:
             }
         )
     body = "\n".join(parts)
-    return page(f"{guide['title']} | {BRAND}", guide["summary"], body, "../", extra)
+    return page(f"{guide['title']} | {BRAND}", guide["summary"], body, "../", extra, canonical=url)
 
 
 def guide_index_page(guides: list[dict], updated: str) -> str:
@@ -356,6 +362,7 @@ def guide_index_page(guides: list[dict], updated: str) -> str:
         body,
         "../",
         jsonld(breadcrumb_ld([("홈", f"{SITE}/"), ("가이드", f"{SITE}/guides/")])),
+        canonical=f"{SITE}/guides/",
     )
 
 
@@ -889,7 +896,7 @@ def category_page(hub: dict, items: list[dict], meta: dict, guides_by_slug: dict
                 "dateModified": updated,
             }
         ) + jsonld(breadcrumb_ld([("홈", f"{SITE}/"), ("분야·대상별", f"{SITE}/categories/"), (hub["label"], url)]))
-        return page(f'{hub["title"]} | {BRAND}', hub["desc"], body, "../", extra, og_type="website")
+        return page(f'{hub["title"]} | {BRAND}', hub["desc"], body, "../", extra, og_type="website", canonical=url)
 
     listed = items[:limit]
     parts.append(f'<h2>{esc(hub["label"])} 주요 공고 {len(listed)}건</h2>')
@@ -941,7 +948,7 @@ def category_page(hub: dict, items: list[dict], meta: dict, guides_by_slug: dict
             },
         }
     ) + jsonld(breadcrumb_ld([("홈", f"{SITE}/"), ("분야·대상별", f"{SITE}/categories/"), (hub["label"], url)]))
-    return page(f'{hub["title"]} | {BRAND}', hub["desc"], body, "../", extra, og_type="website")
+    return page(f'{hub["title"]} | {BRAND}', hub["desc"], body, "../", extra, og_type="website", canonical=url)
 
 
 def categories_index_page(counts: dict[str, int], updated: str) -> str:
@@ -1004,6 +1011,7 @@ def categories_index_page(counts: dict[str, int], updated: str) -> str:
         "../",
         extra,
         og_type="website",
+        canonical=f"{SITE}/categories/",
     )
 
 
@@ -1029,6 +1037,7 @@ def about_page(site: dict, guides: list[dict], updated: str) -> str:
         "보조금 레이더의 데이터 출처와 수집 주기, 추천 계산 방식, 편집 원칙, 운영 문의를 안내합니다.",
         "\n".join(parts),
         "",
+        canonical=f"{SITE}/about.html",
     )
 
 
@@ -1055,6 +1064,7 @@ def legal_page(doc: dict, label: str, updated: str) -> str:
         f"{BRAND} {label} — 수집 항목, 광고·제3자 쿠키, 이용자 권리, 문의처를 안내합니다.",
         "\n".join(parts),
         "",
+        canonical=f"{SITE}/{'privacy' if label == '개인정보처리방침' else 'terms'}.html",
     )
 
 
