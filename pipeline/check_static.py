@@ -15,6 +15,7 @@ from pathlib import Path
 APP = Path(__file__).resolve().parent.parent
 PUBLIC = APP / "public"
 SRC = APP / "src"
+SITE = "https://grantradar-kr.github.io"
 
 errors: list[str] = []
 warnings: list[str] = []
@@ -254,8 +255,8 @@ def check_content() -> None:
         return
     data = json.loads(guides_path.read_text(encoding="utf-8"))
     guides = data.get("guides", [])
-    if len(guides) < 6:
-        fail(f"가이드가 {len(guides)}편뿐입니다 (최소 6편 필요)")
+    if len(guides) < 13:
+        fail(f"가이드가 {len(guides)}편뿐입니다 (최소 13편 필요)")
     slugs = set()
     for guide in guides:
         slug = guide.get("slug", "")
@@ -278,9 +279,12 @@ def check_content() -> None:
             fail(f"정적 가이드 페이지 없음: public/guides/{slug}.html (build_content.py 실행)")
         elif page.stat().st_size < 4000:
             fail(f"정적 가이드 페이지가 너무 작습니다: {slug}")
-    for name in ("guides/index.html", "about.html", "privacy.html", "terms.html", "sitemap.xml", "ads.txt"):
+    for name in ("guides/index.html", "about.html", "privacy.html", "terms.html", "sitemap.xml", "rss.xml", "ads.txt", "robots.txt"):
         if not (PUBLIC / name).exists():
             fail(f"정적 페이지 없음: public/{name}")
+    check_hubs()
+    check_sitemap_rss()
+    check_robots()
     if legal_path.exists():
         legal = json.loads(legal_path.read_text(encoding="utf-8"))
         for key in ("privacy", "terms"):
@@ -298,6 +302,89 @@ def check_content() -> None:
     if ads and "google.com, pub-" not in ads:
         fail("ads.txt 형식 확인 필요")
     notes.append(f"콘텐츠 검사 완료 — 가이드 {len(guides)}편")
+
+
+HUB_SLUGS = [
+    "housing", "finance", "employment", "business", "childcare", "education", "medical", "senior-welfare",
+    "youth", "single", "low-income", "disabled", "single-parent", "self-employed",
+    "urgent", "regions",
+]
+
+
+def check_hubs() -> None:
+    """분야·대상·특집 허브가 모두 생성되었는지, 내용이 비어 있지 않은지 확인한다."""
+    categories = PUBLIC / "categories"
+    if not categories.exists():
+        fail("public/categories 없음 — build_content.py 를 실행하세요")
+        return
+    index = categories / "index.html"
+    if not index.exists():
+        fail("정적 허브 목록 없음: public/categories/index.html")
+    elif index.stat().st_size < 5000:
+        fail("public/categories/index.html 이 너무 작습니다(허브 링크 누락 의심)")
+    thin: list[str] = []
+    missing: list[str] = []
+    for slug in HUB_SLUGS:
+        page = categories / f"{slug}.html"
+        if not page.exists():
+            missing.append(slug)
+            continue
+        body = page.read_text(encoding="utf-8")
+        if page.stat().st_size < 12000 or "CollectionPage" not in body or "BreadcrumbList" not in body:
+            thin.append(slug)
+    if missing:
+        fail(f"허브 페이지 누락: {missing}")
+    if thin:
+        fail(f"허브 페이지가 너무 얇거나 구조화 데이터 누락: {thin}")
+    notes.append(f"허브 검사 완료 — {len(HUB_SLUGS) - len(missing)}개")
+
+
+def check_sitemap_rss() -> None:
+    import xml.etree.ElementTree as ET
+
+    sitemap = PUBLIC / "sitemap.xml"
+    if sitemap.exists():
+        try:
+            root = ET.fromstring(sitemap.read_text(encoding="utf-8"))
+            locs = [el.text or "" for el in root.iter() if el.tag.endswith("loc")]
+            if len(locs) < 35:
+                fail(f"sitemap.xml URL 이 {len(locs)}개뿐입니다 (최소 35개 필요)")
+            for must in (f"{SITE}/", f"{SITE}/guides/", f"{SITE}/categories/", f"{SITE}/categories/urgent.html"):
+                if must not in locs:
+                    fail(f"sitemap.xml 에 필수 URL 없음: {must}")
+            guide_locs = [loc for loc in locs if "/guides/" in loc]
+            if len(guide_locs) < 13:
+                fail(f"sitemap.xml 가이드 URL 이 {len(guide_locs)}개뿐입니다 (최소 13개)")
+            notes.append(f"sitemap.xml OK — URL {len(locs)}개")
+        except Exception as exc:  # noqa: BLE001
+            fail(f"sitemap.xml 파싱 실패: {exc}")
+
+    rss = PUBLIC / "rss.xml"
+    if rss.exists():
+        try:
+            root = ET.fromstring(rss.read_text(encoding="utf-8"))
+            items = [el for el in root.iter() if el.tag == "item"]
+            if len(items) < 13:
+                fail(f"rss.xml 항목이 {len(items)}개뿐입니다 (최소 13개 필요)")
+            channel = root.find("channel")
+            if channel is None or channel.find("title") is None or channel.find("link") is None:
+                fail("rss.xml channel 에 title/link 가 없습니다")
+            notes.append(f"rss.xml OK — 항목 {len(items)}개")
+        except Exception as exc:  # noqa: BLE001
+            fail(f"rss.xml 파싱 실패: {exc}")
+
+
+def check_robots() -> None:
+    robots = PUBLIC / "robots.txt"
+    if not robots.exists():
+        fail("public/robots.txt 없음")
+        return
+    text = robots.read_text(encoding="utf-8")
+    if "User-agent: Yeti" not in text:
+        fail("robots.txt 에 네이버 검색봇(User-agent: Yeti) 허용이 없습니다")
+    if "Sitemap:" not in text:
+        fail("robots.txt 에 Sitemap 표시가 없습니다")
+    notes.append("robots.txt OK (Yeti·Googlebot·Mediapartners-Google)")
 
 
 def main() -> int:

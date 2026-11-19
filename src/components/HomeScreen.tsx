@@ -254,7 +254,7 @@ export default function HomeScreen({
                   onOpen={() => onOpenPolicy(item.policy.id)}
                   onToggleSave={() => onToggleSave(item.policy.id)}
                 />
-                {index === 5 ? (
+                {index === 5 || (index > 5 && (index - 5) % 14 === 0) ? (
                   <div className="sm:col-span-2 xl:col-span-3">
                     <AdSlot label="광고" />
                   </div>

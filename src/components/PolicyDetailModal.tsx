@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import Modal from './Modal'
+import AdSlot from './AdSlot'
 import { DdayBadge, VerdictBadge } from './PolicyCard'
 import { deadlineText, formatDate, relativeUpdated } from '../lib/data'
 import { domainLabel, householdLabel, jobLabel, lifeLabel, sourceLabel } from '../lib/labels'
@@ -268,6 +269,11 @@ export default function PolicyDetailModal({
               정보가 달라요 · 오류 제보하기
             </a>
           </section>
+
+          {/* 광고 — 신청 버튼과 충분한 간격을 두고 본문 하단에 1개만 배치(오클릭 방지) */}
+          <div className="mt-6 border-t border-slate-100 pt-4">
+            <AdSlot label="광고" variant="banner" />
+          </div>
         </div>
 
         <div className="safe-bottom border-t border-slate-100 bg-white px-5 pt-3">

@@ -7,6 +7,14 @@ Disallow: /data/
 User-agent: Googlebot
 Allow: /
 
+# 네이버 검색봇
+User-agent: Yeti
+Allow: /
+
+# 다음 검색봇
+User-agent: Daum
+Allow: /
+
 # Google AdSense 광고 심사 크롤러
 User-agent: Mediapartners-Google
 Allow: /

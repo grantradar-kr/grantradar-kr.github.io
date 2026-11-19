@@ -12,6 +12,25 @@ const FACTS = [
   { label: '운영 방식', value: '민간 운영 · 광고 수익으로 서버·수집 비용 충당' },
 ]
 
+const HUB_LINKS = [
+  { slug: 'housing', label: '주거·월세' },
+  { slug: 'finance', label: '생활·금융' },
+  { slug: 'employment', label: '취업·구직' },
+  { slug: 'business', label: '창업·소상공인' },
+  { slug: 'childcare', label: '출산·육아' },
+  { slug: 'education', label: '교육·장학금' },
+  { slug: 'medical', label: '의료비' },
+  { slug: 'senior-welfare', label: '노인·기초연금' },
+  { slug: 'youth', label: '청년' },
+  { slug: 'single', label: '1인가구' },
+  { slug: 'low-income', label: '저소득' },
+  { slug: 'disabled', label: '장애인' },
+  { slug: 'single-parent', label: '한부모·다자녀' },
+  { slug: 'self-employed', label: '자영업' },
+  { slug: 'urgent', label: '마감 임박 D-7' },
+  { slug: 'regions', label: '지역별 17개 시·도' },
+]
+
 export default function AboutScreen({ onOpenGuides, onOpenGuide }: Props) {
   const operator = SITE_CONTENT.operator
 
@@ -68,6 +87,27 @@ export default function AboutScreen({ onOpenGuides, onOpenGuide }: Props) {
         <p className="mt-2 text-[11px] leading-relaxed text-ink-300">
           콘텐츠 기준일 {updatedLabel(CONTENT_UPDATED)} · 가이드 {GUIDES.length}편 ({GUIDE_CATEGORIES.join(' · ')})
         </p>
+      </section>
+
+      <section>
+        <h2 className="text-[14px] font-extrabold text-ink-900">분야·대상별로 찾기</h2>
+        <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-400">
+          앱의 조건 설정 없이도 바로 볼 수 있는 정적 페이지입니다. 분야 8개·대상 6개·특집 2개로 공고를 묶었습니다.
+        </p>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {HUB_LINKS.map((hub) => (
+            <a
+              key={hub.slug}
+              href={`./categories/${hub.slug}.html`}
+              className="rounded-full bg-white px-3 py-1.5 text-[11.5px] font-bold text-brand-800 ring-1 ring-slate-200"
+            >
+              {hub.label}
+            </a>
+          ))}
+        </div>
+        <a href="./categories/" className="btn-ghost mt-2.5 block text-center">
+          분야·대상별 보조금 전체 보기
+        </a>
       </section>
 
       <section>

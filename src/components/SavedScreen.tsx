@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { DdayBadge } from './PolicyCard'
+import AdSlot from './AdSlot'
 import { deadlineText } from '../lib/data'
 import { sourceLabel } from '../lib/labels'
 import type { Policy, SavedEntry } from '../lib/types'
@@ -97,6 +98,13 @@ export default function SavedScreen({ saved, policiesById, onOpenPolicy, onRemov
           )
         })}
       </ul>
+
+      {/* 저장한 공고가 2건 이상일 때만 목록 하단에 광고 1개 */}
+      {rows.length >= 2 ? (
+        <div className="pt-1">
+          <AdSlot label="광고" variant="banner" />
+        </div>
+      ) : null}
     </div>
   )
 }

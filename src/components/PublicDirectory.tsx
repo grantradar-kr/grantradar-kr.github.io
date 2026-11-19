@@ -213,7 +213,7 @@ export default function PublicDirectory({
                   onOpen={() => onOpenPolicy(policy.id)}
                   onToggleSave={() => onToggleSave(policy.id)}
                 />
-                {index === 8 ? (
+                {index === 8 || (index > 8 && (index - 8) % 14 === 0) ? (
                   <div className="sm:col-span-2 xl:col-span-3">
                     <AdSlot label="광고" />
                   </div>
