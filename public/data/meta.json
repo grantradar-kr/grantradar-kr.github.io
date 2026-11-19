@@ -1,8 +1,8 @@
 {
  "app": "보조금 레이더",
  "app_en": "GrantRadar KR",
- "generated_at": "2026-11-19T06:46:21+09:00",
- "started_at": "2026-11-19T06:31:21+09:00",
+ "generated_at": "2026-11-19T19:06:21+09:00",
+ "started_at": "2026-11-19T18:53:45+09:00",
  "today": "2026-11-19",
  "total": 17008,
  "raw_total": 20615,
@@ -31,17 +31,17 @@
   },
   "jobs": {
    "student": 2158,
-   "jobseeker": 1945,
-   "self_employed": 1476,
+   "jobseeker": 1947,
+   "self_employed": 1472,
    "employee": 1008,
-   "pre_founder": 801,
+   "pre_founder": 803,
    "artist": 742,
    "freelancer": 637
   },
   "households": {
    "low_income": 3893,
    "married": 3513,
-   "disabled": 3308,
+   "disabled": 3309,
    "single": 2532,
    "pregnant": 1802,
    "single_parent": 1230,
@@ -49,38 +49,38 @@
    "homeless": 658
   },
   "domains": {
-   "finance": 9253,
-   "education": 3959,
-   "medical": 3720,
-   "employment": 3037,
+   "finance": 9254,
+   "education": 3960,
+   "medical": 3721,
+   "employment": 3039,
    "childcare": 2801,
    "senior_welfare": 2527,
-   "business": 2086,
-   "housing": 1613
+   "business": 2081,
+   "housing": 1614
   },
   "regions": {
-   "전국": 3127,
-   "경기": 1854,
-   "전남": 1722,
-   "서울": 1326,
-   "경북": 1138,
-   "경남": 1134,
+   "전국": 3125,
+   "경기": 1848,
+   "전남": 1723,
+   "서울": 1325,
+   "경북": 1140,
+   "경남": 1135,
    "충남": 1134,
    "전북": 1058,
-   "강원": 854,
-   "충북": 825,
-   "인천": 662,
-   "부산": 629,
-   "울산": 440,
+   "강원": 850,
+   "충북": 827,
+   "인천": 665,
+   "부산": 632,
+   "울산": 442,
    "대구": 394,
-   "제주": 364,
-   "대전": 210,
+   "제주": 365,
+   "대전": 208,
    "세종": 172,
    "광주": 149
   }
  },
  "counts": {
-  "urgent7": 79,
+  "urgent7": 69,
   "always": 16377,
   "with_apply_url": 1998
  },
@@ -90,38 +90,38 @@
    "ok": true,
    "count": 3942,
    "cached": false,
-   "elapsed_sec": 46.14
+   "elapsed_sec": 37.28
   },
   {
    "source": "bokjiro",
    "ok": true,
    "count": 5621,
    "cached": false,
-   "elapsed_sec": 711.55
+   "elapsed_sec": 619.12
   },
   {
    "source": "bizinfo",
    "ok": true,
    "count": 120,
    "cached": false,
-   "elapsed_sec": 31.67
+   "elapsed_sec": 20.49
   },
   {
    "source": "kstartup",
    "ok": true,
    "count": 45,
    "cached": false,
-   "elapsed_sec": 7.27
+   "elapsed_sec": 5.09
   },
   {
    "source": "gov24",
    "ok": true,
    "count": 10887,
    "cached": false,
-   "elapsed_sec": 103.03
+   "elapsed_sec": 73.1
   }
  ],
- "elapsed_sec": 900.39,
- "data_bytes": 13519708,
+ "elapsed_sec": 755.56,
+ "data_bytes": 13519609,
  "license": "공공데이터포털·온통청년·복지로·기업마당·K-Startup 공개 데이터 기반 (민간 정보 매칭 서비스)"
 }
