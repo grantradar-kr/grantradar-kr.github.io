@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2026 실업급여(구직급여) 계산기 — 1일 급여·수령일수 | 보조금 레이더</title>
+<meta name="description" content="퇴직 전 3개월 평균 월급과 나이·고용보험 가입기간으로 2026년 1일 구직급여(상한 68,100원·하한 66,048원)와 소정급여일수, 예상 총 수령액을 계산합니다." />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://grantradar-kr.github.io/calculators/unemployment-benefit.html" />
+<meta property="og:url" content="https://grantradar-kr.github.io/calculators/unemployment-benefit.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="보조금 레이더" />
+<meta property="og:title" content="2026 실업급여(구직급여) 계산기 — 1일 급여·수령일수 | 보조금 레이더" />
+<meta property="og:description" content="퇴직 전 3개월 평균 월급과 나이·고용보험 가입기간으로 2026년 1일 구직급여(상한 68,100원·하한 66,048원)와 소정급여일수, 예상 총 수령액을 계산합니다." />
+<meta property="og:locale" content="ko_KR" />
+<meta name="twitter:card" content="summary" />
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png" />
+<meta name="google-adsense-account" content="ca-pub-3631676636047500" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3631676636047500" crossorigin="anonymous"></script>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#f6f8f7;color:#0b1220;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;line-height:1.75;-webkit-text-size-adjust:100%}
+a{color:#0a6b55;text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+header.site{background:#fff;border-bottom:1px solid #e6ece9;position:sticky;top:0;z-index:5}
+header.site .wrap{display:flex;align-items:center;gap:16px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:16px;color:#0b1220}
+.brand small{display:block;font-size:10px;letter-spacing:.14em;color:#0a6b55;font-weight:700}
+nav.top{display:flex;gap:14px;font-size:13px;font-weight:700;color:#4b5a55;flex-wrap:wrap}
+nav.top a{color:#4b5a55}
+main{padding:26px 0 48px}
+h1{font-size:26px;line-height:1.4;letter-spacing:-.02em;margin:10px 0 8px}
+h2{font-size:17px;margin:30px 0 8px;letter-spacing:-.01em}
+h3{font-size:14px;margin:18px 0 6px}
+p{margin:8px 0}
+ul{padding-left:20px;margin:8px 0}
+li{margin:4px 0}
+.cat{display:inline-block;background:#e6f6ef;color:#0a6b55;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px}
+.meta{font-size:12px;color:#6b7a75;font-weight:600}
+.lead{font-size:15px;color:#33413c}
+.card{background:#fff;border:1px solid #e6ece9;border-radius:16px;padding:16px 18px;margin:16px 0}
+.takeaways{background:#effaf4;border-color:#c8ecdb}
+.takeaways h2{margin-top:0;font-size:14px;color:#0a5b48}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;background:#fff;border-radius:12px;overflow:hidden}
+caption{caption-side:top;text-align:left;font-size:12px;font-weight:700;color:#4b5a55;padding:4px 0}
+th,td{border:1px solid #e6ece9;padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f2f6f4;font-weight:800;white-space:nowrap}
+.note{background:#f4f6f5;border-radius:10px;padding:9px 11px;font-size:12px;color:#5b6a65}
+.dl dt{font-weight:800;margin-top:10px}
+.dl dd{margin:4px 0 0;color:#33413c}
+.cta{background:#0b1220;color:#fff;border-radius:16px;padding:16px 18px;margin:24px 0}
+.cta strong{display:block;font-size:15px;line-height:1.5}
+.cta p{margin:6px 0 0}
+.cta a{display:inline-block;margin-top:10px;background:#fff;color:#0b1220;font-weight:800;padding:9px 14px;border-radius:10px;font-size:13px}
+footer.site{border-top:1px solid #e6ece9;background:#fff;padding:20px 0 34px;font-size:12px;color:#6b7a75}
+footer.site .links{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;font-weight:700}
+.grid{display:grid;gap:12px}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.gitem{display:block;background:#fff;border:1px solid #e6ece9;border-radius:14px;padding:14px 16px}
+.gitem strong{display:block;font-size:14px;color:#0b1220;line-height:1.5}
+.gitem span{display:block;font-size:12px;color:#5b6a65;margin-top:6px}
+.gitem em{display:block;font-size:11px;color:#0a6b55;font-style:normal;font-weight:800;margin-bottom:6px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.stat{flex:1 1 120px;background:#fff;border:1px solid #e6ece9;border-radius:14px;padding:12px 14px}
+.stat b{display:block;font-size:19px;color:#0a5b48;letter-spacing:-.02em}
+.stat span{font-size:11.5px;color:#5b6a65;font-weight:700}
+.pilist{list-style:none;padding:0;margin:14px 0}
+.pi{background:#fff;border:1px solid #e6ece9;border-radius:14px;padding:14px 16px;margin:10px 0}
+.pi .src{font-size:11px;font-weight:800;color:#0a6b55;margin:0 0 4px}
+.pi h3{margin:0;font-size:14.5px;line-height:1.5}
+.pi h3 a{color:#0b1220}
+.pi .sum{margin:6px 0 0;font-size:12.5px;color:#4b5a55}
+.pi .links{margin:8px 0 0;font-size:11.5px;font-weight:800}
+.pi .links a{color:#0a6b55}
+.dday{display:inline-block;background:#fdecec;color:#b3261e;border-radius:6px;padding:1px 6px;font-size:10.5px;font-weight:800;margin-left:4px}
+.hubnav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 4px}
+.hubnav a{background:#fff;border:1px solid #e6ece9;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;color:#33413c}
+.hubnav a.on{background:#0a6b55;color:#fff;border-color:#0a6b55}
+.ad{margin:20px 0;padding:10px 0;border-top:1px solid #e6ece9;border-bottom:1px solid #e6ece9}
+.ad-label{font-size:10px;font-weight:800;letter-spacing:.1em;color:#9aa8a3;margin:0 0 6px}
+.morebtn{display:block;text-align:center;background:#fff;border:1px solid #d8e3df;border-radius:12px;padding:11px;font-weight:800;font-size:13px;color:#0a6b55;margin:16px 0}
+</style>
+<style>
+.calc{background:#fff;border:1px solid #e6ece9;border-radius:16px;padding:16px 18px;margin:18px 0}
+.calc h2{margin:0;font-size:15px;color:#0b1220}
+.calc .calcrow{display:grid;gap:10px;margin-top:12px}
+@media(min-width:640px){.calc .calcrow{grid-template-columns:1fr 1fr}}
+.calc label{display:block;font-size:12px;font-weight:700;color:#33413c}
+.calc label span.hint{display:block;font-size:11px;font-weight:500;color:#87958f;margin-top:3px}
+.calc input,.calc select{width:100%;margin-top:4px;padding:9px 10px;border:1px solid #d8e3df;border-radius:10px;
+  font-size:14px;font-family:inherit;background:#fff;color:#0b1220}
+.calc input:focus,.calc select:focus{outline:2px solid #12b98d;outline-offset:1px;border-color:#12b98d}
+.calc .chk{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12.5px;font-weight:700;color:#33413c}
+.calc .chk input{width:16px;height:16px;margin:0}
+.out{margin-top:14px;background:#effaf4;border:1px solid #c8ecdb;border-radius:14px;padding:13px 15px}
+.out .head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px}
+.out .head span{font-size:12px;font-weight:800;color:#0a5b48}
+.out .big{font-size:22px;font-weight:800;color:#07402f;letter-spacing:-.02em;line-height:1.2}
+.out .sub{font-size:11.5px;font-weight:600;color:#3f7a68}
+.out .kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.out .kv>div{background:#fff;border:1px solid #c8ecdb;border-radius:10px;padding:8px 10px}
+.out .kv b{display:block;font-size:15px;color:#0b1220;letter-spacing:-.01em}
+.out .kv em{display:block;font-size:10.5px;font-style:normal;font-weight:700;color:#6b7a75;margin-bottom:1px}
+.out .kv i{display:block;font-size:10px;font-style:normal;color:#9aa8a3;margin-top:2px}
+.out ul{list-style:none;padding:0;margin:10px 0 0}
+.out ul li{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e6ece9;border-radius:8px;
+  padding:5px 9px;margin:4px 0;font-size:12px}
+.out ul li .lb{flex:1;color:#33413c;font-weight:700}
+.out ul li .lb em{font-style:normal;font-weight:600;color:#87958f;font-size:10.5px}
+.out ul li b{font-size:11.5px;color:#33413c;white-space:nowrap}
+.out ul li .df{font-size:10.5px;color:#87958f;min-width:64px;text-align:right}
+.ok{color:#0a6b55;font-weight:800;font-size:11px;min-width:26px}
+.no{color:#b3261e;font-weight:800;font-size:11px;min-width:26px}
+.out p.sum{margin:10px 0 0;font-size:12px;line-height:1.7;color:#0a4a3a}
+.calcnote{font-size:11.5px;line-height:1.7;color:#6b7a75;background:#f4f6f5;border-radius:10px;padding:9px 11px;margin:10px 0 0}
+.faqbox dl{margin:6px 0 0}
+</style><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "2026 실업급여(구직급여) 계산기", "description": "퇴직 전 3개월 평균 월급과 나이·고용보험 가입기간으로 2026년 1일 구직급여(상한 68,100원·하한 66,048원)와 소정급여일수, 예상 총 수령액을 계산합니다.", "url": "https://grantradar-kr.github.io/calculators/unemployment-benefit.html", "applicationCategory": "FinanceApplication", "operatingSystem": "Web", "browserRequirements": "자바스크립트 없이도 본문을 읽을 수 있습니다", "inLanguage": "ko-KR", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"}, "featureList": ["가구원 수·소득·재산 입력", "2026년 고시 기준", "계산 결과와 기준선 비교"], "publisher": {"@type": "Organization", "name": "보조금 레이더", "email": "sasolution.edu@gmail.com", "url": "https://grantradar-kr.github.io/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "2026년 실업급여 상한액이 66,000원이라는 말도 있던데요?", "acceptedAnswer": {"@type": "Answer", "text": "66,000원은 2025년 12월 31일 이전에 이직한 사람에게 적용되는 종전 상한입니다. 2026년 최저임금 인상으로 하한액(66,048원)이 기존 상한액보다 높아지면서, 2025년 12월 시행령 개정으로 2026년 1월 1일 이후 이직자의 상한액은 1일 68,100원(급여기초임금일액 113,500원)으로 올랐습니다."}}, {"@type": "Question", "name": "월급이 높으면 실업급여도 많이 받나요?", "acceptedAnswer": {"@type": "Answer", "text": "상한액 때문에 차이가 크지 않습니다. 2026년 기준으로 1일 68,100원이 최대이므로, 월 환산(30일)으로는 약 204만 원이 상한입니다. 반대로 월급이 낮아도 하한액(하루 8시간 기준 66,048원)이 적용되어 월 198만 원 수준이 보장됩니다."}}, {"@type": "Question", "name": "계산된 총액을 한 번에 받을 수 있나요?", "acceptedAnswer": {"@type": "Answer", "text": "아닙니다. 실업급여는 1~4주 단위로 실업인정을 받은 뒤 그 기간만큼 지급됩니다. 수급기간은 이직일 다음 날부터 12개월이고, 7일의 대기기간과 구직활동이 인정되지 않은 날은 지급되지 않습니다. 계산기의 총액은 최대 수령 가능액입니다."}}, {"@type": "Question", "name": "고용보험에 가입한 기간이 여러 직장으로 나뉘어 있어도 되나요?", "acceptedAnswer": {"@type": "Answer", "text": "됩니다. 이직일 이전 18개월 동안의 피보험 단위기간을 합산해 180일 이상이면 기간 요건을 충족합니다. 다만 고용보험에 가입되지 않은 단기 근무는 합산되지 않으므로, 고용24의 피보험자격 이력 조회로 실제 합계를 먼저 확인하세요."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "홈", "item": "https://grantradar-kr.github.io/"}, {"@type": "ListItem", "position": 2, "name": "모의계산기", "item": "https://grantradar-kr.github.io/calculators/"}, {"@type": "ListItem", "position": 3, "name": "실업급여 계산기", "item": "https://grantradar-kr.github.io/calculators/unemployment-benefit.html"}]}</script>
+</head>
+<body>
+<header class="site"><div class="wrap"><a class="brand" href="../index.html">보조금 레이더<small>GrantRadar KR</small></a><nav class="top"><a href="../index.html">홈</a><a href="../calculators/">계산기</a><a href="../guides/">가이드</a><a href="../categories/">보조금 찾기</a><a href="../about.html">서비스 소개</a></nav></div></header>
+<main><div class="wrap">
+<p><a href="./">← 계산기 3종</a></p><p><span class="cat">모의계산기</span></p><h1>2026 실업급여(구직급여) 계산기</h1><p class="lead">퇴직 전 3개월 평균 월급과 나이·고용보험 가입기간으로 2026년 1일 구직급여(상한 68,100원·하한 66,048원)와 소정급여일수, 예상 총 수령액을 계산합니다.</p><p class="meta">기준 확인일 2026-11-21 · 보조금 레이더 편집 · 회원가입 없이 무료</p>
+
+<form class="calc" id="ub-form" onsubmit="return false">
+  <h2>🧾 내 조건으로 계산하기</h2>
+  <div class="calcrow">
+    <label>퇴직 전 3개월 평균 월급 (원)<span class="hint">세전 기준, 상여금 포함 임금총액</span>
+      <input type="number" id="ub-wage" value="3000000" min="0" step="10000" inputmode="numeric" /></label>
+    <label>만 나이<span class="hint">이직일(마지막 근로일) 기준</span>
+      <input type="number" id="ub-age" value="34" min="15" max="80" step="1" inputmode="numeric" /></label>
+    <label>고용보험 가입기간
+      <select id="ub-band">
+        <option value="lt1">1년 미만</option>
+        <option value="1to3">1년 이상 ~ 3년 미만</option>
+        <option value="3to5" selected>3년 이상 ~ 5년 미만</option>
+        <option value="5to10">5년 이상 ~ 10년 미만</option>
+        <option value="gte10">10년 이상</option>
+      </select></label>
+    <label>1일 소정근로시간<span class="hint">마지막 사업장 기준. 하한액이 시간에 비례합니다</span>
+      <select id="ub-hours">
+        <option value="8" selected>하루 8시간</option>
+        <option value="7">하루 7시간</option>
+        <option value="6">하루 6시간</option>
+        <option value="5">하루 5시간</option>
+        <option value="4">하루 4시간</option>
+      </select></label>
+  </div>
+  <label class="chk"><input type="checkbox" id="ub-disabled" /> 장애인 (50세 이상과 같은 소정급여일수 적용)</label>
+  <div class="out" id="ub-out"></div>
+  <p class="calcnote">※ 본 계산 결과는 2026년 고시 기준 참고용 모의계산이며, 실제 수급 여부와 최종 지급액은 복지로·고용24·국세청 홈택스 심사에 따릅니다.<br />
+  기초일액은 편의상 ‘월평균임금 ÷ 30’으로 계산했습니다. 실제로는 이직 전 3개월 임금총액을 그 기간 총일수(89~92일)로
+  나누므로 하루 1,000~2,000원 차이가 날 수 있습니다.</p>
+</form>
+<script>
+function calcWon(v){return Math.round(v).toLocaleString('ko-KR')+'원';}
+function calcNum(id){var el=document.getElementById(id);if(!el)return 0;
+  var v=parseInt(String(el.value).replace(/[^0-9]/g,''),10);return isNaN(v)?0:v;}
+function calcBind(ids,fn){ids.forEach(function(id){var el=document.getElementById(id);if(!el)return;
+  el.addEventListener('input',fn);el.addEventListener('change',fn);});fn();}
+
+(function(){
+var DAYS={lt1:[120,120],'1to3':[150,180],'3to5':[180,210],'5to10':[210,240],gte10:[240,270]};
+var MAXD=68100, HOURLY=10320;
+function run(){
+  var wage=calcNum('ub-wage');
+  var age=calcNum('ub-age');
+  var band=document.getElementById('ub-band').value;
+  var hours=parseInt(document.getElementById('ub-hours').value,10)||8;
+  var disabled=document.getElementById('ub-disabled').checked;
+  var baseDaily=Math.round(wage/30);
+  var rawDaily=Math.round(baseDaily*0.6);
+  var minDaily=Math.round(HOURLY*hours*0.8);
+  var daily=rawDaily, kind='none', limitValue=0;
+  if(rawDaily>MAXD){daily=MAXD;kind='max';limitValue=MAXD;}
+  else if(rawDaily<minDaily){daily=minDaily;kind='min';limitValue=minDaily;}
+  var high=age>=50||disabled;
+  var days=(DAYS[band]||DAYS.lt1)[high?1:0];
+  var total=daily*days, monthly=daily*30;
+  var label=kind==='max'?'상한액 적용':(kind==='min'?'하한액 적용':'상·하한 안쪽(평균임금 60%)');
+  document.getElementById('ub-out').innerHTML=
+    '<div class="head"><span>1일 구직급여</span><strong class="big">'+calcWon(daily)+'</strong>'+
+    '<span class="sub">'+label+'</span></div>'+
+    '<div class="kv"><div><em>소정급여일수</em><b>'+days+'일</b><i>'+(high?'50세 이상·장애인 기준':'50세 미만 기준')+'</i></div>'+
+    '<div><em>예상 총 수령액</em><b>'+calcWon(total)+'</b><i>월 환산(30일) '+calcWon(monthly)+'</i></div></div>'+
+    '<p class="sum">기초일액(평균임금 일액) '+calcWon(baseDaily)+' × 60% = '+calcWon(rawDaily)+
+    '. 실제 지급은 실업인정(1~4주)마다 이뤄지고, 7일 대기기간과 미인정일은 빠집니다.</p>';
+}
+calcBind(['ub-wage','ub-age','ub-band','ub-hours','ub-disabled'],run);
+})();
+</script>
+
+
+<h2>2026년 하루 얼마를 받나</h2>
+<table><caption>2026년 구직급여일액 기준 (2026.1.1. 이후 이직자)</caption>
+<thead><tr><th>구분</th><th>금액</th><th>정하는 방식</th></tr></thead>
+<tbody>
+<tr><td>상한액</td><td>1일 68,100원</td><td>급여기초임금일액 113,500원 × 60%</td></tr>
+<tr><td>하한액(8시간)</td><td>1일 66,048원</td><td>최저임금 10,320원 × 8시간 × 80%</td></tr>
+<tr><td>하한액(4시간)</td><td>1일 33,024원</td><td>최저임금 10,320원 × 4시간 × 80%</td></tr>
+<tr><td>30일 환산</td><td>1,981,440 ~ 2,043,000원</td><td>상·하한을 30일로 환산</td></tr>
+</tbody></table>
+<p class="note">2025년 12월 31일 이전 이직자는 상한 66,000원(급여기초임금일액 11만 원)이 적용됩니다.</p>
+<h2>며칠을 받는지는 나이와 가입기간이 정한다</h2>
+<table><caption>연령·가입기간별 소정급여일수</caption>
+<thead><tr><th>고용보험 가입기간</th><th>50세 미만</th><th>50세 이상·장애인</th></tr></thead>
+<tbody>
+<tr><td>1년 미만</td><td>120일</td><td>120일</td></tr>
+<tr><td>1년 이상 ~ 3년 미만</td><td>150일</td><td>180일</td></tr>
+<tr><td>3년 이상 ~ 5년 미만</td><td>180일</td><td>210일</td></tr>
+<tr><td>5년 이상 ~ 10년 미만</td><td>210일</td><td>240일</td></tr>
+<tr><td>10년 이상</td><td>240일</td><td>270일</td></tr>
+</tbody></table>
+<h2>수급 자격은 세 가지를 함께 본다</h2><ul><li>이직일 이전 18개월 중 피보험 단위기간이 통산 180일 이상</li><li>이직 사유가 비자발적(권고사직·계약만료·정리해고 등) 또는 정당한 사유</li><li>근로 의사와 능력이 있는데 취업하지 못한 상태에서 적극적으로 구직</li></ul><p class="note">2026년 9월 고용보험위원회는 구직급여를 무급휴일을 제외한 주 6일 기준으로 지급하고 상한액을 하한액의 103%에 연동하는 개편 방안을 냈습니다. 법령 개정이 필요한 확정 전 방안이므로, 실제 적용 여부는 고용노동부 발표를 확인하세요.</p><h2>계산 예시</h2><p>만 34세, 가입기간 4년, 평균 월급 300만 원이라면 기초일액 10만 원의 60%는 6만 원이지만 하한액 66,048원이 적용됩니다. 소정급여일수는 180일이므로 총 11,888,640원, 월 환산 1,981,440원입니다. 같은 조건에서 월급이 450만 원이면 상한액 68,100원이 적용되어 총 12,258,000원으로, 차이는 37만 원 남짓입니다.</p>
+<section class="card faqbox"><h2>자주 묻는 질문</h2><dl class="dl"><dt>Q. 2026년 실업급여 상한액이 66,000원이라는 말도 있던데요?</dt><dd>66,000원은 2025년 12월 31일 이전에 이직한 사람에게 적용되는 종전 상한입니다. 2026년 최저임금 인상으로 하한액(66,048원)이 기존 상한액보다 높아지면서, 2025년 12월 시행령 개정으로 2026년 1월 1일 이후 이직자의 상한액은 1일 68,100원(급여기초임금일액 113,500원)으로 올랐습니다.</dd><dt>Q. 월급이 높으면 실업급여도 많이 받나요?</dt><dd>상한액 때문에 차이가 크지 않습니다. 2026년 기준으로 1일 68,100원이 최대이므로, 월 환산(30일)으로는 약 204만 원이 상한입니다. 반대로 월급이 낮아도 하한액(하루 8시간 기준 66,048원)이 적용되어 월 198만 원 수준이 보장됩니다.</dd><dt>Q. 계산된 총액을 한 번에 받을 수 있나요?</dt><dd>아닙니다. 실업급여는 1~4주 단위로 실업인정을 받은 뒤 그 기간만큼 지급됩니다. 수급기간은 이직일 다음 날부터 12개월이고, 7일의 대기기간과 구직활동이 인정되지 않은 날은 지급되지 않습니다. 계산기의 총액은 최대 수령 가능액입니다.</dd><dt>Q. 고용보험에 가입한 기간이 여러 직장으로 나뉘어 있어도 되나요?</dt><dd>됩니다. 이직일 이전 18개월 동안의 피보험 단위기간을 합산해 180일 이상이면 기간 요건을 충족합니다. 다만 고용보험에 가입되지 않은 단기 근무는 합산되지 않으므로, 고용24의 피보험자격 이력 조회로 실제 합계를 먼저 확인하세요.</dd></dl></section><section class="card"><h2>함께 보면 좋은 자료</h2><ul><li><a href="../guides/unemployment-benefit.html">2026 실업급여 조건·수령액·신청 절차</a></li><li><a href="../guides/national-employment-support.html">2026 국민취업지원제도 구직촉진수당</a></li><li><a href="../categories/employment.html">취업·구직 보조금 모음</a></li><li><a href="../categories/finance.html">생활·금융·긴급복지</a></li><li><a href="../index.html#/calculators/unemployment-benefit">앱에서 같은 계산기 열기</a></li></ul></section><div class="cta"><strong>계산이 끝났다면, 받을 수 있는 공고를 확인하세요</strong><p class="meta" style="color:#c8d3cf">나이·직군·가구 상황·지역을 넣으면 일치율 순으로 정리됩니다. 로그인 없이 이용할 수 있습니다.</p><a href="../index.html#/home">내 조건으로 공고 찾기</a></div>
+</div></main>
+<footer class="site"><div class="wrap">
+<div class="links"><a href="../index.html">홈</a><a href="../calculators/">모의계산기</a><a href="../guides/">가이드</a><a href="../categories/">분야·대상별 보조금</a><a href="../about.html">서비스 소개</a><a href="../privacy.html">개인정보처리방침</a><a href="../terms.html">이용약관</a></div>
+<p>보조금 레이더는 정부·공공기관 공식 서비스가 아닌 민간 정보 매칭 플랫폼입니다. 최종 자격 확인과 신청은 공고 원문과 담당 기관을 통해 진행해 주세요.</p>
+<p>문의 <a href="mailto:sasolution.edu@gmail.com">sasolution.edu@gmail.com</a></p>
+</div></footer>
+</body>
+</html>

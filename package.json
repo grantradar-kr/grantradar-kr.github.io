@@ -19,6 +19,7 @@
     "test:smoke": "node pipeline/smoke_test.mjs",
     "test:ui": "node pipeline/ui_flow_test.mjs",
     "test:matcher": "node pipeline/verify_matcher.mjs",
+    "test:calc": "node_modules/.bin/esbuild src/lib/calculators.ts --bundle --format=esm --outfile=pipeline/.cache/calculators.bundle.mjs && node pipeline/calc_test.mjs",
     "content": "python3 pipeline/build_content.py"
   },
   "dependencies": {

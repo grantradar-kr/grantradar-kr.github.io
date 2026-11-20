@@ -133,4 +133,4 @@ export interface SavedEntry {
   memo?: string
 }
 
-export type Route = 'home' | 'browse' | 'saved' | 'settings' | 'guides' | 'about'
+export type Route = 'home' | 'browse' | 'saved' | 'settings' | 'guides' | 'calculators' | 'about'

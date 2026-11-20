@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2026 기준중위소득 계산기 — 내 소득은 몇 %인가 | 보조금 레이더</title>
+<meta name="description" content="가구원 수와 월 소득·재산을 넣으면 2026·2027년 기준중위소득 대비 비율과 생계·의료·주거·교육급여 기준선 통과 여부를 바로 계산합니다. 회원가입 없이 무료." />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://grantradar-kr.github.io/calculators/median-income.html" />
+<meta property="og:url" content="https://grantradar-kr.github.io/calculators/median-income.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="보조금 레이더" />
+<meta property="og:title" content="2026 기준중위소득 계산기 — 내 소득은 몇 %인가 | 보조금 레이더" />
+<meta property="og:description" content="가구원 수와 월 소득·재산을 넣으면 2026·2027년 기준중위소득 대비 비율과 생계·의료·주거·교육급여 기준선 통과 여부를 바로 계산합니다. 회원가입 없이 무료." />
+<meta property="og:locale" content="ko_KR" />
+<meta name="twitter:card" content="summary" />
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png" />
+<meta name="google-adsense-account" content="ca-pub-3631676636047500" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3631676636047500" crossorigin="anonymous"></script>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#f6f8f7;color:#0b1220;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;line-height:1.75;-webkit-text-size-adjust:100%}
+a{color:#0a6b55;text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+header.site{background:#fff;border-bottom:1px solid #e6ece9;position:sticky;top:0;z-index:5}
+header.site .wrap{display:flex;align-items:center;gap:16px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:16px;color:#0b1220}
+.brand small{display:block;font-size:10px;letter-spacing:.14em;color:#0a6b55;font-weight:700}
+nav.top{display:flex;gap:14px;font-size:13px;font-weight:700;color:#4b5a55;flex-wrap:wrap}
+nav.top a{color:#4b5a55}
+main{padding:26px 0 48px}
+h1{font-size:26px;line-height:1.4;letter-spacing:-.02em;margin:10px 0 8px}
+h2{font-size:17px;margin:30px 0 8px;letter-spacing:-.01em}
+h3{font-size:14px;margin:18px 0 6px}
+p{margin:8px 0}
+ul{padding-left:20px;margin:8px 0}
+li{margin:4px 0}
+.cat{display:inline-block;background:#e6f6ef;color:#0a6b55;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px}
+.meta{font-size:12px;color:#6b7a75;font-weight:600}
+.lead{font-size:15px;color:#33413c}
+.card{background:#fff;border:1px solid #e6ece9;border-radius:16px;padding:16px 18px;margin:16px 0}
+.takeaways{background:#effaf4;border-color:#c8ecdb}
+.takeaways h2{margin-top:0;font-size:14px;color:#0a5b48}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;background:#fff;border-radius:12px;overflow:hidden}
+caption{caption-side:top;text-align:left;font-size:12px;font-weight:700;color:#4b5a55;padding:4px 0}
+th,td{border:1px solid #e6ece9;padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f2f6f4;font-weight:800;white-space:nowrap}
+.note{background:#f4f6f5;border-radius:10px;padding:9px 11px;font-size:12px;color:#5b6a65}
+.dl dt{font-weight:800;margin-top:10px}
+.dl dd{margin:4px 0 0;color:#33413c}
+.cta{background:#0b1220;color:#fff;border-radius:16px;padding:16px 18px;margin:24px 0}
+.cta strong{display:block;font-size:15px;line-height:1.5}
+.cta p{margin:6px 0 0}
+.cta a{display:inline-block;margin-top:10px;background:#fff;color:#0b1220;font-weight:800;padding:9px 14px;border-radius:10px;font-size:13px}
+footer.site{border-top:1px solid #e6ece9;background:#fff;padding:20px 0 34px;font-size:12px;color:#6b7a75}
+footer.site .links{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;font-weight:700}
+.grid{display:grid;gap:12px}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.gitem{display:block;background:#fff;border:1px solid #e6ece9;border-radius:14px;padding:14px 16px}
+.gitem strong{display:block;font-size:14px;color:#0b1220;line-height:1.5}
+.gitem span{display:block;font-size:12px;color:#5b6a65;margin-top:6px}
+.gitem em{display:block;font-size:11px;color:#0a6b55;font-style:normal;font-weight:800;margin-bottom:6px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.stat{flex:1 1 120px;background:#fff;border:1px solid #e6ece9;border-radius:14px;padding:12px 14px}
+.stat b{display:block;font-size:19px;color:#0a5b48;letter-spacing:-.02em}
+.stat span{font-size:11.5px;color:#5b6a65;font-weight:700}
+.pilist{list-style:none;padding:0;margin:14px 0}
+.pi{background:#fff;border:1px solid #e6ece9;border-radius:14px;padding:14px 16px;margin:10px 0}
+.pi .src{font-size:11px;font-weight:800;color:#0a6b55;margin:0 0 4px}
+.pi h3{margin:0;font-size:14.5px;line-height:1.5}
+.pi h3 a{color:#0b1220}
+.pi .sum{margin:6px 0 0;font-size:12.5px;color:#4b5a55}
+.pi .links{margin:8px 0 0;font-size:11.5px;font-weight:800}
+.pi .links a{color:#0a6b55}
+.dday{display:inline-block;background:#fdecec;color:#b3261e;border-radius:6px;padding:1px 6px;font-size:10.5px;font-weight:800;margin-left:4px}
+.hubnav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 4px}
+.hubnav a{background:#fff;border:1px solid #e6ece9;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;color:#33413c}
+.hubnav a.on{background:#0a6b55;color:#fff;border-color:#0a6b55}
+.ad{margin:20px 0;padding:10px 0;border-top:1px solid #e6ece9;border-bottom:1px solid #e6ece9}
+.ad-label{font-size:10px;font-weight:800;letter-spacing:.1em;color:#9aa8a3;margin:0 0 6px}
+.morebtn{display:block;text-align:center;background:#fff;border:1px solid #d8e3df;border-radius:12px;padding:11px;font-weight:800;font-size:13px;color:#0a6b55;margin:16px 0}
+</style>
+<style>
+.calc{background:#fff;border:1px solid #e6ece9;border-radius:16px;padding:16px 18px;margin:18px 0}
+.calc h2{margin:0;font-size:15px;color:#0b1220}
+.calc .calcrow{display:grid;gap:10px;margin-top:12px}
+@media(min-width:640px){.calc .calcrow{grid-template-columns:1fr 1fr}}
+.calc label{display:block;font-size:12px;font-weight:700;color:#33413c}
+.calc label span.hint{display:block;font-size:11px;font-weight:500;color:#87958f;margin-top:3px}
+.calc input,.calc select{width:100%;margin-top:4px;padding:9px 10px;border:1px solid #d8e3df;border-radius:10px;
+  font-size:14px;font-family:inherit;background:#fff;color:#0b1220}
+.calc input:focus,.calc select:focus{outline:2px solid #12b98d;outline-offset:1px;border-color:#12b98d}
+.calc .chk{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12.5px;font-weight:700;color:#33413c}
+.calc .chk input{width:16px;height:16px;margin:0}
+.out{margin-top:14px;background:#effaf4;border:1px solid #c8ecdb;border-radius:14px;padding:13px 15px}
+.out .head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px}
+.out .head span{font-size:12px;font-weight:800;color:#0a5b48}
+.out .big{font-size:22px;font-weight:800;color:#07402f;letter-spacing:-.02em;line-height:1.2}
+.out .sub{font-size:11.5px;font-weight:600;color:#3f7a68}
+.out .kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.out .kv>div{background:#fff;border:1px solid #c8ecdb;border-radius:10px;padding:8px 10px}
+.out .kv b{display:block;font-size:15px;color:#0b1220;letter-spacing:-.01em}
+.out .kv em{display:block;font-size:10.5px;font-style:normal;font-weight:700;color:#6b7a75;margin-bottom:1px}
+.out .kv i{display:block;font-size:10px;font-style:normal;color:#9aa8a3;margin-top:2px}
+.out ul{list-style:none;padding:0;margin:10px 0 0}
+.out ul li{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e6ece9;border-radius:8px;
+  padding:5px 9px;margin:4px 0;font-size:12px}
+.out ul li .lb{flex:1;color:#33413c;font-weight:700}
+.out ul li .lb em{font-style:normal;font-weight:600;color:#87958f;font-size:10.5px}
+.out ul li b{font-size:11.5px;color:#33413c;white-space:nowrap}
+.out ul li .df{font-size:10.5px;color:#87958f;min-width:64px;text-align:right}
+.ok{color:#0a6b55;font-weight:800;font-size:11px;min-width:26px}
+.no{color:#b3261e;font-weight:800;font-size:11px;min-width:26px}
+.out p.sum{margin:10px 0 0;font-size:12px;line-height:1.7;color:#0a4a3a}
+.calcnote{font-size:11.5px;line-height:1.7;color:#6b7a75;background:#f4f6f5;border-radius:10px;padding:9px 11px;margin:10px 0 0}
+.faqbox dl{margin:6px 0 0}
+</style><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "2026 기준중위소득 계산기 — 내 소득은 몇 %인가", "description": "가구원 수와 월 소득·재산을 넣으면 2026·2027년 기준중위소득 대비 비율과 생계·의료·주거·교육급여 기준선 통과 여부를 바로 계산합니다. 회원가입 없이 무료.", "url": "https://grantradar-kr.github.io/calculators/median-income.html", "applicationCategory": "FinanceApplication", "operatingSystem": "Web", "browserRequirements": "자바스크립트 없이도 본문을 읽을 수 있습니다", "inLanguage": "ko-KR", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"}, "featureList": ["가구원 수·소득·재산 입력", "2026년 고시 기준", "계산 결과와 기준선 비교"], "publisher": {"@type": "Organization", "name": "보조금 레이더", "email": "sasolution.edu@gmail.com", "url": "https://grantradar-kr.github.io/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "기준중위소득 60% 이하라는 말은 무슨 뜻인가요?", "acceptedAnswer": {"@type": "Answer", "text": "그 해 기준중위소득 금액에 0.6을 곱한 금액 이하라는 뜻입니다. 2026년 3인 가구라면 5,359,036원의 60%인 3,215,421원이 기준선이 됩니다. 공고의 기준은 대개 소득인정액과 비교하며, 통장에 찍히는 소득만 보지 않습니다."}}, {"@type": "Question", "name": "이 계산기의 소득인정액과 실제 심사 결과가 다른 이유는 무엇인가요?", "acceptedAnswer": {"@type": "Answer", "text": "이 계산기는 월 소득에 재산의 월 소득환산액만 더한 간이 방식입니다. 실제 기초생활보장 심사에서는 근로소득공제(30%)와 가구특성별 지출비용이 추가로 차감되고, 금융재산 2,000만 원 공제·부채 차감·자동차 환산이 반영됩니다. 그래서 실제 소득인정액이 계산값보다 낮게 나오는 경우가 많습니다."}}, {"@type": "Question", "name": "2027년 기준으로는 왜 비율이 달라지나요?", "acceptedAnswer": {"@type": "Answer", "text": "기준중위소득이 매년 인상되기 때문입니다. 2027년 4인 가구 기준중위소득은 2026년보다 6.7% 오른 6,929,885원으로, 같은 소득이라도 비율은 낮아집니다. 다만 급여별 선정기준 금액도 함께 오르므로, 해가 바뀔 때는 두 해 기준을 함께 확인하는 것이 안전합니다."}}, {"@type": "Question", "name": "재산이 있으면 무조건 탈락인가요?", "acceptedAnswer": {"@type": "Answer", "text": "아닙니다. 지역별 기본재산액(대도시 1억 3,500만 원, 중소도시 8,500만 원, 농어촌 7,250만 원)까지는 공제되고, 남는 금액에 연 4%를 적용해 12개월로 나눈 금액만 월 소득에 더해집니다. 전세보증금 5,000만 원은 대도시 기준 전액 공제됩니다."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "홈", "item": "https://grantradar-kr.github.io/"}, {"@type": "ListItem", "position": 2, "name": "모의계산기", "item": "https://grantradar-kr.github.io/calculators/"}, {"@type": "ListItem", "position": 3, "name": "중위소득 계산기", "item": "https://grantradar-kr.github.io/calculators/median-income.html"}]}</script>
+</head>
+<body>
+<header class="site"><div class="wrap"><a class="brand" href="../index.html">보조금 레이더<small>GrantRadar KR</small></a><nav class="top"><a href="../index.html">홈</a><a href="../calculators/">계산기</a><a href="../guides/">가이드</a><a href="../categories/">보조금 찾기</a><a href="../about.html">서비스 소개</a></nav></div></header>
+<main><div class="wrap">
+<p><a href="./">← 계산기 3종</a></p><p><span class="cat">모의계산기</span></p><h1>2026 기준중위소득 계산기 — 내 소득은 몇 %인가</h1><p class="lead">가구원 수와 월 소득·재산을 넣으면 2026·2027년 기준중위소득 대비 비율과 생계·의료·주거·교육급여 기준선 통과 여부를 바로 계산합니다. 회원가입 없이 무료.</p><p class="meta">기준 확인일 2026-11-21 · 보조금 레이더 편집 · 회원가입 없이 무료</p>
+
+<form class="calc" id="mn-form" onsubmit="return false">
+  <h2>📊 내 조건으로 계산하기</h2>
+  <div class="calcrow">
+    <label>가구원 수<span class="hint">주민등록등본상 생계·주거를 함께 하는 사람</span>
+      <select id="mn-house"><option value="1">1인 가구</option><option value="2">2인 가구</option><option value="3" selected>3인 가구</option><option value="4">4인 가구</option><option value="5">5인 가구</option><option value="6">6인 가구</option><option value="7">7인 가구</option><option value="8">8인 가구</option><option value="9">9인 가구</option><option value="10">10인 가구</option></select></label>
+    <label>월 세전소득 (원)<span class="hint">근로·사업소득 합계, 4대보험·세금 떼기 전</span>
+      <input type="number" id="mn-income" value="3000000" min="0" step="10000" inputmode="numeric" /></label>
+    <label>일반재산 (원, 선택)<span class="hint">전세보증금·집·토지 등. 모르면 비워 두세요</span>
+      <input type="number" id="mn-asset" value="" min="0" step="1000000" inputmode="numeric" placeholder="예: 50000000" /></label>
+    <label>지역 구분<span class="hint">기본재산액 공제: 대도시 1억 3,500만 · 중소도시 8,500만 · 농어촌 7,250만 원</span>
+      <select id="mn-region">
+        <option value="metro">대도시 (특별시·광역시 구, 특례시)</option>
+        <option value="city">중소도시 (도의 시, 세종)</option>
+        <option value="rural">농어촌 (도의 군)</option>
+      </select></label>
+  </div>
+  <div class="out" id="mn-out"></div>
+  <p class="calcnote">※ 본 계산 결과는 2026년 고시 기준 참고용 모의계산이며, 실제 수급 여부와 최종 지급액은 복지로·고용24·국세청 홈택스 심사에 따릅니다.<br />
+  소득인정액(간이) = 월 소득 + max(0, 일반재산 − 기본재산액) × 4% ÷ 12. 실제 심사에서는 근로소득공제와 가구특성별
+  지출비용이 추가로 차감되어 소득인정액이 더 낮게 산정될 수 있습니다.</p>
+</form>
+<script>
+function calcWon(v){return Math.round(v).toLocaleString('ko-KR')+'원';}
+function calcNum(id){var el=document.getElementById(id);if(!el)return 0;
+  var v=parseInt(String(el.value).replace(/[^0-9]/g,''),10);return isNaN(v)?0:v;}
+function calcBind(ids,fn){ids.forEach(function(id){var el=document.getElementById(id);if(!el)return;
+  el.addEventListener('input',fn);el.addEventListener('change',fn);});fn();}
+
+(function(){
+var MEDIAN={2026:[2564238,4199292,5359036,6494738,7556719,8555952,9515150],
+            2027:[2736042,4480645,5718091,6929885,8063019,9129201,10152665]};
+var BASE={metro:135000000,city:85000000,rural:72500000};
+var TH=[["생계급여",32],["의료급여",40],["주거급여",48],["교육급여·차상위",50],["국민취업지원·청년월세",60],
+        ["중위 100%",100],["국민취업지원(청년)",120],["중위 150%",150],["중위 180%",180]];
+function med(y,n){var t=MEDIAN[y];return n<=7?t[n-1]:t[6]+(t[6]-t[5])*(n-7);}
+function run(){
+  var h=calcNum('mn-house')||1;
+  var income=calcNum('mn-income');
+  var asset=calcNum('mn-asset');
+  var region=document.getElementById('mn-region').value;
+  var m26=med(2026,h), m27=med(2027,h);
+  var base=BASE[region]||BASE.metro;
+  var assetIncome=Math.max(0,Math.round((Math.max(0,asset-base)*0.04)/12));
+  var recognized=income+assetIncome;
+  var ratio=(recognized/m26)*100, ratio27=(recognized/m27)*100;
+  var rows='', pitched=[];
+  TH.forEach(function(item){
+    var limit=Math.floor(m26*item[1]/100);
+    var pass=recognized<=limit;
+    var diff=Math.abs(recognized-limit);
+    if(pass&&item[1]<=100)pitched.push(item[0]);
+    rows+='<li><span class="'+(pass?'ok':'no')+'">'+(pass?'통과':'미달')+'</span>'+
+      '<span class="lb">'+item[0]+' <em>중위 '+item[1]+'%</em></span>'+
+      '<b>'+calcWon(limit)+'</b><span class="df">'+(pass?'-':'+')+calcWon(diff).replace('원','')+'</span></li>';
+  });
+  var sum=pitched.length
+    ? '이 소득·재산이면 '+pitched.join(' · ')+' 기준선 안에 들어옵니다. 실제 판정은 소득인정액을 정밀 계산해 이뤄집니다.'
+    : '중위 100% 기준선도 넘습니다. 청년·다자녀·사업자용 완화 기준이 있는지 공고문에서 확인해 보세요.';
+  document.getElementById('mn-out').innerHTML=
+    '<div class="head"><span>2026년 '+h+'인 가구 기준</span><strong class="big">'+calcWon(m26)+'</strong>'+
+    '<span class="sub">/월 · 2027년 '+calcWon(m27)+'</span></div>'+
+    '<div class="kv"><div><em>소득인정액(간이)</em><b>'+calcWon(recognized)+'</b><i>재산 환산 '+calcWon(assetIncome)+' 포함</i></div>'+
+    '<div><em>2026 기준중위소득 대비</em><b>'+ratio.toFixed(1)+'%</b><i>2027년 기준으로는 '+ratio27.toFixed(1)+'%</i></div></div>'+
+    '<ul>'+rows+'</ul><p class="sum">'+sum+'</p>';
+}
+calcBind(['mn-house','mn-income','mn-asset','mn-region'],run);
+})();
+</script>
+
+
+<h2>2026년·2027년 기준중위소득</h2>
+<table><caption>가구원 수별 기준중위소득 (단위: 원/월)</caption>
+<thead><tr><th>가구원 수</th><th>2026년</th><th>2027년</th></tr></thead>
+<tbody>
+<tr><td>1인</td><td>2,564,238</td><td>2,736,042</td></tr>
+<tr><td>2인</td><td>4,199,292</td><td>4,480,645</td></tr>
+<tr><td>3인</td><td>5,359,036</td><td>5,718,091</td></tr>
+<tr><td>4인</td><td>6,494,738</td><td>6,929,885</td></tr>
+<tr><td>5인</td><td>7,556,719</td><td>8,063,019</td></tr>
+<tr><td>6인</td><td>8,555,952</td><td>9,129,201</td></tr>
+<tr><td>7인</td><td>9,515,150</td><td>10,152,665</td></tr>
+</tbody></table>
+<p class="note">8인 이상은 7인 가구 값에 (7인 − 6인) 차액을 1명마다 더해 산정합니다. 2027년 값은 보건복지부 고시
+제2026-157호(2026.7.29., 2027.1.1. 시행)로 확정된 금액입니다.</p>
+<h2>급여별 선정기준은 몇 %인가</h2>
+<table><caption>2026년 급여별 선정기준 (단위: 원/월)</caption>
+<thead><tr><th>구분</th><th>1인 가구</th><th>4인 가구</th><th>기준</th></tr></thead>
+<tbody>
+<tr><td>생계급여</td><td>820,556</td><td>2,078,316</td><td>중위 32%</td></tr>
+<tr><td>의료급여</td><td>1,025,695</td><td>2,597,895</td><td>중위 40%</td></tr>
+<tr><td>주거급여</td><td>1,230,834</td><td>3,117,474</td><td>중위 48%</td></tr>
+<tr><td>교육급여</td><td>1,282,119</td><td>3,247,369</td><td>중위 50%</td></tr>
+</tbody></table>
+<h2>소득인정액은 이렇게 계산한다</h2><ul><li>1단계 — 가구원 수를 확정합니다. 주민등록등본상 생계와 주거를 함께 하는 사람이 기준입니다.</li><li>2단계 — 그 가구원 수의 기준중위소득에 공고의 %를 곱해 내 기준선을 구합니다.</li><li>3단계 — 소득인정액 = 소득평가액 + 재산의 소득환산액. 소득평가액은 실제소득에서 근로소득공제와 가구특성별 지출비용을 뺀 값입니다.</li><li>4단계 — 재산의 소득환산액 = [(재산 − 기본재산액 − 부채) × 연 4%] ÷ 12개월. 금융재산은 2,000만 원까지 공제합니다.</li></ul><p class="note">기준중위소득은 2026년 현재 15개 부처 80여 개 사업의 선정기준으로 쓰입니다. 사업마다 적용 비율이 달라, 같은 소득으로 어떤 사업은 통과하고 어떤 사업은 미달합니다.</p><h2>예시로 확인하기</h2><p>대도시 1인 가구, 월 근로소득 200만 원, 전세보증금 5,000만 원, 금융재산 500만 원이라면 보증금은 기본재산액(1억 3,500만 원) 안에 들어 전액 공제되어 재산 환산액이 0원입니다. 근로소득공제를 반영하면 소득인정액은 대략 중위 60%(1,538,543원)를 조금 넘는 수준이 되어 청년월세 같은 60% 기준 사업과는 경계에 서게 됩니다.</p>
+<section class="card faqbox"><h2>자주 묻는 질문</h2><dl class="dl"><dt>Q. 기준중위소득 60% 이하라는 말은 무슨 뜻인가요?</dt><dd>그 해 기준중위소득 금액에 0.6을 곱한 금액 이하라는 뜻입니다. 2026년 3인 가구라면 5,359,036원의 60%인 3,215,421원이 기준선이 됩니다. 공고의 기준은 대개 소득인정액과 비교하며, 통장에 찍히는 소득만 보지 않습니다.</dd><dt>Q. 이 계산기의 소득인정액과 실제 심사 결과가 다른 이유는 무엇인가요?</dt><dd>이 계산기는 월 소득에 재산의 월 소득환산액만 더한 간이 방식입니다. 실제 기초생활보장 심사에서는 근로소득공제(30%)와 가구특성별 지출비용이 추가로 차감되고, 금융재산 2,000만 원 공제·부채 차감·자동차 환산이 반영됩니다. 그래서 실제 소득인정액이 계산값보다 낮게 나오는 경우가 많습니다.</dd><dt>Q. 2027년 기준으로는 왜 비율이 달라지나요?</dt><dd>기준중위소득이 매년 인상되기 때문입니다. 2027년 4인 가구 기준중위소득은 2026년보다 6.7% 오른 6,929,885원으로, 같은 소득이라도 비율은 낮아집니다. 다만 급여별 선정기준 금액도 함께 오르므로, 해가 바뀔 때는 두 해 기준을 함께 확인하는 것이 안전합니다.</dd><dt>Q. 재산이 있으면 무조건 탈락인가요?</dt><dd>아닙니다. 지역별 기본재산액(대도시 1억 3,500만 원, 중소도시 8,500만 원, 농어촌 7,250만 원)까지는 공제되고, 남는 금액에 연 4%를 적용해 12개월로 나눈 금액만 월 소득에 더해집니다. 전세보증금 5,000만 원은 대도시 기준 전액 공제됩니다.</dd></dl></section><section class="card"><h2>함께 보면 좋은 자료</h2><ul><li><a href="../guides/median-income.html">기준중위소득·소득분위 계산법 (2026~2027)</a></li><li><a href="../guides/housing-benefits.html">주거급여·청년월세·전세자금 비교</a></li><li><a href="../categories/low-income.html">저소득·생계 지원 모음</a></li><li><a href="../categories/youth.html">청년 지원금 모음</a></li><li><a href="../categories/housing.html">주거 보조금 모음</a></li><li><a href="../index.html#/calculators/median-income">앱에서 같은 계산기 열기</a></li></ul></section><div class="cta"><strong>계산이 끝났다면, 받을 수 있는 공고를 확인하세요</strong><p class="meta" style="color:#c8d3cf">나이·직군·가구 상황·지역을 넣으면 일치율 순으로 정리됩니다. 로그인 없이 이용할 수 있습니다.</p><a href="../index.html#/home">내 조건으로 공고 찾기</a></div>
+</div></main>
+<footer class="site"><div class="wrap">
+<div class="links"><a href="../index.html">홈</a><a href="../calculators/">모의계산기</a><a href="../guides/">가이드</a><a href="../categories/">분야·대상별 보조금</a><a href="../about.html">서비스 소개</a><a href="../privacy.html">개인정보처리방침</a><a href="../terms.html">이용약관</a></div>
+<p>보조금 레이더는 정부·공공기관 공식 서비스가 아닌 민간 정보 매칭 플랫폼입니다. 최종 자격 확인과 신청은 공고 원문과 담당 기관을 통해 진행해 주세요.</p>
+<p>문의 <a href="mailto:sasolution.edu@gmail.com">sasolution.edu@gmail.com</a></p>
+</div></footer>
+</body>
+</html>

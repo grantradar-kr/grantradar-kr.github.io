@@ -255,8 +255,8 @@ def check_content() -> None:
         return
     data = json.loads(guides_path.read_text(encoding="utf-8"))
     guides = data.get("guides", [])
-    if len(guides) < 13:
-        fail(f"가이드가 {len(guides)}편뿐입니다 (최소 13편 필요)")
+    if len(guides) < 18:
+        fail(f"가이드가 {len(guides)}편뿐입니다 (최소 18편 필요)")
     slugs = set()
     for guide in guides:
         slug = guide.get("slug", "")
@@ -283,6 +283,7 @@ def check_content() -> None:
         if not (PUBLIC / name).exists():
             fail(f"정적 페이지 없음: public/{name}")
     check_hubs()
+    check_calculators()
     check_sitemap_rss()
     check_robots()
     if legal_path.exists():
@@ -303,6 +304,9 @@ def check_content() -> None:
         fail("ads.txt 형식 확인 필요")
     notes.append(f"콘텐츠 검사 완료 — 가이드 {len(guides)}편")
 
+
+CALCULATOR_SLUGS = ["median-income", "unemployment-benefit", "eitc"]
+DISCLAIMER_MARK = "본 계산 결과는 2026년 고시 기준 참고용 모의계산"
 
 HUB_SLUGS = [
     "housing", "finance", "employment", "business", "childcare", "education", "medical", "senior-welfare",
@@ -339,6 +343,40 @@ def check_hubs() -> None:
     notes.append(f"허브 검사 완료 — {len(HUB_SLUGS) - len(missing)}개")
 
 
+def check_calculators() -> None:
+    """모의계산기 정적 페이지(허브 + 3종)가 계산 UI·구조화 데이터·고지와 함께 생성되었는지 확인한다."""
+    calc_dir = PUBLIC / "calculators"
+    if not calc_dir.exists():
+        fail("public/calculators 없음 — build_content.py 를 실행하세요")
+        return
+    hub = calc_dir / "index.html"
+    if not hub.exists():
+        fail("계산기 허브 없음: public/calculators/index.html")
+    else:
+        body = hub.read_text(encoding="utf-8")
+        if hub.stat().st_size < 8000 or "CollectionPage" not in body or "BreadcrumbList" not in body:
+            fail("계산기 허브가 너무 얇거나 구조화 데이터 누락")
+        for slug in CALCULATOR_SLUGS:
+            if f"./{slug}.html" not in body:
+                fail(f"계산기 허브에 {slug} 링크 없음")
+    for slug in CALCULATOR_SLUGS:
+        page = calc_dir / f"{slug}.html"
+        if not page.exists():
+            fail(f"계산기 페이지 없음: public/calculators/{slug}.html")
+            continue
+        body = page.read_text(encoding="utf-8")
+        if page.stat().st_size < 12000:
+            fail(f"계산기 페이지가 너무 작습니다: {slug} ({page.stat().st_size} bytes)")
+        for must in ("FAQPage", "WebApplication", "BreadcrumbList", 'rel="canonical"', 'id="'):
+            if must not in body:
+                fail(f"계산기 페이지 구조 누락: {slug} → {must}")
+        if DISCLAIMER_MARK not in body:
+            fail(f"계산기 페이지에 모의계산 고지문이 없습니다: {slug}")
+        if "<script>" not in body or "addEventListener" not in body:
+            fail(f"계산기 페이지에 인라인 계산 스크립트가 없습니다: {slug}")
+    notes.append(f"계산기 검사 완료 — 허브 1 + 계산기 {len(CALCULATOR_SLUGS)}개")
+
+
 def check_sitemap_rss() -> None:
     import xml.etree.ElementTree as ET
 
@@ -347,14 +385,23 @@ def check_sitemap_rss() -> None:
         try:
             root = ET.fromstring(sitemap.read_text(encoding="utf-8"))
             locs = [el.text or "" for el in root.iter() if el.tag.endswith("loc")]
-            if len(locs) < 35:
-                fail(f"sitemap.xml URL 이 {len(locs)}개뿐입니다 (최소 35개 필요)")
-            for must in (f"{SITE}/", f"{SITE}/guides/", f"{SITE}/categories/", f"{SITE}/categories/urgent.html"):
+            if len(locs) < 44:
+                fail(f"sitemap.xml URL 이 {len(locs)}개뿐입니다 (최소 44개 필요)")
+            for must in (
+                f"{SITE}/",
+                f"{SITE}/guides/",
+                f"{SITE}/categories/",
+                f"{SITE}/categories/urgent.html",
+                f"{SITE}/calculators/",
+            ):
                 if must not in locs:
                     fail(f"sitemap.xml 에 필수 URL 없음: {must}")
+            for slug in CALCULATOR_SLUGS:
+                if f"{SITE}/calculators/{slug}.html" not in locs:
+                    fail(f"sitemap.xml 에 계산기 URL 없음: {slug}")
             guide_locs = [loc for loc in locs if "/guides/" in loc]
-            if len(guide_locs) < 13:
-                fail(f"sitemap.xml 가이드 URL 이 {len(guide_locs)}개뿐입니다 (최소 13개)")
+            if len(guide_locs) < 18:
+                fail(f"sitemap.xml 가이드 URL 이 {len(guide_locs)}개뿐입니다 (최소 18개)")
             notes.append(f"sitemap.xml OK — URL {len(locs)}개")
         except Exception as exc:  # noqa: BLE001
             fail(f"sitemap.xml 파싱 실패: {exc}")
@@ -364,8 +411,8 @@ def check_sitemap_rss() -> None:
         try:
             root = ET.fromstring(rss.read_text(encoding="utf-8"))
             items = [el for el in root.iter() if el.tag == "item"]
-            if len(items) < 13:
-                fail(f"rss.xml 항목이 {len(items)}개뿐입니다 (최소 13개 필요)")
+            if len(items) < 27:
+                fail(f"rss.xml 항목이 {len(items)}개뿐입니다 (최소 27개 필요)")
             channel = root.find("channel")
             if channel is None or channel.find("title") is None or channel.find("link") is None:
                 fail("rss.xml channel 에 title/link 가 없습니다")

@@ -168,21 +168,23 @@ def page(title: str, description: str, body: str, prefix: str, extra_head: str =
             f'<link rel="canonical" href="{esc(canonical)}" />\n'
             f'<meta property="og:url" content="{esc(canonical)}" />\n'
         )
+    ads_head = (
+        f'<meta name="google-adsense-account" content="{ADSENSE_CLIENT}" />\n'
+        f'<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE_CLIENT}" crossorigin="anonymous"></script>\n'
+    )
     nav = (
         f'<nav class="top">'
         f'<a href="{prefix}index.html">홈</a>'
+        f'<a href="{prefix}calculators/">계산기</a>'
         f'<a href="{prefix}guides/">가이드</a>'
         f'<a href="{prefix}categories/">보조금 찾기</a>'
         f'<a href="{prefix}about.html">서비스 소개</a>'
         f'</nav>'
     )
-    ads_head = (
-        f'<meta name="google-adsense-account" content="{ADSENSE_CLIENT}" />\n'
-        f'<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE_CLIENT}" crossorigin="anonymous"></script>\n'
-    )
     footer_links = (
         f'<div class="links">'
         f'<a href="{prefix}index.html">홈</a>'
+        f'<a href="{prefix}calculators/">모의계산기</a>'
         f'<a href="{prefix}guides/">가이드</a>'
         f'<a href="{prefix}categories/">분야·대상별 보조금</a>'
         f'<a href="{prefix}about.html">서비스 소개</a>'
@@ -705,6 +707,97 @@ HUBS: list[dict] = [
 
 HUB_BY_SLUG = {hub["slug"]: hub for hub in HUBS}
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from calc_pages import CALC_CSS, CALC_FAQS, CALC_META, calc_body, hub_body  # noqa: E402
+
+CALC_SLUGS = list(CALC_META.keys())
+
+
+def calculators_hub_page() -> str:
+    url = f"{SITE}/calculators/"
+    extra = jsonld(
+        {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "보조금 모의계산기 3종",
+            "description": "기준중위소득 판정, 2026 실업급여, 근로·자녀장려금을 로그인 없이 계산하는 무료 모의계산기 모음입니다.",
+            "url": url,
+            "inLanguage": "ko-KR",
+            "isPartOf": {"@type": "WebSite", "name": BRAND, "url": f"{SITE}/"},
+            "hasPart": [
+                {
+                    "@type": "WebApplication",
+                    "name": meta["h1"],
+                    "url": f"{SITE}/calculators/{slug}.html",
+                    "applicationCategory": "FinanceApplication",
+                    "operatingSystem": "Web",
+                }
+                for slug, meta in CALC_META.items()
+            ],
+        }
+    ) + jsonld(breadcrumb_ld([("홈", f"{SITE}/"), ("모의계산기", url)]))
+    return page(
+        f"보조금 모의계산기 3종 — 중위소득·실업급여·근로장려금 | {BRAND}",
+        "기준중위소득 판정, 2026 실업급여(구직급여), 근로·자녀장려금을 회원가입 없이 바로 계산하는 무료 모의계산기 모음입니다.",
+        hub_body(),
+        "../",
+        extra + jsonld_head_css(),
+        og_type="website",
+        canonical=url,
+    )
+
+
+def jsonld_head_css() -> str:
+    return f"<style>{CALC_CSS}</style>"
+
+
+def calculator_page(slug: str) -> str:
+    meta = CALC_META[slug]
+    url = f"{SITE}/calculators/{slug}.html"
+    faqs = CALC_FAQS[slug]
+    extra = f"<style>{CALC_CSS}</style>"
+    extra += jsonld(
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": meta["h1"],
+            "description": meta["description"],
+            "url": url,
+            "applicationCategory": "FinanceApplication",
+            "operatingSystem": "Web",
+            "browserRequirements": "자바스크립트 없이도 본문을 읽을 수 있습니다",
+            "inLanguage": "ko-KR",
+            "isAccessibleForFree": True,
+            "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"},
+            "featureList": ["가구원 수·소득·재산 입력", "2026년 고시 기준", "계산 결과와 기준선 비교"],
+            "publisher": {"@type": "Organization", "name": BRAND, "email": CONTACT, "url": f"{SITE}/"},
+        }
+    )
+    extra += jsonld(
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": item["q"],
+                    "acceptedAnswer": {"@type": "Answer", "text": item["a"]},
+                }
+                for item in faqs
+            ],
+        }
+    )
+    extra += jsonld(
+        breadcrumb_ld(
+            [
+                ("홈", f"{SITE}/"),
+                ("모의계산기", f"{SITE}/calculators/"),
+                (meta["short"], url),
+            ]
+        )
+    )
+    return page(meta["title"], meta["description"], calc_body(slug), "../", extra, og_type="website", canonical=url)
+
 
 def load_policies() -> tuple[list[dict], dict]:
     policies_path = PUBLIC / "data" / "policies.json"
@@ -1071,9 +1164,12 @@ def legal_page(doc: dict, label: str, updated: str) -> str:
 def sitemap_xml(guides: list[dict], updated: str) -> str:
     urls: list[tuple[str, str, str]] = [
         (f"{SITE}/", "1.0", updated),
+        (f"{SITE}/calculators/", "0.9", updated),
         (f"{SITE}/guides/", "0.9", updated),
         (f"{SITE}/categories/", "0.9", updated),
     ]
+    for slug in CALC_SLUGS:
+        urls.append((f"{SITE}/calculators/{slug}.html", "0.9", updated))
     for guide in guides:
         urls.append((f"{SITE}/guides/{guide['slug']}.html", "0.8", guide.get("updated", updated)))
     for hub in HUBS:
@@ -1139,6 +1235,28 @@ def rss_xml(guides: list[dict], meta: dict, updated: str) -> str:
             "</item>"
         )
     total = meta.get("total")
+    for slug, calc_meta in CALC_META.items():
+        link = f"{SITE}/calculators/{slug}.html"
+        items.append(
+            "<item>"
+            f"<title>{esc(calc_meta['h1'])}</title>"
+            f"<link>{esc(link)}</link>"
+            f"<guid isPermaLink=\"true\">{esc(link)}</guid>"
+            "<category>모의계산기</category>"
+            f"<description>{esc(calc_meta['description'])}</description>"
+            f"<pubDate>{pubdate(updated)}</pubDate>"
+            "</item>"
+        )
+    items.append(
+        "<item>"
+        f"<title>보조금 모의계산기 3종 — 중위소득·실업급여·근로장려금</title>"
+        f"<link>{esc(SITE + '/calculators/')}</link>"
+        f"<guid isPermaLink=\"true\">{esc(SITE + '/calculators/')}</guid>"
+        "<category>모의계산기</category>"
+        "<description>로그인 없이 쓰는 모의계산기 모음입니다. 기준중위소득 판정, 2026 실업급여, 근로·자녀장려금 예상액을 바로 계산합니다.</description>"
+        f"<pubDate>{pubdate(updated)}</pubDate>"
+        "</item>"
+    )
     desc = (
         f"{BRAND} — 온통청년·복지로·기업마당·K-Startup·보조금24 공개 공고를 매일 두 차례 모아 정리하는 민간 정보 매칭 서비스입니다. "
         f"현재 {total:,}건의 공고를 분야·대상·지역별로 볼 수 있습니다." if isinstance(total, int) else
@@ -1216,6 +1334,12 @@ def main() -> int:
         categories_index_page(hub_counts, data_updated), encoding="utf-8"
     )
 
+    calculators_dir = PUBLIC / "calculators"
+    calculators_dir.mkdir(parents=True, exist_ok=True)
+    (calculators_dir / "index.html").write_text(calculators_hub_page(), encoding="utf-8")
+    for calc_slug in CALC_SLUGS:
+        (calculators_dir / f"{calc_slug}.html").write_text(calculator_page(calc_slug), encoding="utf-8")
+
     (PUBLIC / "about.html").write_text(about_page(guides["site"], items, updated), encoding="utf-8")
     (PUBLIC / "privacy.html").write_text(legal_page(legal["privacy"], "개인정보처리방침", legal["updated"]), encoding="utf-8")
     (PUBLIC / "terms.html").write_text(legal_page(legal["terms"], "이용약관", legal["updated"]), encoding="utf-8")
@@ -1232,6 +1356,7 @@ def main() -> int:
         chars = len(re.sub(r"\s", "", json.dumps(guide, ensure_ascii=False)))
         print(f"    · {guide['slug']} ({chars:,}자)")
     print(f"  허브 {len(HUBS)}개 → public/categories/*.html")
+    print(f"  계산기 {len(CALC_SLUGS) + 1}개 → public/calculators/*.html")
     for hub in HUBS:
         print(f"    · {hub['slug']} ({hub['kind']}, {hub_counts[hub['slug']]:,}건)")
     urls = sitemap.count("<loc>")

@@ -198,6 +198,46 @@ await sleep(400)
 check('광고 끄기 토글 제거', !bodyText().includes('광고 표시'))
 check('광고 슬롯 미설정 시 빈 ins 없음', window.document.querySelectorAll('ins.adsbygoogle').length === 0)
 
+// 13) 모의계산기 3종 (로그인 없이 동작)
+window.location.hash = '#/calculators'
+window.dispatchEvent(new window.Event('hashchange'))
+await sleep(500)
+check('계산기 허브', bodyText().includes('내 숫자로 먼저 확인하는 모의계산기'))
+
+const calcCard = findButton('기준중위소득 %')
+calcCard?.click()
+await sleep(500)
+check('중위소득 계산기 열림', bodyText().includes('소득인정액(간이)') && bodyText().includes('급여별 기준선 통과 여부'))
+check('중위소득 기본 결과(56.0%)', bodyText().includes('56.0%'))
+const incomeInput = window.document.querySelector('input[type="number"]')
+if (incomeInput) {
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
+  setter.call(incomeInput, '5000000')
+  incomeInput.dispatchEvent(new window.Event('input', { bubbles: true }))
+  await sleep(300)
+}
+check('소득 변경 시 재계산(93.3%)', bodyText().includes('93.3%'))
+check('모의계산 고지 노출', bodyText().includes('참고용 모의계산'))
+
+const unempTab = findButton('실업급여')
+unempTab?.click()
+await sleep(400)
+check('실업급여 계산기 열림', bodyText().includes('소정급여일수') && bodyText().includes('1일 구직급여'))
+check('실업급여 기본 결과(66,048원)', bodyText().includes('66,048원'))
+
+const eitcTab = findButton('근로장려금')
+eitcTab?.click()
+await sleep(400)
+check('근로장려금 계산기 열림', bodyText().includes('정기신청 예상 합계'))
+check('기한 후 신청 비교 노출', bodyText().includes('기한 후 신청'))
+
+// 14) 가이드 화면의 계산기 바로가기
+window.location.hash = '#/guides'
+window.dispatchEvent(new window.Event('hashchange'))
+await sleep(500)
+check('가이드 화면 계산기 진입점', bodyText().includes('읽기 전에 계산부터'))
+check('새 가이드 5편 목록 노출', bodyText().includes('2026 실업급여') && bodyText().includes('본인부담상한제'))
+
 console.log(errors.length ? `런타임 오류 ${errors.length}건: ${errors[0]}` : '런타임 오류 없음')
 if (errors.length || failures) process.exit(1)
 console.log('모든 사용자 흐름 통과')

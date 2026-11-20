@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2026 근로장려금·자녀장려금 계산기 — 예상 지급액 | 보조금 레이더</title>
+<meta name="description" content="가구 유형과 부부합산 총급여, 부양자녀 수, 재산 구간으로 근로장려금·자녀장려금 예상액을 계산합니다. 재산 50% 감액과 기한 후 신청 5% 감액을 함께 비교합니다." />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://grantradar-kr.github.io/calculators/eitc.html" />
+<meta property="og:url" content="https://grantradar-kr.github.io/calculators/eitc.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="보조금 레이더" />
+<meta property="og:title" content="2026 근로장려금·자녀장려금 계산기 — 예상 지급액 | 보조금 레이더" />
+<meta property="og:description" content="가구 유형과 부부합산 총급여, 부양자녀 수, 재산 구간으로 근로장려금·자녀장려금 예상액을 계산합니다. 재산 50% 감액과 기한 후 신청 5% 감액을 함께 비교합니다." />
+<meta property="og:locale" content="ko_KR" />
+<meta name="twitter:card" content="summary" />
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png" />
+<meta name="google-adsense-account" content="ca-pub-3631676636047500" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3631676636047500" crossorigin="anonymous"></script>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#f6f8f7;color:#0b1220;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;line-height:1.75;-webkit-text-size-adjust:100%}
+a{color:#0a6b55;text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+header.site{background:#fff;border-bottom:1px solid #e6ece9;position:sticky;top:0;z-index:5}
+header.site .wrap{display:flex;align-items:center;gap:16px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:16px;color:#0b1220}
+.brand small{display:block;font-size:10px;letter-spacing:.14em;color:#0a6b55;font-weight:700}
+nav.top{display:flex;gap:14px;font-size:13px;font-weight:700;color:#4b5a55;flex-wrap:wrap}
+nav.top a{color:#4b5a55}
+main{padding:26px 0 48px}
+h1{font-size:26px;line-height:1.4;letter-spacing:-.02em;margin:10px 0 8px}
+h2{font-size:17px;margin:30px 0 8px;letter-spacing:-.01em}
+h3{font-size:14px;margin:18px 0 6px}
+p{margin:8px 0}
+ul{padding-left:20px;margin:8px 0}
+li{margin:4px 0}
+.cat{display:inline-block;background:#e6f6ef;color:#0a6b55;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px}
+.meta{font-size:12px;color:#6b7a75;font-weight:600}
+.lead{font-size:15px;color:#33413c}
+.card{background:#fff;border:1px solid #e6ece9;border-radius:16px;padding:16px 18px;margin:16px 0}
+.takeaways{background:#effaf4;border-color:#c8ecdb}
+.takeaways h2{margin-top:0;font-size:14px;color:#0a5b48}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;background:#fff;border-radius:12px;overflow:hidden}
+caption{caption-side:top;text-align:left;font-size:12px;font-weight:700;color:#4b5a55;padding:4px 0}
+th,td{border:1px solid #e6ece9;padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f2f6f4;font-weight:800;white-space:nowrap}
+.note{background:#f4f6f5;border-radius:10px;padding:9px 11px;font-size:12px;color:#5b6a65}
+.dl dt{font-weight:800;margin-top:10px}
+.dl dd{margin:4px 0 0;color:#33413c}
+.cta{background:#0b1220;color:#fff;border-radius:16px;padding:16px 18px;margin:24px 0}
+.cta strong{display:block;font-size:15px;line-height:1.5}
+.cta p{margin:6px 0 0}
+.cta a{display:inline-block;margin-top:10px;background:#fff;color:#0b1220;font-weight:800;padding:9px 14px;border-radius:10px;font-size:13px}
+footer.site{border-top:1px solid #e6ece9;background:#fff;padding:20px 0 34px;font-size:12px;color:#6b7a75}
+footer.site .links{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;font-weight:700}
+.grid{display:grid;gap:12px}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.gitem{display:block;background:#fff;border:1px solid #e6ece9;border-radius:14px;padding:14px 16px}
+.gitem strong{display:block;font-size:14px;color:#0b1220;line-height:1.5}
+.gitem span{display:block;font-size:12px;color:#5b6a65;margin-top:6px}
+.gitem em{display:block;font-size:11px;color:#0a6b55;font-style:normal;font-weight:800;margin-bottom:6px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.stat{flex:1 1 120px;background:#fff;border:1px solid #e6ece9;border-radius:14px;padding:12px 14px}
+.stat b{display:block;font-size:19px;color:#0a5b48;letter-spacing:-.02em}
+.stat span{font-size:11.5px;color:#5b6a65;font-weight:700}
+.pilist{list-style:none;padding:0;margin:14px 0}
+.pi{background:#fff;border:1px solid #e6ece9;border-radius:14px;padding:14px 16px;margin:10px 0}
+.pi .src{font-size:11px;font-weight:800;color:#0a6b55;margin:0 0 4px}
+.pi h3{margin:0;font-size:14.5px;line-height:1.5}
+.pi h3 a{color:#0b1220}
+.pi .sum{margin:6px 0 0;font-size:12.5px;color:#4b5a55}
+.pi .links{margin:8px 0 0;font-size:11.5px;font-weight:800}
+.pi .links a{color:#0a6b55}
+.dday{display:inline-block;background:#fdecec;color:#b3261e;border-radius:6px;padding:1px 6px;font-size:10.5px;font-weight:800;margin-left:4px}
+.hubnav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 4px}
+.hubnav a{background:#fff;border:1px solid #e6ece9;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;color:#33413c}
+.hubnav a.on{background:#0a6b55;color:#fff;border-color:#0a6b55}
+.ad{margin:20px 0;padding:10px 0;border-top:1px solid #e6ece9;border-bottom:1px solid #e6ece9}
+.ad-label{font-size:10px;font-weight:800;letter-spacing:.1em;color:#9aa8a3;margin:0 0 6px}
+.morebtn{display:block;text-align:center;background:#fff;border:1px solid #d8e3df;border-radius:12px;padding:11px;font-weight:800;font-size:13px;color:#0a6b55;margin:16px 0}
+</style>
+<style>
+.calc{background:#fff;border:1px solid #e6ece9;border-radius:16px;padding:16px 18px;margin:18px 0}
+.calc h2{margin:0;font-size:15px;color:#0b1220}
+.calc .calcrow{display:grid;gap:10px;margin-top:12px}
+@media(min-width:640px){.calc .calcrow{grid-template-columns:1fr 1fr}}
+.calc label{display:block;font-size:12px;font-weight:700;color:#33413c}
+.calc label span.hint{display:block;font-size:11px;font-weight:500;color:#87958f;margin-top:3px}
+.calc input,.calc select{width:100%;margin-top:4px;padding:9px 10px;border:1px solid #d8e3df;border-radius:10px;
+  font-size:14px;font-family:inherit;background:#fff;color:#0b1220}
+.calc input:focus,.calc select:focus{outline:2px solid #12b98d;outline-offset:1px;border-color:#12b98d}
+.calc .chk{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12.5px;font-weight:700;color:#33413c}
+.calc .chk input{width:16px;height:16px;margin:0}
+.out{margin-top:14px;background:#effaf4;border:1px solid #c8ecdb;border-radius:14px;padding:13px 15px}
+.out .head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px}
+.out .head span{font-size:12px;font-weight:800;color:#0a5b48}
+.out .big{font-size:22px;font-weight:800;color:#07402f;letter-spacing:-.02em;line-height:1.2}
+.out .sub{font-size:11.5px;font-weight:600;color:#3f7a68}
+.out .kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.out .kv>div{background:#fff;border:1px solid #c8ecdb;border-radius:10px;padding:8px 10px}
+.out .kv b{display:block;font-size:15px;color:#0b1220;letter-spacing:-.01em}
+.out .kv em{display:block;font-size:10.5px;font-style:normal;font-weight:700;color:#6b7a75;margin-bottom:1px}
+.out .kv i{display:block;font-size:10px;font-style:normal;color:#9aa8a3;margin-top:2px}
+.out ul{list-style:none;padding:0;margin:10px 0 0}
+.out ul li{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e6ece9;border-radius:8px;
+  padding:5px 9px;margin:4px 0;font-size:12px}
+.out ul li .lb{flex:1;color:#33413c;font-weight:700}
+.out ul li .lb em{font-style:normal;font-weight:600;color:#87958f;font-size:10.5px}
+.out ul li b{font-size:11.5px;color:#33413c;white-space:nowrap}
+.out ul li .df{font-size:10.5px;color:#87958f;min-width:64px;text-align:right}
+.ok{color:#0a6b55;font-weight:800;font-size:11px;min-width:26px}
+.no{color:#b3261e;font-weight:800;font-size:11px;min-width:26px}
+.out p.sum{margin:10px 0 0;font-size:12px;line-height:1.7;color:#0a4a3a}
+.calcnote{font-size:11.5px;line-height:1.7;color:#6b7a75;background:#f4f6f5;border-radius:10px;padding:9px 11px;margin:10px 0 0}
+.faqbox dl{margin:6px 0 0}
+</style><script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "2026 근로장려금·자녀장려금 계산기", "description": "가구 유형과 부부합산 총급여, 부양자녀 수, 재산 구간으로 근로장려금·자녀장려금 예상액을 계산합니다. 재산 50% 감액과 기한 후 신청 5% 감액을 함께 비교합니다.", "url": "https://grantradar-kr.github.io/calculators/eitc.html", "applicationCategory": "FinanceApplication", "operatingSystem": "Web", "browserRequirements": "자바스크립트 없이도 본문을 읽을 수 있습니다", "inLanguage": "ko-KR", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"}, "featureList": ["가구원 수·소득·재산 입력", "2026년 고시 기준", "계산 결과와 기준선 비교"], "publisher": {"@type": "Organization", "name": "보조금 레이더", "email": "sasolution.edu@gmail.com", "url": "https://grantradar-kr.github.io/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "2026년에 신청하는 근로장려금은 어느 해 소득인가요?", "acceptedAnswer": {"@type": "Answer", "text": "2025년 귀속분입니다. 근로장려금은 소득이 발생한 다음 해에 신청합니다. 2026년 5월 1일~6월 1일 정기신청(2026년 8월 27일 지급)을 놓쳤다면 2026년 12월 1일까지 기한 후 신청할 수 있고, 이 경우 산정액의 95%가 2027년 1월 15일에 지급됩니다."}}, {"@type": "Question", "name": "맞벌이 소득상한이 올라간다는 이야기가 있던데요?", "acceptedAnswer": {"@type": "Answer", "text": "2026년 세법개정안에 2027년 귀속분(2027년 신청)부터 맞벌이 소득상한을 4,400만 원에서 5,200만 원으로, 최대 지급액을 330만 원에서 360만 원으로 올리는 내용이 담겨 있습니다. 단독(2,600만 원·180만 원), 홑벌이(3,700만 원·310만 원)도 함께 확대됩니다. 확정 전까지는 현행 기준으로 판단하세요."}}, {"@type": "Question", "name": "근로장려금은 탈락인데 자녀장려금은 받을 수 있나요?", "acceptedAnswer": {"@type": "Answer", "text": "가능합니다. 자녀장려금은 총소득 7,000만 원 미만이면 대상이 되므로, 근로장려금 소득상한(단독 2,200만·홑벌이 3,200만·맞벌이 4,400만 원)을 넘는 가구도 자녀장려금은 받을 수 있습니다. 두 제도는 한 번의 신청으로 함께 심사됩니다."}}, {"@type": "Question", "name": "재산이 1억 7,000만 원을 넘으면 얼마나 줄어드나요?", "acceptedAnswer": {"@type": "Answer", "text": "산정된 지급액의 50%만 지급됩니다. 2억 4,000만 원 이상이면 아예 대상에서 제외됩니다. 재산은 2025년 6월 1일 기준으로 가구원 전체 합계를 보며, 전세보증금 반환 채무나 담보대출 같은 부채는 차감하지 않습니다."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "홈", "item": "https://grantradar-kr.github.io/"}, {"@type": "ListItem", "position": 2, "name": "모의계산기", "item": "https://grantradar-kr.github.io/calculators/"}, {"@type": "ListItem", "position": 3, "name": "근로장려금 계산기", "item": "https://grantradar-kr.github.io/calculators/eitc.html"}]}</script>
+</head>
+<body>
+<header class="site"><div class="wrap"><a class="brand" href="../index.html">보조금 레이더<small>GrantRadar KR</small></a><nav class="top"><a href="../index.html">홈</a><a href="../calculators/">계산기</a><a href="../guides/">가이드</a><a href="../categories/">보조금 찾기</a><a href="../about.html">서비스 소개</a></nav></div></header>
+<main><div class="wrap">
+<p><a href="./">← 계산기 3종</a></p><p><span class="cat">모의계산기</span></p><h1>2026 근로장려금·자녀장려금 계산기</h1><p class="lead">가구 유형과 부부합산 총급여, 부양자녀 수, 재산 구간으로 근로장려금·자녀장려금 예상액을 계산합니다. 재산 50% 감액과 기한 후 신청 5% 감액을 함께 비교합니다.</p><p class="meta">기준 확인일 2026-11-21 · 보조금 레이더 편집 · 회원가입 없이 무료</p>
+
+<form class="calc" id="et-form" onsubmit="return false">
+  <h2>💸 내 조건으로 계산하기</h2>
+  <div class="calcrow">
+    <label>가구 유형<span class="hint">단독 2,200만 · 홑벌이 3,200만 · 맞벌이 4,400만 원 미만</span>
+      <select id="et-type">
+        <option value="single">단독가구 (배우자·부양자녀 없음)</option>
+        <option value="singleEarner" selected>홑벌이가구</option>
+        <option value="dual">맞벌이가구</option>
+      </select></label>
+    <label>부부합산 연간 총급여 (원)<span class="hint">근로·사업소득 합계(비과세 제외)</span>
+      <input type="number" id="et-income" value="20000000" min="0" step="1000000" inputmode="numeric" /></label>
+    <label>18세 미만 부양자녀 수<span class="hint">자녀장려금은 1인당 50만~100만 원</span>
+      <input type="number" id="et-children" value="1" min="0" max="10" step="1" inputmode="numeric" /></label>
+    <label>가구원 합산 재산<span class="hint">2025년 6월 1일 기준 · 부채는 차감하지 않음</span>
+      <select id="et-asset">
+        <option value="under" selected>1억 7,000만 원 미만</option>
+        <option value="mid">1억 7,000만 ~ 2억 4,000만 원 (50% 감액)</option>
+        <option value="over">2억 4,000만 원 이상 (대상 제외)</option>
+      </select></label>
+  </div>
+  <div class="out" id="et-out"></div>
+  <p class="calcnote">※ 본 계산 결과는 2026년 고시 기준 참고용 모의계산이며, 실제 수급 여부와 최종 지급액은 복지로·고용24·국세청 홈택스 심사에 따릅니다.<br />
+  근로장려금은 점증·평탄·점감 구간으로 계산합니다. 2025년 귀속 기준 최대 지급액은 단독 165만·홑벌이 285만·맞벌이
+  330만 원이고, 맞벌이 최대 지급 구간은 800만~1,700만 원입니다.</p>
+</form>
+<script>
+function calcWon(v){return Math.round(v).toLocaleString('ko-KR')+'원';}
+function calcNum(id){var el=document.getElementById(id);if(!el)return 0;
+  var v=parseInt(String(el.value).replace(/[^0-9]/g,''),10);return isNaN(v)?0:v;}
+function calcBind(ids,fn){ids.forEach(function(id){var el=document.getElementById(id);if(!el)return;
+  el.addEventListener('input',fn);el.addEventListener('change',fn);});fn();}
+
+(function(){
+var PARAM={single:{max:1650000,fs:4000000,fe:9000000,cap:22000000},
+           singleEarner:{max:2850000,fs:7000000,fe:14000000,cap:32000000},
+           dual:{max:3300000,fs:8000000,fe:17000000,cap:44000000}};
+var CHILD_CAP=70000000, CHILD_MAX=1000000, CHILD_MIN=500000, FULL={singleEarner:21000000,dual:25000000,single:0};
+function baseEitc(x,p){
+  if(x<=0||x>=p.cap)return 0;
+  if(x<p.fs)return Math.round(p.max*x/p.fs);
+  if(x<=p.fe)return p.max;
+  return Math.round(p.max*(1-(x-p.fe)/(p.cap-p.fe)));
+}
+function childCredit(x,n,type){
+  if(n<=0||type==='single'||x>=CHILD_CAP)return 0;
+  var full=FULL[type], per;
+  if(x<=full){per=CHILD_MAX;}
+  else{per=Math.round(CHILD_MAX-(CHILD_MAX-CHILD_MIN)*(x-full)/(CHILD_CAP-full));}
+  return per*n;
+}
+function run(){
+  var type=document.getElementById('et-type').value;
+  var income=calcNum('et-income');
+  var children=calcNum('et-children');
+  var band=document.getElementById('et-asset').value;
+  var p=PARAM[type]||PARAM.single;
+  var factor=band==='over'?0:(band==='mid'?0.5:1);
+  var e=baseEitc(income,p);
+  if(e>0&&e<30000)e=30000;
+  var c=childCredit(income,children,type);
+  var re=Math.round(e*factor), rc=Math.round(c*factor);
+  var le=Math.round(re*0.95), lc=Math.round(rc*0.95);
+  var flag=factor===0.5?'<span class="no">재산 50% 감액</span>':(factor===0?'<span class="no">재산 2.4억 이상 — 제외</span>':'');
+  var childNote=type==='single'?'단독가구는 대상 아님':('산정액 '+calcWon(c)+' ('+children+'명)');
+  var sum=factor===0?'재산 합계가 2억 4,000만 원 이상이면 근로·자녀장려금 대상에서 제외됩니다.'
+    :((re+rc)===0?'총급여가 소득상한('+calcWon(p.cap)+')을 넘어 근로장려금은 0원입니다. 자녀장려금은 총소득 7,000만 원 미만이면 별도로 받을 수 있습니다.'
+    :'자녀장려금은 총소득 7,000만 원 미만이면 근로장려금과 별개로 지급됩니다(자녀 1인당 50만~100만 원).');
+  document.getElementById('et-out').innerHTML=
+    '<div class="head"><span>정기신청 예상 합계</span><strong class="big">'+calcWon(re+rc)+'</strong>'+flag+'</div>'+
+    '<div class="kv"><div><em>근로장려금</em><b>'+calcWon(re)+'</b><i>산정액 '+calcWon(e)+'</i></div>'+
+    '<div><em>자녀장려금</em><b>'+calcWon(rc)+'</b><i>'+childNote+'</i></div></div>'+
+    '<div class="kv"><div><em>기한 후 신청(12.1까지)</em><b>'+calcWon(le+lc)+'</b><i>5% 감액 · 다음 해 1월 지급</i></div>'+
+    '<div><em>소득상한</em><b>'+calcWon(p.cap)+'</b><i>부부합산 총급여 기준</i></div></div>'+
+    '<p class="sum">'+sum+'</p>';
+}
+calcBind(['et-type','et-income','et-children','et-asset'],run);
+})();
+</script>
+
+
+<h2>2026년 신청분(2025년 귀속) 소득요건과 최대 지급액</h2>
+<table><caption>2025년 귀속(2026년 신청) 근로장려금 소득요건·최대 지급액</caption>
+<thead><tr><th>가구 유형</th><th>부부합산 총소득</th><th>최대 지급액</th></tr></thead>
+<tbody>
+<tr><td>단독가구</td><td>2,200만 원 미만</td><td>165만 원</td></tr>
+<tr><td>홑벌이가구</td><td>3,200만 원 미만</td><td>285만 원</td></tr>
+<tr><td>맞벌이가구</td><td>4,400만 원 미만</td><td>330만 원</td></tr>
+</tbody></table>
+<p class="note">자녀장려금은 18세 미만 부양자녀가 있는 홑벌이·맞벌이 가구가 대상이며, 부부합산 총소득 7,000만 원
+미만이면 신청할 수 있습니다. 지급액은 자녀 1인당 최소 50만 원에서 최대 100만 원입니다.</p>
+<h2>재산 요건</h2>
+<table><caption>재산 요건 (2025년 6월 1일 기준, 부채 차감 없음)</caption>
+<thead><tr><th>가구원 전체 재산 합계</th><th>지급 비율</th></tr></thead>
+<tbody>
+<tr><td>1억 7,000만 원 미만</td><td>산정액 100%</td></tr>
+<tr><td>1억 7,000만 원 이상 ~ 2억 4,000만 원 미만</td><td>산정액 50%</td></tr>
+<tr><td>2억 4,000만 원 이상</td><td>대상 제외</td></tr>
+</tbody></table>
+<h2>신청 일정</h2>
+<table><caption>2025년 귀속분 신청·지급 일정</caption>
+<thead><tr><th>구분</th><th>신청 기간</th><th>지급 비율</th><th>지급 시기</th></tr></thead>
+<tbody>
+<tr><td>정기신청</td><td>2026년 5월 1일 ~ 6월 1일</td><td>산정액 100%</td><td>2026년 8월 27일</td></tr>
+<tr><td>기한 후 신청</td><td>2026년 12월 1일(화)까지</td><td>산정액 95%</td><td>2027년 1월 15일 예정</td></tr>
+</tbody></table>
+<h2>계산 구조를 알면 예상액이 보인다</h2><p>근로장려금은 총급여액 등에 따라 점증·평탄·점감 세 구간으로 계산합니다. 단독가구는 400만~900만 원 구간에서 최대 165만 원을 받고, 그 아래는 비례해 늘고 위로는 상한(2,200만 원)까지 비례해 줄어듭니다. 홑벌이는 700만~1,400만 원, 맞벌이는 800만~1,700만 원이 최대 지급 구간입니다.</p><p class="note">산정액이 3만 원보다 적으면 최소 3만 원이 지급됩니다. 지급액은 국세청이 소득·재산 자료를 심사해 확정하므로, 이 계산기의 예상액과 다를 수 있습니다.</p><h2>2027년 귀속분은 기준이 올라간다</h2><p>2026년 세법개정안에는 2027년 귀속분부터 단독 2,600만 원·180만 원, 홑벌이 3,700만 원·310만 원, 맞벌이 5,200만 원·360만 원으로 소득상한과 최대 지급액을 올리는 내용이 담겨 있습니다. 국회 논의를 거치는 단계이므로 확정 전까지는 현행 기준으로 판단하세요.</p>
+<section class="card faqbox"><h2>자주 묻는 질문</h2><dl class="dl"><dt>Q. 2026년에 신청하는 근로장려금은 어느 해 소득인가요?</dt><dd>2025년 귀속분입니다. 근로장려금은 소득이 발생한 다음 해에 신청합니다. 2026년 5월 1일~6월 1일 정기신청(2026년 8월 27일 지급)을 놓쳤다면 2026년 12월 1일까지 기한 후 신청할 수 있고, 이 경우 산정액의 95%가 2027년 1월 15일에 지급됩니다.</dd><dt>Q. 맞벌이 소득상한이 올라간다는 이야기가 있던데요?</dt><dd>2026년 세법개정안에 2027년 귀속분(2027년 신청)부터 맞벌이 소득상한을 4,400만 원에서 5,200만 원으로, 최대 지급액을 330만 원에서 360만 원으로 올리는 내용이 담겨 있습니다. 단독(2,600만 원·180만 원), 홑벌이(3,700만 원·310만 원)도 함께 확대됩니다. 확정 전까지는 현행 기준으로 판단하세요.</dd><dt>Q. 근로장려금은 탈락인데 자녀장려금은 받을 수 있나요?</dt><dd>가능합니다. 자녀장려금은 총소득 7,000만 원 미만이면 대상이 되므로, 근로장려금 소득상한(단독 2,200만·홑벌이 3,200만·맞벌이 4,400만 원)을 넘는 가구도 자녀장려금은 받을 수 있습니다. 두 제도는 한 번의 신청으로 함께 심사됩니다.</dd><dt>Q. 재산이 1억 7,000만 원을 넘으면 얼마나 줄어드나요?</dt><dd>산정된 지급액의 50%만 지급됩니다. 2억 4,000만 원 이상이면 아예 대상에서 제외됩니다. 재산은 2025년 6월 1일 기준으로 가구원 전체 합계를 보며, 전세보증금 반환 채무나 담보대출 같은 부채는 차감하지 않습니다.</dd></dl></section><section class="card"><h2>함께 보면 좋은 자료</h2><ul><li><a href="../guides/earned-income-tax-credit.html">2026 근로장려금·자녀장려금 총정리</a></li><li><a href="../guides/rejection-reasons.html">지원금 신청이 탈락하는 10가지 이유</a></li><li><a href="../categories/finance.html">생활·금융·긴급복지</a></li><li><a href="../categories/self-employed.html">자영업·소상공인 지원금</a></li><li><a href="../index.html#/calculators/eitc">앱에서 같은 계산기 열기</a></li></ul></section><div class="cta"><strong>계산이 끝났다면, 받을 수 있는 공고를 확인하세요</strong><p class="meta" style="color:#c8d3cf">나이·직군·가구 상황·지역을 넣으면 일치율 순으로 정리됩니다. 로그인 없이 이용할 수 있습니다.</p><a href="../index.html#/home">내 조건으로 공고 찾기</a></div>
+</div></main>
+<footer class="site"><div class="wrap">
+<div class="links"><a href="../index.html">홈</a><a href="../calculators/">모의계산기</a><a href="../guides/">가이드</a><a href="../categories/">분야·대상별 보조금</a><a href="../about.html">서비스 소개</a><a href="../privacy.html">개인정보처리방침</a><a href="../terms.html">이용약관</a></div>
+<p>보조금 레이더는 정부·공공기관 공식 서비스가 아닌 민간 정보 매칭 플랫폼입니다. 최종 자격 확인과 신청은 공고 원문과 담당 기관을 통해 진행해 주세요.</p>
+<p>문의 <a href="mailto:sasolution.edu@gmail.com">sasolution.edu@gmail.com</a></p>
+</div></footer>
+</body>
+</html>

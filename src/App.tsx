@@ -6,6 +6,8 @@ import PublicDirectory from './components/PublicDirectory'
 import SavedScreen from './components/SavedScreen'
 import SettingsScreen from './components/SettingsScreen'
 import GuidesScreen from './components/GuidesScreen'
+import CalculatorsScreen, { type CalcKey } from './components/CalculatorsScreen'
+import { CALCULATORS } from './components/CalculatorsScreen'
 import AboutScreen from './components/AboutScreen'
 import PolicyDetailModal from './components/PolicyDetailModal'
 import OnboardingModal from './components/OnboardingModal'
@@ -41,17 +43,24 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
-function parseHash(): { route: Route; policyId: string | null; guideSlug: string | null } {
+function parseHash(): { route: Route; policyId: string | null; guideSlug: string | null; calcKey: CalcKey | null } {
   const raw = window.location.hash.replace(/^#\/?/, '')
   const [head, ...rest] = raw.split('/')
-  if (head === 'policy' && rest.length) return { route: 'home', policyId: decodeURIComponent(rest.join('/')), guideSlug: null }
+  if (head === 'policy' && rest.length)
+    return { route: 'home', policyId: decodeURIComponent(rest.join('/')), guideSlug: null, calcKey: null }
   if (head === 'guides') {
     const slug = rest.length ? decodeURIComponent(rest.join('/')) : null
-    return { route: 'guides', policyId: null, guideSlug: slug }
+    return { route: 'guides', policyId: null, guideSlug: slug, calcKey: null }
   }
-  if (head === 'about') return { route: 'about', policyId: null, guideSlug: null }
-  if (head === 'browse' || head === 'saved' || head === 'settings') return { route: head, policyId: null, guideSlug: null }
-  return { route: 'home', policyId: null, guideSlug: null }
+  if (head === 'calculators') {
+    const slug = rest.length ? decodeURIComponent(rest.join('/')) : ''
+    const match = CALCULATORS.find((item) => item.key === slug)
+    return { route: 'calculators', policyId: null, guideSlug: null, calcKey: match ? match.key : null }
+  }
+  if (head === 'about') return { route: 'about', policyId: null, guideSlug: null, calcKey: null }
+  if (head === 'browse' || head === 'saved' || head === 'settings')
+    return { route: head, policyId: null, guideSlug: null, calcKey: null }
+  return { route: 'home', policyId: null, guideSlug: null, calcKey: null }
 }
 
 export default function App() {
@@ -67,6 +76,7 @@ export default function App() {
   const [route, setRoute] = useState<Route>(() => parseHash().route)
   const [detailId, setDetailId] = useState<string | null>(() => parseHash().policyId)
   const [guideSlug, setGuideSlug] = useState<string | null>(() => parseHash().guideSlug)
+  const [calcKey, setCalcKey] = useState<CalcKey | null>(() => parseHash().calcKey)
 
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showAuth, setShowAuth] = useState(false)
@@ -118,6 +128,7 @@ export default function App() {
         setRoute(parsed.route)
       }
       setGuideSlug(parsed.guideSlug)
+      setCalcKey(parsed.calcKey)
       setDetailId(parsed.policyId)
     }
     window.addEventListener('hashchange', onHashChange)
@@ -195,7 +206,18 @@ export default function App() {
     setRoute(next)
     setDetailId(null)
     setGuideSlug(null)
+    setCalcKey(null)
     window.location.hash = `#/${next}`
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const openCalculator = (key: CalcKey | null) => {
+    routeRef.current = 'calculators'
+    setRoute('calculators')
+    setCalcKey(key)
+    setGuideSlug(null)
+    setDetailId(null)
+    window.location.hash = key ? `#/calculators/${key}` : '#/calculators'
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -203,6 +225,7 @@ export default function App() {
     routeRef.current = 'guides'
     setRoute('guides')
     setGuideSlug(slug)
+    setCalcKey(null)
     setDetailId(null)
     window.location.hash = `#/guides/${encodeURIComponent(slug)}`
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -317,10 +340,20 @@ export default function App() {
             onGoHome={() => navigate('home')}
             onOpenProfile={() => setShowOnboarding(true)}
           />
+        ) : route === 'calculators' ? (
+          <CalculatorsScreen
+            initial={calcKey ?? undefined}
+            onSelect={openCalculator}
+            onOpenGuide={openGuide}
+            onGoHome={() => navigate('home')}
+            onToast={notify}
+          />
         ) : route === 'guides' ? (
           <GuidesScreen
             slug={guideSlug}
             onOpenGuide={openGuide}
+            onOpenCalculators={() => openCalculator(null)}
+            onOpenCalculator={openCalculator}
             onBackToGuides={() => {
               routeRef.current = 'guides'
               setRoute('guides')
@@ -360,6 +393,7 @@ export default function App() {
             onEditProfile={() => setShowOnboarding(true)}
             onOpenGuides={() => navigate('guides')}
             onOpenGuide={openGuide}
+            onOpenCalculator={() => openCalculator(null)}
           />
         )}
 
@@ -375,6 +409,9 @@ export default function App() {
             </a>
             <a href="#/guides" className="font-semibold hover:text-brand-700">
               가이드
+            </a>
+            <a href="#/calculators" className="font-semibold hover:text-brand-700">
+              계산기
             </a>
             <button type="button" onClick={() => setLegal('privacy')} className="font-semibold hover:text-brand-700">
               개인정보처리방침

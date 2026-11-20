@@ -15,7 +15,15 @@ interface Props {
   onOpenGuide: (slug: string) => void
   onBackToGuides: () => void
   onGoHome: () => void
+  onOpenCalculators: () => void
+  onOpenCalculator: (key: 'median-income' | 'unemployment-benefit' | 'eitc') => void
 }
+
+const CALC_LINKS: { key: 'median-income' | 'unemployment-benefit' | 'eitc'; emoji: string; label: string; desc: string }[] = [
+  { key: 'median-income', emoji: '📊', label: '중위소득 판정', desc: '내 소득이 몇 %인지' },
+  { key: 'unemployment-benefit', emoji: '🧾', label: '실업급여', desc: '1일 급여·수령일수' },
+  { key: 'eitc', emoji: '💸', label: '근로장려금', desc: '예상 지급액 계산' },
+]
 
 function MetaLine({ guide }: { guide: Guide }) {
   return (
@@ -206,7 +214,7 @@ function GuideArticle({ guide, onBackToGuides, onOpenGuide, onGoHome }: Props & 
   )
 }
 
-export default function GuidesScreen({ slug, onOpenGuide, onBackToGuides, onGoHome }: Props) {
+export default function GuidesScreen({ slug, onOpenGuide, onBackToGuides, onGoHome, onOpenCalculators, onOpenCalculator }: Props) {
   const [category, setCategory] = useState<string>('all')
   const guide = guideBySlug(slug)
 
@@ -223,7 +231,7 @@ export default function GuidesScreen({ slug, onOpenGuide, onBackToGuides, onGoHo
         </div>
       )
     }
-    return <GuideArticle guide={guide} slug={slug} onOpenGuide={onOpenGuide} onBackToGuides={onBackToGuides} onGoHome={onGoHome} />
+    return <GuideArticle guide={guide} slug={slug} onOpenGuide={onOpenGuide} onBackToGuides={onBackToGuides} onGoHome={onGoHome} onOpenCalculators={onOpenCalculators} onOpenCalculator={onOpenCalculator} />
   }
 
   const list = category === 'all' ? GUIDES : GUIDES.filter((item) => item.category === category)
@@ -257,6 +265,30 @@ export default function GuidesScreen({ slug, onOpenGuide, onBackToGuides, onGoHo
           </button>
         ))}
       </div>
+
+      {/* 모의계산기 바로가기 — 읽기 전에 내 숫자로 확인 */}
+      <section className="rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-3">
+        <div className="flex items-baseline justify-between gap-2">
+          <h2 className="text-[13px] font-extrabold text-ink-900">읽기 전에 계산부터</h2>
+          <button type="button" onClick={onOpenCalculators} className="text-[11px] font-bold text-brand-700 hover:underline">
+            전체 보기 →
+          </button>
+        </div>
+        <div className="mt-2 grid grid-cols-3 gap-1.5">
+          {CALC_LINKS.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => onOpenCalculator(item.key)}
+              className="rounded-xl bg-white px-2 py-2.5 text-center ring-1 ring-brand-100 transition hover:bg-brand-50"
+            >
+              <span className="text-[16px]">{item.emoji}</span>
+              <span className="mt-0.5 block text-[10.5px] font-bold leading-tight text-ink-700">{item.label}</span>
+              <span className="mt-0.5 block text-[9.5px] font-semibold leading-tight text-ink-300">{item.desc}</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
       <div className="grid gap-2.5 sm:grid-cols-2">
         {list.map((item) => (

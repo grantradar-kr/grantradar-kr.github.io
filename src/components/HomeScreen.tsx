@@ -18,6 +18,7 @@ interface Props {
   onEditProfile: () => void
   onOpenGuides: () => void
   onOpenGuide: (slug: string) => void
+  onOpenCalculator: () => void
 }
 
 const VERDICT_TABS: { key: Verdict | 'all'; label: string }[] = [
@@ -37,6 +38,7 @@ export default function HomeScreen({
   onEditProfile,
   onOpenGuides,
   onOpenGuide,
+  onOpenCalculator,
 }: Props) {
   const [query, setQuery] = useState('')
   const [verdict, setVerdict] = useState<Verdict | 'all'>('all')
@@ -200,6 +202,40 @@ export default function HomeScreen({
           </button>
         ))}
       </div>
+
+      {/* 모의계산기 퀵카드 */}
+      <section className="rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-3">
+        <div className="flex items-baseline justify-between gap-2">
+          <div>
+            <p className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-brand-700">Calculators</p>
+            <h2 className="mt-0.5 text-[13.5px] font-extrabold text-ink-900">내 숫자로 먼저 계산해 보세요</h2>
+          </div>
+          <button
+            type="button"
+            onClick={onOpenCalculator}
+            className="shrink-0 text-[11.5px] font-bold text-brand-700 hover:underline"
+          >
+            계산기 3종 →
+          </button>
+        </div>
+        <div className="mt-2 grid grid-cols-3 gap-1.5">
+          {[
+            { emoji: '📊', label: '중위소득 판정' },
+            { emoji: '🧾', label: '실업급여' },
+            { emoji: '💸', label: '근로장려금' },
+          ].map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              onClick={onOpenCalculator}
+              className="rounded-xl bg-white px-2 py-2.5 text-center ring-1 ring-brand-100 transition hover:bg-brand-50"
+            >
+              <span className="text-[16px]">{item.emoji}</span>
+              <span className="mt-0.5 block text-[10.5px] font-bold leading-tight text-ink-700">{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
       {/* 목록 */}
       <GuideTeaser onOpenGuides={onOpenGuides} onOpenGuide={onOpenGuide} />
