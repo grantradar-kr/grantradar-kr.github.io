@@ -24,3 +24,7 @@ ios/DerivedData/
 # OS
 .DS_Store
 Thumbs.db
+
+# QA 산출물(스크린샷)
+qa-mobile/
+qa-calc/
