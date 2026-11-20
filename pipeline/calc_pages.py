@@ -75,7 +75,7 @@ function run(){
   var ratio=(recognized/m26)*100, ratio27=(recognized/m27)*100;
   var rows='', pitched=[];
   TH.forEach(function(item){
-    var limit=Math.floor(m26*item[1]/100);
+    var limit=Math.round(m26*item[1]/100);
     var pass=recognized<=limit;
     var diff=Math.abs(recognized-limit);
     if(pass&&item[1]<=100)pitched.push(item[0]);
@@ -322,7 +322,7 @@ CALC_FAQS: dict[str, list[dict]] = {
     "median-income": [
         {
             "q": "기준중위소득 60% 이하라는 말은 무슨 뜻인가요?",
-            "a": "그 해 기준중위소득 금액에 0.6을 곱한 금액 이하라는 뜻입니다. 2026년 3인 가구라면 5,359,036원의 60%인 3,215,421원이 기준선이 됩니다. 공고의 기준은 대개 소득인정액과 비교하며, 통장에 찍히는 소득만 보지 않습니다.",
+            "a": "그 해 기준중위소득 금액에 0.6을 곱한 금액 이하라는 뜻입니다. 2026년 3인 가구라면 5,359,036원의 60%인 3,215,422원이 기준선이 됩니다. 공고의 기준은 대개 소득인정액과 비교하며, 통장에 찍히는 소득만 보지 않습니다.",
         },
         {
             "q": "이 계산기의 소득인정액과 실제 심사 결과가 다른 이유는 무엇인가요?",

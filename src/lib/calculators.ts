@@ -103,7 +103,7 @@ export function calcMedianIncome(input: MedianInput): MedianResult {
   const ratio2026 = median2026 > 0 ? (recognized / median2026) * 100 : 0
   const ratio2027 = median2027 > 0 ? (recognized / median2027) * 100 : 0
   const rows: MedianRow[] = MEDIAN_THRESHOLDS.map((item) => {
-    const limit = Math.floor((median2026 * item.pct) / 100)
+    const limit = Math.round((median2026 * item.pct) / 100)
     return { label: item.label, pct: item.pct, limit, pass: recognized <= limit, gap: recognized - limit }
   })
   return {
