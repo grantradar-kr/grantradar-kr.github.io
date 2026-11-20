@@ -68,6 +68,18 @@ UA = (
 
 _SOURCE_CACHE_FLAG: dict[str, bool] = {}
 
+# 소스별 수집 중 발생한 페이지 오류 기록 (부분 수집 판정·폴백 판단에 사용)
+_SOURCE_ERRORS: dict[str, dict] = {}
+
+# 페이지 요청 재시도 정책: 최대 3회, 1.5초 → 3초 백오프
+FETCH_RETRIES = 3
+FETCH_BACKOFF = (1.5, 3.0)
+
+# 직전 정상 건수 대비 이 비율 미만으로 급감하면 데이터 증발로 보고 기존 공고를 병합한다
+DROP_RATIO = 0.65
+# 직전 건수가 이보다 적은 소스는 비율 판정이 과민해지므로 비율 규칙을 적용하지 않는다
+MIN_TREND_BASE = 20
+
 SOURCE_LABEL = {
     "youthcenter": "온통청년",
     "bokjiro": "복지로",
@@ -278,26 +290,65 @@ def make_opener() -> tuple[urllib.request.OpenerDirector, http.cookiejar.CookieJ
     return opener, jar
 
 
+def _sleep_before_retry(attempt: int, url: str, exc: Exception) -> None:
+    wait = FETCH_BACKOFF[min(attempt, len(FETCH_BACKOFF) - 1)]
+    print(f"  [retry] {url} 실패({type(exc).__name__}: {exc}) → {wait:g}s 후 재시도 "
+          f"({attempt + 1}/{FETCH_RETRIES - 1})", flush=True)
+    time.sleep(wait)
+
+
 def http_json(opener, url: str, payload: dict, headers: dict | None = None, timeout: int = 60):
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-    req = urllib.request.Request(url, data=body, headers=headers or {})
-    req.add_header("Content-Type", "application/json; charset=UTF-8")
-    req.add_header("Accept", "application/json, text/plain, */*")
-    with opener.open(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8", "ignore"))
+    last: Exception | None = None
+    for attempt in range(FETCH_RETRIES):
+        try:
+            req = urllib.request.Request(url, data=body, headers=headers or {})
+            req.add_header("Content-Type", "application/json; charset=UTF-8")
+            req.add_header("Accept", "application/json, text/plain, */*")
+            with opener.open(req, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8", "ignore"))
+        except Exception as exc:  # noqa: BLE001
+            last = exc
+            if attempt < FETCH_RETRIES - 1:
+                _sleep_before_retry(attempt, url, exc)
+    raise last  # type: ignore[misc]
 
 
 def http_get_json(opener, url: str, timeout: int = 60):
-    req = urllib.request.Request(url)
-    req.add_header("Accept", "application/json")
-    with opener.open(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8", "ignore"))
+    last: Exception | None = None
+    for attempt in range(FETCH_RETRIES):
+        try:
+            req = urllib.request.Request(url)
+            req.add_header("Accept", "application/json")
+            with opener.open(req, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8", "ignore"))
+        except Exception as exc:  # noqa: BLE001
+            last = exc
+            if attempt < FETCH_RETRIES - 1:
+                _sleep_before_retry(attempt, url, exc)
+    raise last  # type: ignore[misc]
 
 
 def fetch_text(opener, url: str, timeout: int = 30) -> str:
-    req = urllib.request.Request(url)
-    with opener.open(req, timeout=timeout) as resp:
-        return resp.read().decode("utf-8", "ignore")
+    """HTML 본문을 가져온다. 실패하면 1.5초·3초 백오프로 최대 3회 재시도."""
+    last: Exception | None = None
+    for attempt in range(FETCH_RETRIES):
+        try:
+            req = urllib.request.Request(url)
+            with opener.open(req, timeout=timeout) as resp:
+                return resp.read().decode("utf-8", "ignore")
+        except Exception as exc:  # noqa: BLE001
+            last = exc
+            if attempt < FETCH_RETRIES - 1:
+                _sleep_before_retry(attempt, url, exc)
+    raise last  # type: ignore[misc]
+
+
+def _note_error(source: str, page: int, exc: Exception | str) -> dict:
+    detail = str(exc) if isinstance(exc, str) else f"{type(exc).__name__}: {exc}"
+    info = {"page": page, "error": detail}
+    _SOURCE_ERRORS[source] = info
+    return info
 
 
 # --------------------------------------------------------------------------------------
@@ -329,7 +380,12 @@ def collect_youthcenter(list_count: int = 500, max_pages: int = 12, delay: float
             "pageNum": page,
             "listCount": list_count,
         }
-        data = http_json(opener, YOUTH_API_URL, payload, headers, timeout=90)
+        try:
+            data = http_json(opener, YOUTH_API_URL, payload, headers, timeout=90)
+        except Exception as exc:  # noqa: BLE001
+            _note_error("youthcenter", page, exc)
+            print(f"  [youthcenter] page {page} 실패(재시도 소진): {exc}", flush=True)
+            break
         rows = (data.get("searchResult") or {}).get("youthpolicy") or []
         if total is None:
             total = ((data.get("resultCount") or {}).get("youthpolicy")) or 0
@@ -343,6 +399,9 @@ def collect_youthcenter(list_count: int = 500, max_pages: int = 12, delay: float
         if total and len(items) >= total:
             break
         time.sleep(delay)
+    if "youthcenter" in _SOURCE_ERRORS:
+        info = _SOURCE_ERRORS["youthcenter"]
+        print(f"  [youthcenter] 부분 수집 — {info['page']}페이지에서 중단({info['error']}), {len(items)}건", flush=True)
     return items
 
 
@@ -585,10 +644,13 @@ def collect_bokjiro(max_pages: int = 700, delay: float = 0.35, start_page: int =
         try:
             data = http_json(opener, BOKJIRO_API_URL, payload, headers, timeout=60)
         except Exception as exc:  # noqa: BLE001
-            print(f"  [bokjiro] page {page} 실패: {exc}", flush=True)
+            _note_error("bokjiro", page, exc)
+            print(f"  [bokjiro] page {page} 실패(재시도 소진): {exc}", flush=True)
             break
         if "dmMessage" in data and "dsServiceList0" not in data:
-            print(f"  [bokjiro] page {page} 오류응답: {data['dmMessage'].get('content')}", flush=True)
+            msg = (data.get("dmMessage") or {}).get("content")
+            _note_error("bokjiro", page, f"오류응답: {msg}")
+            print(f"  [bokjiro] page {page} 오류응답: {msg}", flush=True)
             break
         if not counts:
             counts = data.get("dmCount") or {}
@@ -764,7 +826,19 @@ def collect_bokjiro_chunked(max_pages: int = 700, delay: float = 0.35, from_page
         run_end = page
         while run_end + 1 <= max_pages and (run_end + 1) not in covered and run_end + 1 - page < BOKJIRO_CHUNK - 1:
             run_end += 1
+        _SOURCE_ERRORS.pop("bokjiro", None)
         rows = collect_bokjiro(max_pages=run_end, delay=delay, start_page=page)
+        chunk_error = _SOURCE_ERRORS.get("bokjiro")
+        if chunk_error:
+            # 페이지 오류로 청크가 미완성 → '완료' 청크로 남기지 않고 부분 결과만 병합한 뒤 중단한다.
+            # (다음 실행에서 같은 구간을 다시 받아 채운다)
+            if rows:
+                partial = CACHE_DIR / f"bokjiro_{TODAY.isoformat()}_{page}_{run_end}.partial.json"
+                partial.write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
+                for row in rows:
+                    merged[row["id"]] = row
+            print(f"  [bokjiro] {page}~{run_end}p 청크 중단({chunk_error['page']}페이지 오류) · 누적 {len(merged)}건", flush=True)
+            break
         if not rows:
             print(f"  [bokjiro] {page}페이지부터 데이터 없음 → 수집 종료", flush=True)
             (bokjiro_chunk_path(page, run_end)).write_text("[]", encoding="utf-8")
@@ -793,7 +867,8 @@ def collect_bizinfo(pages: int = 8, delay: float = 0.3) -> list[dict]:
         try:
             body = fetch_text(opener, BIZINFO_LIST.format(page=page), timeout=30)
         except Exception as exc:  # noqa: BLE001
-            print(f"  [bizinfo] page {page} 실패: {exc}", flush=True)
+            info = _note_error("bizinfo", page, exc)
+            print(f"  [bizinfo] page {page} 실패(재시도 소진): {exc} → 부분 결과 {len(items)}건", flush=True)
             break
         n_before = len(items)
         for tr in re.findall(r"<tr[^>]*>(.*?)</tr>", body, re.S):
@@ -816,6 +891,9 @@ def collect_bizinfo(pages: int = 8, delay: float = 0.3) -> list[dict]:
         if len(items) == n_before:
             break
         time.sleep(delay)
+    if "bizinfo" in _SOURCE_ERRORS:
+        info = _SOURCE_ERRORS["bizinfo"]
+        print(f"  [bizinfo] 부분 수집 — {info['page']}페이지에서 중단({info['error']}), {len(items)}건", flush=True)
     return items
 
 
@@ -873,7 +951,8 @@ def collect_kstartup(pages: int = 3, delay: float = 0.3) -> list[dict]:
         try:
             body = fetch_text(opener, KSTARTUP_LIST.format(page=page), timeout=30)
         except Exception as exc:  # noqa: BLE001
-            print(f"  [kstartup] page {page} 실패: {exc}", flush=True)
+            info = _note_error("kstartup", page, exc)
+            print(f"  [kstartup] page {page} 실패(재시도 소진): {exc} → 부분 결과 {len(items)}건", flush=True)
             break
         n_before = len(items)
         for blk in re.findall(r"<li[^>]*>(.*?)</li>", body, re.S):
@@ -903,6 +982,9 @@ def collect_kstartup(pages: int = 3, delay: float = 0.3) -> list[dict]:
         if len(items) == n_before:
             break
         time.sleep(delay)
+    if "kstartup" in _SOURCE_ERRORS:
+        info = _SOURCE_ERRORS["kstartup"]
+        print(f"  [kstartup] 부분 수집 — {info['page']}페이지에서 중단({info['error']}), {len(items)}건", flush=True)
     return items
 
 
@@ -972,7 +1054,8 @@ def collect_gov24(key: str) -> list[dict]:
             try:
                 data = http_get_json(opener, f"{endpoint}?{qs}", timeout=60)
             except Exception as exc:  # noqa: BLE001
-                print(f"  [gov24] {label} page {page} 실패: {exc}", flush=True)
+                _note_error("gov24", page, exc)
+                print(f"  [gov24] {label} page {page} 실패(재시도 소진): {exc}", flush=True)
                 break
             chunk = data.get("data") or []
             if not chunk:
@@ -1076,10 +1159,12 @@ def run_source(name: str, fn, use_cache: bool) -> tuple[list[dict], dict]:
         if cached is not None:
             print(f"  [cache] {name}: {len(cached)}건 재사용", flush=True)
             return cached, {"source": name, "ok": True, "count": len(cached), "cached": True, "elapsed_sec": 0.0}
+    _SOURCE_ERRORS.pop(name, None)
     try:
         items = fn()
         if items:
             save_cache(name, items)
+        page_error = _SOURCE_ERRORS.get(name)
         status = {
             "source": name,
             "ok": bool(items),
@@ -1087,6 +1172,12 @@ def run_source(name: str, fn, use_cache: bool) -> tuple[list[dict], dict]:
             "cached": bool(_SOURCE_CACHE_FLAG.get(name)),
             "elapsed_sec": round(time.time() - t0, 2),
         }
+        if page_error:
+            # 중간 페이지 오류로 조기 종료한 부분 수집 — 결과를 성공으로 단정하지 않는다
+            status["had_error"] = True
+            status["partial"] = True
+            status["error_page"] = page_error["page"]
+            status["error"] = page_error["error"]
         return items, status
     except Exception as exc:  # noqa: BLE001
         print(f"  [error] {name}: {type(exc).__name__} {exc}", flush=True)
@@ -1224,6 +1315,75 @@ def print_coverage(items: list[dict]) -> None:
         print(f" {flag}{label:<16} {n:>5}건")
 
 
+# --------------------------------------------------------------------------------------
+# 기존 데이터 보존 · 폴백
+# --------------------------------------------------------------------------------------
+def load_existing_payload() -> list[dict]:
+    path = DATA_DIR / "policies.json"
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [warn] 기존 policies.json 읽기 실패: {exc}", flush=True)
+        return []
+    return data if isinstance(data, list) else []
+
+
+def refresh_valid_existing(items: list[dict]) -> tuple[list[dict], int]:
+    """기존 공고의 dday를 오늘 기준으로 다시 계산해 돌려주고, 이미 마감된 공고 수를 함께 돌려준다."""
+    out: list[dict] = []
+    dropped = 0
+    for it in items:
+        if not isinstance(it, dict) or not it.get("id"):
+            continue
+        item = dict(it)
+        deadline = item.get("deadline")
+        if deadline:
+            parsed = parse_ymd(deadline)
+            if parsed is not None:
+                item["dday"] = (parsed - TODAY).days
+            else:
+                item.pop("dday", None)
+        dday = item.get("dday")
+        if isinstance(dday, int) and dday < 0:
+            dropped += 1
+            continue
+        out.append(item)
+    return out, dropped
+
+
+def merge_with_previous(name: str, new_items: list[dict], prev_items: list[dict], status: dict) -> list[dict]:
+    """직전 정상 건수 대비 급감했거나 페이지 오류로 조기 종료했으면
+    기존 policies.json의 유효 공고를 병합해 데이터 증발을 막는다."""
+    if not prev_items:
+        return new_items
+
+    new_valid_n = sum(1 for it in new_items if it.get("dday") is None or it["dday"] >= 0)
+    had_error = bool(status.get("had_error"))
+    ratio = new_valid_n / len(prev_items) if prev_items else 1.0
+    dropped = len(prev_items) >= MIN_TREND_BASE and ratio < DROP_RATIO
+    error_short = had_error and new_valid_n < len(prev_items)
+    if not (dropped or error_short):
+        return new_items
+
+    seen = {it["id"] for it in new_items}
+    carry = [it for it in prev_items if it["id"] not in seen]
+    reasons: list[str] = []
+    if dropped:
+        reasons.append(f"직전 정상 {len(prev_items)}건 대비 {new_valid_n}건({ratio * 100:.0f}%) 급감")
+    if error_short:
+        reasons.append(f"페이지 오류({status.get('error_page')}p: {status.get('error')})로 조기 종료")
+    status["fallback_used"] = True
+    status["live_count"] = new_valid_n
+    status["merged_from_previous"] = len(carry)
+    status["count"] = len(new_items) + len(carry)
+    status["fallback_reason"] = " · ".join(reasons) + f" → 기존 유효 공고 {len(carry)}건 병합"
+    print(f"  [fallback] {name}: {' · '.join(reasons)} → 기존 유효 공고 {len(carry)}건 병합 "
+          f"(총 {len(new_items) + len(carry)}건)", flush=True)
+    return new_items + carry
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="보조금 레이더 수집 파이프라인")
     parser.add_argument("--only", default="", help="youthcenter|bokjiro|bizinfo|kstartup|gov24 (쉼표 구분)")
@@ -1269,9 +1429,41 @@ def main() -> int:
         collected.extend(items)
         statuses.append(status)
 
-    raw_total = len(collected)
-    active = [it for it in collected if it.get("dday") is None or it["dday"] >= 0]
-    filtered_expired = raw_total - len(active)
+    # 덮어쓰기 전에 기존 데이터를 읽어 소스별로 비교한다 (데이터 증발 방지)
+    prev_by_source: dict[str, list[dict]] = {}
+    prev_valid_items, prev_dropped = refresh_valid_existing(load_existing_payload())
+    for it in prev_valid_items:
+        prev_by_source.setdefault(it.get("source") or "", []).append(it)
+
+    new_by_source: dict[str, list[dict]] = {}
+    for it in collected:
+        new_by_source.setdefault(it["source"], []).append(it)
+
+    ran = {name for name, _ in runners}
+    final_items: list[dict] = []
+    for name in SOURCE_LABEL:
+        prev_items = prev_by_source.get(name, [])
+        status = next((s for s in statuses if s["source"] == name), None)
+        if name not in ran:
+            # --only 로 선택하지 않았거나(또는 키 미설정으로 건너뛴) 소스는 기존 데이터를 그대로 보존한다
+            if not prev_items:
+                continue
+            final_items.extend(prev_items)
+            note = "이번 실행에서 수집하지 않아 기존 데이터 유지"
+            if status is None:
+                status = {"source": name, "ok": True, "count": len(prev_items), "cached": False,
+                          "elapsed_sec": 0}
+                statuses.append(status)
+            status.update({"count": len(prev_items), "ok": True, "preserved": True, "note": note})
+            status.pop("skipped", None)
+            print(f"  [보존] {name}: 이번 실행 제외 → 기존 {len(prev_items)}건 유지", flush=True)
+            continue
+        final_items.extend(merge_with_previous(name, new_by_source.get(name, []), prev_items, status or {}) if status is not None
+                           else new_by_source.get(name, []))
+
+    raw_total = len(final_items)
+    active = [it for it in final_items if it.get("dday") is None or it["dday"] >= 0]
+    filtered_expired = raw_total - len(active) + prev_dropped
     merged = dedupe(active)
     merged.sort(key=lambda it: (
         0 if it.get("dday") is not None and it["dday"] <= 7 else 1,
@@ -1284,6 +1476,9 @@ def main() -> int:
         print("!! 수집 결과가 비었습니다. 기존 파일을 유지합니다.", flush=True)
         return 2
 
+    order = {name: idx for idx, name in enumerate(SOURCE_LABEL)}
+    statuses.sort(key=lambda s: order.get(s.get("source", ""), 99))
+
     (DATA_DIR / "policies.json").write_text(
         json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
     )
@@ -1295,8 +1490,19 @@ def main() -> int:
     if not args.quiet:
         print("\n=== 소스별 건수 ===")
         for st in statuses:
+            flags = ["cache" if st.get("cached") else "live"]
+            if st.get("preserved"):
+                flags.append("보존")
+            if st.get("fallback_used"):
+                flags.append("폴백")
+            if st.get("partial"):
+                flags.append(f"부분수집({st.get('error_page')}p)")
+            if st.get("error"):
+                flags.append(str(st["error"]))
             print(f"  {SOURCE_LABEL.get(st['source'], st['source']):<10} {st['count']:>5}건 "
-                  f"({'cache' if st.get('cached') else 'live'}{', ' + st.get('error', '') if st.get('error') else ''})")
+                  f"({', '.join(flags)})")
+            if st.get("fallback_reason"):
+                print(f"    └ {st['fallback_reason']}")
         print(f"  {'합계(중복제거)':<10} {len(payload):>5}건  (만료 제외 {filtered_expired}건)")
         print_coverage(payload)
         size_kb = (DATA_DIR / "policies.json").stat().st_size / 1024
