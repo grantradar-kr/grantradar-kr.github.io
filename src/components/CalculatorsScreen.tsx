@@ -373,7 +373,7 @@ function UnemploymentCalculator({ onOpenGuide, onGoHome }: { onOpenGuide: (slug:
           </div>
           <div className="rounded-xl bg-white px-3 py-2 ring-1 ring-brand-100">
             <p className="text-[10.5px] font-bold text-ink-400">예상 총 수령액</p>
-            <p className="mt-0.5 text-[15px] font-extrabold text-brand-800">{manwon(result.total)}</p>
+            <p className="mt-0.5 text-[15px] font-extrabold text-brand-800">{won(result.total)}</p>
             <p className="mt-0.5 text-[10px] text-ink-300">월 환산(30일) {won(result.monthly)}</p>
           </div>
         </div>
@@ -565,7 +565,7 @@ export default function CalculatorsScreen({ initial, onSelect, onOpenGuide, onGo
         <h2 className="text-[13.5px] font-extrabold text-ink-900">계산에 쓴 2026년 기준값</h2>
         <ul className="mt-2 space-y-1 text-[11.5px] leading-relaxed text-ink-600">
           <li>· 기준중위소득 3인 {won(5359036)} · 4인 {won(6494738)} (2027년 4인 {won(6929885)})</li>
-          <li>· 기본재산액 대도시 {manwon(135000000)} · 중소도시 {manwon(85000000)} · 농어촌 {manwon(72500000)}</li>
+          <li>· 기본재산액 대도시 1억 3,500만 원 · 중소도시 8,500만 원 · 농어촌 7,250만 원</li>
           <li>· 구직급여 상한 1일 {won(68100)} · 하한 최저임금 {won(10320)}의 80%</li>
           <li>· 근로장려금 최대 단독 165만 · 홑벌이 285만 · 맞벌이 330만 원</li>
         </ul>
