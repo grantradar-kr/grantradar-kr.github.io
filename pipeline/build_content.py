@@ -177,7 +177,7 @@ def page(title: str, description: str, body: str, prefix: str, extra_head: str =
         f'<a href="{prefix}index.html">홈</a>'
         f'<a href="{prefix}calculators/">계산기</a>'
         f'<a href="{prefix}guides/">가이드</a>'
-        f'<a href="{prefix}categories/">보조금 찾기</a>'
+        f'<a href="{prefix}index.html#/onboarding">보조금 찾기</a>'
         f'<a href="{prefix}about.html">서비스 소개</a>'
         f'</nav>'
     )

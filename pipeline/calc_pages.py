@@ -499,7 +499,7 @@ def calc_body(slug: str) -> str:
     tail += (
         '<div class="cta"><strong>계산이 끝났다면, 받을 수 있는 공고를 확인하세요</strong>'
         '<p class="meta" style="color:#c8d3cf">나이·직군·가구 상황·지역을 넣으면 일치율 순으로 정리됩니다. 로그인 없이 이용할 수 있습니다.</p>'
-        '<a href="../index.html#/home">내 조건으로 공고 찾기</a></div>'
+        '<a href="../index.html#/onboarding">내 조건으로 공고 찾기</a></div>'
     )
 
     if slug == "median-income":
@@ -584,7 +584,7 @@ def hub_body() -> str:
         f'<p class="note">{DISCLAIMER}</p>'
         '<div class="cta"><strong>계산 결과를 들고 공고를 확인하세요</strong>'
         '<p class="meta" style="color:#c8d3cf">조건을 한 번 넣으면 내가 받을 수 있는 공고만 일치율 순으로 보여 줍니다.</p>'
-        '<a href="../index.html#/home">내 조건으로 공고 찾기</a></div>'
+        '<a href="../index.html#/onboarding">내 조건으로 공고 찾기</a></div>'
         '<h2>함께 보면 좋은 가이드</h2>'
         '<div class="hubnav">'
         '<a href="../guides/median-income.html">기준중위소득 계산법</a>'

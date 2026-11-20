@@ -434,6 +434,28 @@ def check_robots() -> None:
     notes.append("robots.txt OK (Yeti·Googlebot·Mediapartners-Google)")
 
 
+def check_onboarding_links() -> None:
+    """정적 페이지 상단 '보조금 찾기'는 앱의 조건 선택 창(#/onboarding)으로 연결되어야 한다."""
+    targets = [
+        PUBLIC / "categories" / "index.html",
+        PUBLIC / "guides" / "index.html",
+        PUBLIC / "calculators" / "index.html",
+        PUBLIC / "about.html",
+    ]
+    bad: list[str] = []
+    for page in targets:
+        if not page.exists():
+            bad.append(f"{page.name}(없음)")
+            continue
+        body = page.read_text(encoding="utf-8")
+        if "index.html#/onboarding" not in body:
+            bad.append(str(page.relative_to(PUBLIC)))
+    if bad:
+        fail(f"상단 '보조금 찾기' → #/onboarding 링크 누락: {bad}")
+    else:
+        notes.append("상단 '보조금 찾기' → #/onboarding 링크 OK")
+
+
 def main() -> int:
     print("=== 보조금 레이더 정적 검증 ===\n")
     check_json()
@@ -443,6 +465,7 @@ def main() -> int:
     check_assets()
     check_data()
     check_content()
+    check_onboarding_links()
 
     for line in notes:
         print(f"  {line}")

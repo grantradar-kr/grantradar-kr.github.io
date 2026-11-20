@@ -238,6 +238,23 @@ await sleep(500)
 check('가이드 화면 계산기 진입점', bodyText().includes('읽기 전에 계산부터'))
 check('새 가이드 5편 목록 노출', bodyText().includes('2026 실업급여') && bodyText().includes('본인부담상한제'))
 
+// 15) #/onboarding 딥링크 — 정적 페이지의 '보조금 찾기'가 조건 선택 창을 바로 띄운다
+//     (이미 프로필을 저장한 상태 = 첫 실행 온보딩이 숨겨진 상태에서도 열려야 한다)
+window.location.hash = '#/settings'
+window.dispatchEvent(new window.Event('hashchange'))
+await sleep(300)
+const onboardingDialog = () => window.document.querySelector('[role="dialog"][aria-label="내 조건 설정"]')
+check('#/onboarding 전에는 조건 창 닫혀 있음', !onboardingDialog())
+window.location.hash = '#/onboarding'
+window.dispatchEvent(new window.Event('hashchange'))
+await sleep(400)
+check('#/onboarding 해시로 조건 선택 창 즉시 열림', Boolean(onboardingDialog()))
+check('딥링크 진입 시 기본 정보 단계부터', bodyText().includes('기본 정보') && bodyText().includes('출생연도'))
+onboardingDialog()?.querySelector('button[aria-label="닫기"]')?.click()
+await sleep(400)
+check('#/onboarding 닫으면 해시 #/home 정리', window.location.hash === '#/home')
+check('#/onboarding 닫은 뒤 재열림 없음', !onboardingDialog())
+
 console.log(errors.length ? `런타임 오류 ${errors.length}건: ${errors[0]}` : '런타임 오류 없음')
 if (errors.length || failures) process.exit(1)
 console.log('모든 사용자 흐름 통과')

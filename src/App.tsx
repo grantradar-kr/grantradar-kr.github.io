@@ -43,24 +43,26 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
-function parseHash(): { route: Route; policyId: string | null; guideSlug: string | null; calcKey: CalcKey | null } {
+function parseHash(): { route: Route; policyId: string | null; guideSlug: string | null; calcKey: CalcKey | null; openOnboarding: boolean } {
   const raw = window.location.hash.replace(/^#\/?/, '')
   const [head, ...rest] = raw.split('/')
   if (head === 'policy' && rest.length)
-    return { route: 'home', policyId: decodeURIComponent(rest.join('/')), guideSlug: null, calcKey: null }
+    return { route: 'home', policyId: decodeURIComponent(rest.join('/')), guideSlug: null, calcKey: null, openOnboarding: false }
+  if (head === 'onboarding')
+    return { route: 'home', policyId: null, guideSlug: null, calcKey: null, openOnboarding: true }
   if (head === 'guides') {
     const slug = rest.length ? decodeURIComponent(rest.join('/')) : null
-    return { route: 'guides', policyId: null, guideSlug: slug, calcKey: null }
+    return { route: 'guides', policyId: null, guideSlug: slug, calcKey: null, openOnboarding: false }
   }
   if (head === 'calculators') {
     const slug = rest.length ? decodeURIComponent(rest.join('/')) : ''
     const match = CALCULATORS.find((item) => item.key === slug)
-    return { route: 'calculators', policyId: null, guideSlug: null, calcKey: match ? match.key : null }
+    return { route: 'calculators', policyId: null, guideSlug: null, calcKey: match ? match.key : null, openOnboarding: false }
   }
-  if (head === 'about') return { route: 'about', policyId: null, guideSlug: null, calcKey: null }
+  if (head === 'about') return { route: 'about', policyId: null, guideSlug: null, calcKey: null, openOnboarding: false }
   if (head === 'browse' || head === 'saved' || head === 'settings')
-    return { route: head, policyId: null, guideSlug: null, calcKey: null }
-  return { route: 'home', policyId: null, guideSlug: null, calcKey: null }
+    return { route: head, policyId: null, guideSlug: null, calcKey: null, openOnboarding: false }
+  return { route: 'home', policyId: null, guideSlug: null, calcKey: null, openOnboarding: false }
 }
 
 export default function App() {
@@ -78,7 +80,7 @@ export default function App() {
   const [guideSlug, setGuideSlug] = useState<string | null>(() => parseHash().guideSlug)
   const [calcKey, setCalcKey] = useState<CalcKey | null>(() => parseHash().calcKey)
 
-  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(() => parseHash().openOnboarding)
   const [showAuth, setShowAuth] = useState(false)
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin')
   const [legal, setLegal] = useState<LegalKind | null>(null)
@@ -130,6 +132,8 @@ export default function App() {
       setGuideSlug(parsed.guideSlug)
       setCalcKey(parsed.calcKey)
       setDetailId(parsed.policyId)
+      // #/onboarding — 정적 페이지의 '보조금 찾기' 링크가 조건 선택 창을 바로 띄운다
+      if (parsed.openOnboarding) setShowOnboarding(true)
     }
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
@@ -241,10 +245,18 @@ export default function App() {
     window.location.hash = `#/${routeRef.current}`
   }
 
+  const leaveOnboardingHash = () => {
+    // #/onboarding 로 진입한 경우 닫은 뒤 해시를 정리해 재열림을 막는다
+    if (window.location.hash.startsWith('#/onboarding')) {
+      window.location.hash = '#/home'
+    }
+  }
+
   const handleSaveProfile = (next: Profile) => {
     setProfile(next)
     saveProfile(next)
     setShowOnboarding(false)
+    leaveOnboardingHash()
     notify('내 조건을 저장했어요. 추천을 다시 계산했습니다.')
   }
 
@@ -287,6 +299,7 @@ export default function App() {
 
   const dismissOnboarding = () => {
     setShowOnboarding(false)
+    leaveOnboardingHash()
     setSettings((prev) => {
       const next = { ...prev, hideOnboarding: true }
       saveSettings(next)
