@@ -1,12 +1,12 @@
 {
  "app": "보조금 레이더",
  "app_en": "GrantRadar KR",
- "generated_at": "2026-11-21T08:25:02+09:00",
- "started_at": "2026-11-21T08:24:41+09:00",
+ "generated_at": "2026-11-21T18:55:27+09:00",
+ "started_at": "2026-11-21T18:40:00+09:00",
  "today": "2026-11-21",
  "total": 17015,
- "raw_total": 17015,
- "expired_filtered": 0,
+ "raw_total": 20628,
+ "expired_filtered": 2085,
  "by_source": {
   "youthcenter": 2315,
   "bizinfo": 120,
@@ -88,48 +88,40 @@
   {
    "source": "youthcenter",
    "ok": true,
-   "count": 2315,
+   "count": 3942,
    "cached": false,
-   "elapsed_sec": 0,
-   "preserved": true,
-   "note": "이번 실행에서 수집하지 않아 기존 데이터 유지"
+   "elapsed_sec": 45.17
   },
   {
    "source": "bokjiro",
    "ok": true,
-   "count": 4332,
+   "count": 5629,
    "cached": false,
-   "elapsed_sec": 0,
-   "preserved": true,
-   "note": "이번 실행에서 수집하지 않아 기존 데이터 유지"
+   "elapsed_sec": 750.66
   },
   {
    "source": "bizinfo",
    "ok": true,
    "count": 120,
    "cached": false,
-   "elapsed_sec": 19.8
+   "elapsed_sec": 30.63
   },
   {
    "source": "kstartup",
    "ok": true,
    "count": 45,
    "cached": false,
-   "elapsed_sec": 0,
-   "preserved": true,
-   "note": "이번 실행에서 수집하지 않아 기존 데이터 유지"
+   "elapsed_sec": 6.81
   },
   {
    "source": "gov24",
    "ok": true,
-   "count": 10203,
+   "count": 10892,
    "cached": false,
-   "elapsed_sec": 0,
-   "preserved": true,
-   "note": "이번 실행에서 수집하지 않아 기존 데이터 유지"
+   "elapsed_sec": 92.48
   }
  ],
- "elapsed_sec": 20.69,
+ "elapsed_sec": 926.74,
  "data_bytes": 13521718,
  "license": "공공데이터포털·온통청년·복지로·기업마당·K-Startup 공개 데이터 기반 (민간 정보 매칭 서비스)"
 }
