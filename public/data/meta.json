@@ -1,12 +1,12 @@
 {
  "app": "보조금 레이더",
  "app_en": "GrantRadar KR",
- "generated_at": "2026-11-22T06:42:48+09:00",
- "started_at": "2026-11-22T06:28:18+09:00",
+ "generated_at": "2026-11-22T18:53:11+09:00",
+ "started_at": "2026-11-22T18:40:22+09:00",
  "today": "2026-11-22",
  "total": 17014,
  "raw_total": 20629,
- "expired_filtered": 2088,
+ "expired_filtered": 2087,
  "by_source": {
   "bizinfo": 120,
   "kstartup": 45,
@@ -59,8 +59,8 @@
    "housing": 1614
   },
   "regions": {
-   "전국": 3124,
-   "경기": 1847,
+   "전국": 3125,
+   "경기": 1846,
    "전남": 1720,
    "서울": 1323,
    "충남": 1141,
@@ -80,7 +80,7 @@
   }
  },
  "counts": {
-  "urgent7": 67,
+  "urgent7": 66,
   "always": 16388,
   "with_apply_url": 1994
  },
@@ -90,38 +90,38 @@
    "ok": true,
    "count": 3942,
    "cached": false,
-   "elapsed_sec": 39.92
+   "elapsed_sec": 36.27
   },
   {
    "source": "bokjiro",
    "ok": true,
    "count": 5629,
    "cached": false,
-   "elapsed_sec": 701.32
+   "elapsed_sec": 624.62
   },
   {
    "source": "bizinfo",
    "ok": true,
    "count": 120,
    "cached": false,
-   "elapsed_sec": 28.52
+   "elapsed_sec": 24.0
   },
   {
    "source": "kstartup",
    "ok": true,
    "count": 45,
    "cached": false,
-   "elapsed_sec": 6.62
+   "elapsed_sec": 5.59
   },
   {
    "source": "gov24",
    "ok": true,
    "count": 10893,
    "cached": false,
-   "elapsed_sec": 92.5
+   "elapsed_sec": 78.16
   }
  ],
- "elapsed_sec": 869.83,
- "data_bytes": 13520496,
+ "elapsed_sec": 769.41,
+ "data_bytes": 13520457,
  "license": "공공데이터포털·온통청년·복지로·기업마당·K-Startup 공개 데이터 기반 (민간 정보 매칭 서비스)"
 }
