@@ -189,7 +189,7 @@ check('가이드 표·출처 노출', bodyText().includes('가구원 수별 기�
 window.location.hash = '#/about'
 window.dispatchEvent(new window.Event('hashchange'))
 await sleep(600)
-check('서비스 소개', bodyText().includes('보조금 레이더는 이렇게 만들어집니다') && bodyText().includes('sasolution.edu@gmail.com'))
+check('서비스 소개', bodyText().includes('보조금 레이더는 이렇게 만들어집니다') && bodyText().includes('eldbs9180@gmail.com'))
 
 // 12) 광고: 설정 토글 없음 / 슬롯 ID 미설정 시 <ins> 미렌더
 window.location.hash = '#/settings'

@@ -172,7 +172,7 @@ function GuideArticle({ guide, onBackToGuides, onOpenGuide, onGoHome }: Props & 
           </ul>
           <p className="mt-2 text-[11px] leading-relaxed text-ink-300">
             이 글은 {updatedLabel(guide.updated)} 기준으로 작성했습니다. 제도와 금액은 이후 바뀔 수 있으니, 신청 전에는 공고 원문과
-            담당 기관 안내를 확인하세요. 오류 제보는 sasolution.edu@gmail.com 으로 보내 주시면 확인 후 수정합니다.
+            담당 기관 안내를 확인하세요. 오류 제보는 eldbs9180@gmail.com 으로 보내 주시면 확인 후 수정합니다.
           </p>
         </section>
       ) : null}

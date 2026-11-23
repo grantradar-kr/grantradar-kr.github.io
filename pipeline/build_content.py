@@ -35,7 +35,7 @@ KST = timezone(timedelta(hours=9))
 
 BRAND = "보조금 레이더"
 BRAND_EN = "GrantRadar KR"
-CONTACT = "sasolution.edu@gmail.com"
+CONTACT = "eldbs9180@gmail.com"
 # 공개 게시자 ID (ads.txt·소유권 확인용). VITE_ADSENSE_CLIENT 가 있으면 그 값을 쓴다.
 ADSENSE_CLIENT = (os.environ.get("VITE_ADSENSE_CLIENT") or "").strip() or "ca-pub-3631676636047500"
 ADSENSE_PUB = ADSENSE_CLIENT[3:] if ADSENSE_CLIENT.startswith("ca-") else ADSENSE_CLIENT

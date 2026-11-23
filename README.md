@@ -283,7 +283,7 @@ AdSense 심사에서 문제가 되는 ‘목록·외부 링크 위주’ 구성�
 - [ ] 첫 배포 후 `public/data/policies.json` 이 최신인지 확인 (`meta.json` 의 `generated_at`)
 - [ ] `update-policies.yml` 수동 1회 실행해 커밋·재배포가 도는지 확인
 - [ ] Supabase 프로젝트 생성 후 `schema.sql` 실행, 이메일 인증 정책 결정
-- [x] 개인정보처리방침 문의 이메일(`sasolution.edu@gmail.com`) 교체
+- [x] 개인정보처리방침 문의 이메일(`eldbs9180@gmail.com`) 교체
 - [ ] AdSense 신청 전 개인정보·약관 페이지 링크 확인 (설정 → 약관)
 - [ ] Play Console / App Store Connect 앱 등록, 스크린샷·개인정보 보호 양식 작성
 

@@ -263,7 +263,7 @@ export default function PolicyDetailModal({
               정보 기준 {relativeUpdated(policy.posted_at) || '공고 원문 참조'} · 출처 {sourceLabel(policy.source)}
             </p>
             <a
-              href={`mailto:sasolution.edu@gmail.com?subject=${encodeURIComponent(`[보조금 레이더] 정보 오류 제보 - ${policy.title}`)}&body=${encodeURIComponent(`공고: ${policy.title}\n링크: ${policy.url}\n\n수정이 필요한 내용: `)}`}
+              href={`mailto:eldbs9180@gmail.com?subject=${encodeURIComponent(`[보조금 레이더] 정보 오류 제보 - ${policy.title}`)}&body=${encodeURIComponent(`공고: ${policy.title}\n링크: ${policy.url}\n\n수정이 필요한 내용: `)}`}
               className="mt-2 inline-block text-[11.5px] font-bold text-brand-700 hover:underline"
             >
               정보가 달라요 · 오류 제보하기

@@ -437,7 +437,7 @@ export default function App() {
             </a>
           </div>
           <p className="mt-2 text-ink-300">
-            문의 <a href="mailto:sasolution.edu@gmail.com" className="underline hover:text-brand-700">sasolution.edu@gmail.com</a>
+            문의 <a href="mailto:eldbs9180@gmail.com" className="underline hover:text-brand-700">eldbs9180@gmail.com</a>
           </p>
         </footer>
       </main>
