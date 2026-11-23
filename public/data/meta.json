@@ -1,18 +1,18 @@
 {
  "app": "보조금 레이더",
  "app_en": "GrantRadar KR",
- "generated_at": "2026-11-23T19:19:44+09:00",
- "started_at": "2026-11-23T19:04:05+09:00",
- "today": "2026-11-23",
- "total": 17015,
- "raw_total": 20630,
- "expired_filtered": 2087,
+ "generated_at": "2026-11-24T06:53:39+09:00",
+ "started_at": "2026-11-24T06:39:51+09:00",
+ "today": "2026-11-24",
+ "total": 17016,
+ "raw_total": 20631,
+ "expired_filtered": 2095,
  "by_source": {
-  "kstartup": 45,
   "bizinfo": 120,
-  "gov24": 10204,
+  "kstartup": 45,
   "youthcenter": 2314,
-  "bokjiro": 4332
+  "bokjiro": 4332,
+  "gov24": 10205
  },
  "source_labels": {
   "youthcenter": "온통청년",
@@ -25,63 +25,63 @@
   "life_stages": {
    "youth": 3986,
    "infant": 3574,
-   "student": 3362,
-   "senior": 2804,
-   "middle": 927
+   "student": 3363,
+   "senior": 2805,
+   "middle": 928
   },
   "jobs": {
-   "student": 2157,
-   "jobseeker": 1943,
+   "student": 2156,
+   "jobseeker": 1945,
    "self_employed": 1473,
-   "employee": 1008,
+   "employee": 1009,
    "pre_founder": 803,
    "artist": 739,
    "freelancer": 636
   },
   "households": {
-   "low_income": 3892,
-   "married": 3510,
-   "disabled": 3311,
+   "low_income": 3890,
+   "married": 3511,
+   "disabled": 3310,
    "single": 2529,
    "pregnant": 1801,
-   "single_parent": 1228,
-   "multi_child": 943,
+   "single_parent": 1227,
+   "multi_child": 942,
    "homeless": 657
   },
   "domains": {
    "finance": 9254,
    "education": 3963,
-   "medical": 3730,
-   "employment": 3035,
+   "medical": 3731,
+   "employment": 3037,
    "childcare": 2801,
-   "senior_welfare": 2531,
-   "business": 2082,
+   "senior_welfare": 2532,
+   "business": 2081,
    "housing": 1614
   },
   "regions": {
-   "전국": 3135,
+   "전국": 3134,
    "경기": 1847,
-   "전남": 1715,
+   "전남": 1716,
    "서울": 1320,
-   "충남": 1142,
+   "충남": 1144,
    "경북": 1141,
-   "경남": 1138,
+   "경남": 1139,
    "전북": 1055,
-   "강원": 849,
+   "강원": 846,
    "충북": 829,
    "인천": 665,
-   "부산": 630,
+   "부산": 631,
    "울산": 441,
    "대구": 392,
    "제주": 368,
    "대전": 210,
    "세종": 173,
-   "광주": 148
+   "광주": 149
   }
  },
  "counts": {
-  "urgent7": 137,
-  "always": 16387,
+  "urgent7": 144,
+  "always": 16390,
   "with_apply_url": 1994
  },
  "sources": [
@@ -90,38 +90,38 @@
    "ok": true,
    "count": 3942,
    "cached": false,
-   "elapsed_sec": 43.6
+   "elapsed_sec": 40.72
   },
   {
    "source": "bokjiro",
    "ok": true,
    "count": 5629,
    "cached": false,
-   "elapsed_sec": 764.22
+   "elapsed_sec": 663.98
   },
   {
    "source": "bizinfo",
    "ok": true,
    "count": 120,
    "cached": false,
-   "elapsed_sec": 29.01
+   "elapsed_sec": 26.0
   },
   {
    "source": "kstartup",
    "ok": true,
    "count": 45,
    "cached": false,
-   "elapsed_sec": 6.88
+   "elapsed_sec": 4.9
   },
   {
    "source": "gov24",
    "ok": true,
-   "count": 10894,
+   "count": 10895,
    "cached": false,
-   "elapsed_sec": 95.19
+   "elapsed_sec": 90.88
   }
  ],
- "elapsed_sec": 939.91,
- "data_bytes": 13521538,
+ "elapsed_sec": 827.48,
+ "data_bytes": 13522645,
  "license": "공공데이터포털·온통청년·복지로·기업마당·K-Startup 공개 데이터 기반 (민간 정보 매칭 서비스)"
 }
