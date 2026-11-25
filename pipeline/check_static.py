@@ -305,7 +305,7 @@ def check_content() -> None:
     notes.append(f"콘텐츠 검사 완료 — 가이드 {len(guides)}편")
 
 
-CALCULATOR_SLUGS = ["median-income", "unemployment-benefit", "eitc"]
+CALCULATOR_SLUGS = ["median-income", "unemployment-benefit", "eitc", "monthly-rent"]
 DISCLAIMER_MARK = "본 계산 결과는 2026년 고시 기준 참고용 모의계산"
 
 HUB_SLUGS = [
@@ -344,7 +344,7 @@ def check_hubs() -> None:
 
 
 def check_calculators() -> None:
-    """모의계산기 정적 페이지(허브 + 3종)가 계산 UI·구조화 데이터·고지와 함께 생성되었는지 확인한다."""
+    """모의계산기 정적 페이지(허브 + 4종)가 계산 UI·구조화 데이터·고지와 함께 생성되었는지 확인한다."""
     calc_dir = PUBLIC / "calculators"
     if not calc_dir.exists():
         fail("public/calculators 없음 — build_content.py 를 실행하세요")

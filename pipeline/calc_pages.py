@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""정적 모의계산기 페이지(허브 + 3종)의 본문·스크립트.
+"""정적 모의계산기 페이지(허브 + 4종)의 본문·스크립트.
 
 build_content.py 가 page() 틀과 JSON-LD 를 붙여 public/calculators/*.html 로 저장한다.
 계산 기준값은 src/lib/calculators.ts 와 동일하게 유지한다(2026-11-21 확인).
@@ -177,10 +177,45 @@ calcBind(['et-type','et-income','et-children','et-asset'],run);
 })();
 """
 
+RENT_JS = """
+(function(){
+var LIMIT=10000000, HIGH=55000000, CAP=80000000, STANDARD=130000;
+function run(){
+  var salary=calcNum('mr-salary');
+  var rent=calcNum('mr-rent');
+  var months=Math.min(12,Math.max(0,calcNum('mr-months')));
+  var other=document.getElementById('mr-other').checked;
+  var paid=rent*months;
+  var base=Math.min(paid,LIMIT);
+  var over=salary>CAP;
+  var rate=over?0:(salary<=HIGH&&!other?0.17:0.15);
+  var credit=Math.round(base*rate);
+  var withLocal=Math.round(credit*1.1);
+  var rateTxt=over?'대상 아님':(rate===0.17?'17%':'15%');
+  var rows='';
+  rows+='<li><span class="lb">공제 대상 월세 <em>연 1,000만 원 한도</em></span><b>'+calcWon(base)+'</b><span class="df">납부 '+calcWon(paid).replace('원','')+'</span></li>';
+  rows+='<li><span class="lb">세액공제액 <em>월세의 '+rateTxt+'</em></span><b>'+calcWon(credit)+'</b><span class="df"></span></li>';
+  rows+='<li><span class="lb">지방소득세 포함 <em>소득세의 10%</em></span><b>'+calcWon(withLocal)+'</b><span class="df"></span></li>';
+  rows+='<li><span class="'+(credit>STANDARD?'ok':'no')+'">'+(credit>STANDARD?'유리':'비교')+'</span><span class="lb">표준세액공제 <em>13만 원</em></span><b>'+calcWon(STANDARD)+'</b><span class="df">'+(credit>STANDARD?'+'+calcWon(credit-STANDARD).replace('원',''):'')+'</span></li>';
+  var sum = over
+    ? '총급여가 8,000만 원을 넘어 월세 세액공제 대상이 아닙니다. 부양가족 공제와 신용카드 소득공제를 먼저 확인해 보세요.'
+    : (credit>STANDARD
+      ? '표준세액공제(13만 원)보다 '+calcWon(credit-STANDARD)+' 유리합니다. 다만 결정세액이 '+calcWon(credit)+'보다 적으면 그만큼만 공제됩니다.'
+      : '공제액이 표준세액공제 13만 원보다 적습니다. 특별세액공제를 포기하고 표준세액공제를 받는 편이 유리할 수 있습니다.');
+  document.getElementById('mr-out').innerHTML=
+    '<div class="head"><span>2026년 귀속 예상 세액공제</span><strong class="big">'+calcWon(credit)+'</strong>'+
+    '<span class="sub">월세의 '+rateTxt+' · 지방소득세 포함 '+calcWon(withLocal)+'</span></div>'+
+    '<ul>'+rows+'</ul><p class="sum">'+sum+'</p>';
+}
+calcBind(['mr-salary','mr-rent','mr-months','mr-other'],run);
+})();
+"""
+
 JS_BY_SLUG = {
     "median-income": MEDIAN_JS,
     "unemployment-benefit": UNEMPLOYMENT_JS,
     "eitc": EITC_JS,
+    "monthly-rent": RENT_JS,
 }
 
 # 계산기 페이지에서 연결하는 가이드 제목(정적 링크 텍스트용)
@@ -191,6 +226,8 @@ GUIDE_TITLES = {
     "national-employment-support": "2026 국민취업지원제도 구직촉진수당",
     "earned-income-tax-credit": "2026 근로장려금·자녀장려금 총정리",
     "rejection-reasons": "지원금 신청이 탈락하는 10가지 이유",
+    "monthly-rent-tax-credit": "월세 세액공제 17%·15% 조건과 최대 170만 원",
+    "year-end-tax-refund": "연말정산 환급금, 언제·얼마 들어오나",
 }
 
 
@@ -281,6 +318,19 @@ SCHEDULE_TABLE = """
 </tbody></table>
 """
 
+RENT_TABLE = """
+<table><caption>월세별 예상 세액공제액 (12개월 납부·요건 충족 가정)</caption>
+<thead><tr><th>월세</th><th>연간 월세</th><th>17% 적용</th><th>15% 적용</th></tr></thead>
+<tbody>
+<tr><td>40만 원</td><td>480만 원</td><td>81만 6,000원</td><td>72만 원</td></tr>
+<tr><td>50만 원</td><td>600만 원</td><td>102만 원</td><td>90만 원</td></tr>
+<tr><td>70만 원</td><td>840만 원</td><td>142만 8,000원</td><td>126만 원</td></tr>
+<tr><td>80만 원</td><td>960만 원</td><td>163만 2,000원</td><td>144만 원</td></tr>
+<tr><td>100만 원</td><td>1,200만 원 → 1,000만 원</td><td>170만 원</td><td>150만 원</td></tr>
+</tbody></table>
+<p class="note">공제 대상 월세는 연 1,000만 원까지입니다. 관리비·보증금은 월세액에 포함되지 않으며, 중간에 이사했다면 집마다 실제로 낸 월세를 합산합니다.</p>
+"""
+
 # ------------------------------------------------------------------ 페이지 정의
 CALC_META: dict[str, dict] = {
     "median-income": {
@@ -315,6 +365,17 @@ CALC_META: dict[str, dict] = {
         "related_guides": ["earned-income-tax-credit", "rejection-reasons"],
         "related_hubs": [("finance", "생활·금융·긴급복지"), ("self-employed", "자영업·소상공인 지원금")],
         "app": "#/calculators/eitc",
+    },
+    "monthly-rent": {
+        "slug": "monthly-rent",
+        "title": "월세 세액공제 계산기 2026 — 17%·15% 예상 공제액 | 보조금 레이더",
+        "h1": "월세 세액공제 계산기 — 내 월세로 연말정산 공제액 계산",
+        "description": "총급여와 월세·납부 개월을 넣으면 2026년 귀속 월세 세액공제액을 17%·15%로 계산합니다. 연 1,000만 원 한도와 표준세액공제 13만 원 비교까지 한 번에 확인하세요.",
+        "keyword": "월세 세액공제 계산기, 월세 17% 15%, 연말정산 월세 공제, 월세 1000만원 한도",
+        "short": "월세 세액공제",
+        "related_guides": ["monthly-rent-tax-credit", "year-end-tax-refund"],
+        "related_hubs": [("housing", "주거 보조금 모음"), ("finance", "생활·금융·긴급복지")],
+        "app": "#/calculators/monthly-rent",
     },
 }
 
@@ -371,6 +432,24 @@ CALC_FAQS: dict[str, list[dict]] = {
         {
             "q": "재산이 1억 7,000만 원을 넘으면 얼마나 줄어드나요?",
             "a": "산정된 지급액의 50%만 지급됩니다. 2억 4,000만 원 이상이면 아예 대상에서 제외됩니다. 재산은 2025년 6월 1일 기준으로 가구원 전체 합계를 보며, 전세보증금 반환 채무나 담보대출 같은 부채는 차감하지 않습니다.",
+        },
+    ],
+    "monthly-rent": [
+        {
+            "q": "월세 1,000만 원을 다 돌려받는 건가요?",
+            "a": "아닙니다. 1,000만 원은 공제 대상 월세의 상한일 뿐이고, 실제로 돌려받는 금액은 공제 대상 월세에 공제율을 곱한 값입니다. 월세 1,000만 원에 17%를 적용하면 170만 원, 15%면 150만 원이 최대 공제액입니다.",
+        },
+        {
+            "q": "공제율 17%와 15%는 무엇으로 갈리나요?",
+            "a": "본인의 총급여와 종합소득금액으로 갈립니다. 총급여 5,500만 원 이하이면서 종합소득금액이 4,500만 원 이하이면 17%, 총급여 8,000만 원 이하(종합소득금액 7,000만 원 이하)이면 15%입니다. 총급여 8,000만 원을 넘거나 종합소득금액이 7,000만 원을 넘으면 대상이 아닙니다. 배우자 소득은 합산하지 않습니다.",
+        },
+        {
+            "q": "결정세액이 적으면 어떻게 되나요?",
+            "a": "세액공제는 낼 세금에서 빼 주는 제도라, 결정세액이 공제액보다 적으면 남는 금액은 사라집니다. 현금으로 돌려받는 것이 아니므로, 원천징수영수증의 결정세액이 0원이라면 공제를 더 챙겨도 환급은 늘지 않습니다.",
+        },
+        {
+            "q": "관리비와 보증금도 공제 대상인가요?",
+            "a": "아닙니다. 임대인에게 실제로 지급한 월세만 대상이고, 관리비·공과금·임차보증금은 포함되지 않습니다. 계약서에 월세와 관리비가 구분돼 있으면 월세로 적힌 금액만 계산합니다.",
         },
     ],
 }
@@ -439,6 +518,26 @@ def _calculator_form(slug: str) -> str:
 </form>
 {_script(slug)}
 """
+    if slug == "monthly-rent":
+        return f"""
+<form class="calc" id="mr-form" onsubmit="return false">
+  <h2>🏠 내 월세로 계산하기</h2>
+  <div class="calcrow">
+    <label>총급여 (연, 원)<span class="hint">비과세 소득 제외 · 5,500만 원 이하면 17%</span>
+      <input type="number" id="mr-salary" value="48000000" min="0" step="1000000" inputmode="numeric" /></label>
+    <label>월세 (월, 원)<span class="hint">관리비·보증금 제외, 실제 지급한 월세</span>
+      <input type="number" id="mr-rent" value="700000" min="0" step="10000" inputmode="numeric" /></label>
+    <label>납부 개월 수<span class="hint">그해 실제로 월세를 낸 달만 (최대 12개월)</span>
+      <input type="number" id="mr-months" value="12" min="1" max="12" step="1" inputmode="numeric" /></label>
+  </div>
+  <label class="chk"><input type="checkbox" id="mr-other" /> 종합소득금액 4,500만 원 초과 (17% 구간에서 제외)</label>
+  <div class="out" id="mr-out"></div>
+  <p class="calcnote">{DISCLAIMER}<br />
+  무주택 세대주(요건을 갖춘 세대원·배우자 포함)만 대상이며, 12월 31일 기준 무주택이어야 합니다. 공제 대상 주택은 국민주택규모
+  85㎡ 이하 또는 기준시가 4억 원 이하이고, 주민등록표 주소와 임대차계약서 주소가 같아야 합니다.</p>
+</form>
+{_script(slug)}
+"""
     return f"""
 <form class="calc" id="et-form" onsubmit="return false">
   <h2>💸 내 조건으로 계산하기</h2>
@@ -487,7 +586,7 @@ def calc_body(slug: str) -> str:
     faqs = CALC_FAQS[slug]
     dl = "".join(f"<dt>Q. {item['q']}</dt><dd>{item['a']}</dd>" for item in faqs)
     head = (
-        '<p><a href="./">← 계산기 3종</a></p>'
+        '<p><a href="./">← 계산기 4종</a></p>'
         '<p><span class="cat">모의계산기</span></p>'
         f"<h1>{meta['h1']}</h1>"
         f'<p class="lead">{meta["description"]}</p>'
@@ -535,6 +634,23 @@ def calc_body(slug: str) -> str:
             "<h2>계산 예시</h2>"
             "<p>만 34세, 가입기간 4년, 평균 월급 300만 원이라면 기초일액 10만 원의 60%는 6만 원이지만 하한액 66,048원이 적용됩니다. 소정급여일수는 180일이므로 총 11,888,640원, 월 환산 1,981,440원입니다. 같은 조건에서 월급이 450만 원이면 상한액 68,100원이 적용되어 총 12,258,000원으로, 차이는 37만 원 남짓입니다.</p>"
         )
+    elif slug == "monthly-rent":
+        mid = (
+            "<h2>2026년 귀속 월세 세액공제 기준</h2>"
+            + RENT_TABLE
+            + "<h2>요건은 소득·세대·주택 세 가지를 함께 본다</h2>"
+            "<ul>"
+            "<li>소득 — 총급여 8,000만 원 이하(종합소득금액 7,000만 원 초과자 제외). 17%는 총급여 5,500만 원 이하이면서 종합소득금액 4,500만 원 이하</li>"
+            "<li>세대 — 12월 31일 현재 무주택 세대의 세대주. 세대주가 주택 관련 공제를 받지 않으면 세대원도 가능</li>"
+            "<li>주택 — 국민주택규모(85㎡, 수도권·도시지역 외 100㎡) 이하 또는 기준시가 4억 원 이하. 주거용 오피스텔·고시원 포함</li>"
+            "<li>거주 — 본인 또는 기본공제 대상자 명의로 임차하고, 임대차계약서 주소와 주민등록표 주소가 같아야(전입신고 필요)</li>"
+            "</ul>"
+            "<h2>표준세액공제와 비교해야 하는 이유</h2>"
+            "<p>특별세액공제·월세 세액공제를 하나도 신청하지 않은 근로자에게는 표준세액공제 13만 원이 자동으로 적용됩니다. 계산된 월세 세액공제가 13만 원보다 적다면, 월세 공제를 신청하는 대신 표준세액공제를 받는 편이 유리합니다. 이 계산기는 두 금액을 함께 보여 줍니다.</p>"
+            "<h2>놓쳤다면 5년 안에 돌려받을 수 있다</h2>"
+            "<p>연말정산 때 서류를 내지 못했더라도 5월 종합소득세 신고 기간에 경정청구하거나, 홈택스 '종합소득세 신고 → 경정청구'에서 신청할 수 있습니다. 주민등록표등본, 임대차계약증서 사본, 계좌이체 영수증 같은 지급 증빙을 준비하세요.</p>"
+            '<p class="note">2026년 8월 세제개편안에는 공제 대상 월세 한도를 1,200만 원으로 올리고 청년에게 17%를 적용하는 안이 담겼지만, 국회 심의 중인 개정안이므로 이 계산기에는 반영하지 않았습니다.</p>'
+        )
     else:
         mid = (
             "<h2>2026년 신청분(2025년 귀속) 소득요건과 최대 지급액</h2>"
@@ -563,7 +679,7 @@ def hub_body() -> str:
     return (
         '<p><a href="../index.html">← 보조금 레이더 홈</a></p>'
         '<p><span class="cat">Calculators</span></p>'
-        "<h1>보조금 모의계산기 3종</h1>"
+        "<h1>보조금 모의계산기 4종</h1>"
         '<p class="lead">내 숫자를 넣으면 얼마를 받을 수 있는지 바로 확인하는 계산기입니다. 로그인·회원가입 없이 쓸 수 있고, '
         '입력값은 서버로 전송되지 않습니다. 모든 결과는 2026년 고시 기준 참고용이며 최종 판정은 담당 기관 심사로 확정됩니다.</p>'
         f'<div class="grid">{"".join(cards)}</div>'
@@ -573,13 +689,15 @@ def hub_body() -> str:
         "<li>기본재산액 — 대도시 1억 3,500만 원 · 중소도시 8,500만 원 · 농어촌 7,250만 원</li>"
         "<li>구직급여 — 상한 1일 68,100원 · 하한 최저임금 10,320원의 80%(8시간 기준 66,048원)</li>"
         "<li>근로장려금 — 최대 단독 165만 · 홑벌이 285만 · 맞벌이 330만 원(2025년 귀속)</li>"
+        "<li>월세 세액공제 — 한도 연 1,000만 원 · 17%(총급여 5,500만 원 이하) 또는 15%</li>"
         "</ul>"
         "<h2>계산기별로 알 수 있는 것</h2>"
-        "<table><caption>세 계산기의 입력과 결과</caption>"
+        "<table><caption>네 계산기의 입력과 결과</caption>"
         "<thead><tr><th>계산기</th><th>입력</th><th>결과</th></tr></thead><tbody>"
         "<tr><td>기준중위소득</td><td>가구원 수·월 소득·재산·지역</td><td>중위 대비 %, 급여별 기준선 통과 여부</td></tr>"
         "<tr><td>실업급여</td><td>평균 월급·나이·가입기간·근로시간</td><td>1일 급여(상·하한 적용), 소정급여일수, 총액</td></tr>"
         "<tr><td>근로·자녀장려금</td><td>가구 유형·총급여·자녀 수·재산 구간</td><td>예상 지급액, 재산 감액, 기한 후 신청액</td></tr>"
+        "<tr><td>월세 세액공제</td><td>총급여·월세·납부 개월</td><td>17%·15% 공제액, 표준세액공제 비교</td></tr>"
         "</tbody></table>"
         f'<p class="note">{DISCLAIMER}</p>'
         '<div class="cta"><strong>계산 결과를 들고 공고를 확인하세요</strong>'
@@ -591,6 +709,7 @@ def hub_body() -> str:
         '<a href="../guides/unemployment-benefit.html">실업급여 조건·절차</a>'
         '<a href="../guides/earned-income-tax-credit.html">근로·자녀장려금 총정리</a>'
         '<a href="../guides/health-insurance-refund.html">본인부담상한제 환급</a>'
+        '<a href="../guides/monthly-rent-tax-credit.html">월세 세액공제 17%·15%</a>'
         '<a href="../categories/">분야·대상별 보조금</a>'
         "</div>"
     )

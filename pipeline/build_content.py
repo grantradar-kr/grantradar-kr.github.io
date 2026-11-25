@@ -390,7 +390,7 @@ HUBS: list[dict] = [
             "전세자금 대출은 보증기관(주택도시보증공사·한국주택금융공사) 심사를 함께 거칩니다.",
             "접수 기간이 짧은 사업이 많으므로 마감 임박 표시를 보고 예산 소진 전에 신청하세요.",
         ],
-        "guides": ["housing-benefits", "median-income", "duplicate-benefits"],
+        "guides": ["monthly-rent-tax-credit", "housing-benefits", "median-income"],
     },
     {
         "slug": "finance",
@@ -411,7 +411,7 @@ HUBS: list[dict] = [
             "생계급여는 소득인정액이 기준중위소득 32% 이하일 때 지급됩니다.",
             "같은 목적의 현금 지원은 중복 수령이 제한되니, 이미 받는 급여를 먼저 확인하세요.",
         ],
-        "guides": ["median-income", "duplicate-benefits", "rejection-reasons"],
+        "guides": ["year-end-tax-refund", "median-income", "duplicate-benefits"],
     },
     {
         "slug": "employment",
@@ -600,7 +600,7 @@ HUBS: list[dict] = [
             "차상위 확인서를 받으면 감면·바우처 사업을 추가로 신청할 수 있습니다.",
             "소득·재산 변동이 생기면 신고해야 하며, 신고하지 않으면 환수 대상이 됩니다.",
         ],
-        "guides": ["median-income", "duplicate-benefits", "rejection-reasons"],
+        "guides": ["energy-voucher-winter", "median-income", "duplicate-benefits"],
     },
     {
         "slug": "disabled",
@@ -682,7 +682,7 @@ HUBS: list[dict] = [
             "온라인 접수가 막히면 방문 접수 가능 여부를 확인하세요.",
             "마감 하루 전에는 담당자 통화가 어려우니 여유 있게 문의하세요.",
         ],
-        "guides": ["rejection-reasons", "duplicate-benefits", "median-income"],
+        "guides": ["energy-voucher-winter", "rejection-reasons", "duplicate-benefits"],
     },
     {
         "slug": "regions",
@@ -719,8 +719,8 @@ def calculators_hub_page() -> str:
         {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            "name": "보조금 모의계산기 3종",
-            "description": "기준중위소득 판정, 2026 실업급여, 근로·자녀장려금을 로그인 없이 계산하는 무료 모의계산기 모음입니다.",
+            "name": "보조금 모의계산기 4종",
+            "description": "기준중위소득 판정, 2026 실업급여, 근로·자녀장려금, 월세 세액공제를 로그인 없이 계산하는 무료 모의계산기 모음입니다.",
             "url": url,
             "inLanguage": "ko-KR",
             "isPartOf": {"@type": "WebSite", "name": BRAND, "url": f"{SITE}/"},
@@ -737,8 +737,8 @@ def calculators_hub_page() -> str:
         }
     ) + jsonld(breadcrumb_ld([("홈", f"{SITE}/"), ("모의계산기", url)]))
     return page(
-        f"보조금 모의계산기 3종 — 중위소득·실업급여·근로장려금 | {BRAND}",
-        "기준중위소득 판정, 2026 실업급여(구직급여), 근로·자녀장려금을 회원가입 없이 바로 계산하는 무료 모의계산기 모음입니다.",
+        f"보조금 모의계산기 4종 — 중위소득·실업급여·근로장려금·월세 세액공제 | {BRAND}",
+        "기준중위소득 판정, 2026 실업급여(구직급여), 근로·자녀장려금, 월세 세액공제를 회원가입 없이 바로 계산하는 무료 모의계산기 모음입니다.",
         hub_body(),
         "../",
         extra + jsonld_head_css(),
@@ -1249,7 +1249,7 @@ def rss_xml(guides: list[dict], meta: dict, updated: str) -> str:
         )
     items.append(
         "<item>"
-        f"<title>보조금 모의계산기 3종 — 중위소득·실업급여·근로장려금</title>"
+        f"<title>보조금 모의계산기 4종 — 중위소득·실업급여·근로장려금·월세 세액공제</title>"
         f"<link>{esc(SITE + '/calculators/')}</link>"
         f"<guid isPermaLink=\"true\">{esc(SITE + '/calculators/')}</guid>"
         "<category>모의계산기</category>"

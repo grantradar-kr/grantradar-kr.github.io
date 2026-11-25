@@ -312,6 +312,66 @@ export function calcEitc(input: EitcInput): EitcResult {
   }
 }
 
+/* ------------------------------------------------------------------ 4) 월세 세액공제 */
+
+/**
+ * 월세 세액공제 기준 (조세특례제한법 제95조의2, 2026년 귀속)
+ *  · 총급여 8,000만 원 이하(종합소득금액 7,000만 원 초과자 제외)
+ *  · 공제 대상 월세 연 1,000만 원 한도 · 무주택 세대주(요건 충족 시 세대원·배우자)
+ *  · 공제율 — 총급여 5,500만 원 이하(종합소득금액 4,500만 원 이하) 17%, 그 밖 15%
+ *  · 공제액이 표준세액공제 13만 원보다 적으면 표준세액공제가 유리하다
+ */
+export const RENT_CREDIT = {
+  limit: 10000000,
+  rateHigh: 0.17,
+  rateNormal: 0.15,
+  incomeCap: 80000000,
+  highCap: 55000000,
+  standardCredit: 130000,
+  localTaxRate: 0.1,
+} as const
+
+export interface RentCreditInput {
+  totalSalary: number
+  monthlyRent: number
+  months: number
+  /** 종합소득금액 4,500만 원 초과 — 17% 구간에서 제외된다 */
+  highOtherIncome?: boolean
+}
+
+export interface RentCreditResult {
+  overIncome: boolean
+  rate: number
+  rentPaid: number
+  rentBase: number
+  credit: number
+  creditWithLocal: number
+  beatsStandard: boolean
+  monthCount: number
+}
+
+export function calcRentCredit(input: RentCreditInput): RentCreditResult {
+  const salary = Math.max(0, Math.round(input.totalSalary || 0))
+  const monthly = Math.max(0, Math.round(input.monthlyRent || 0))
+  const monthCount = Math.min(12, Math.max(0, Math.floor(input.months || 0)))
+  const overIncome = salary > RENT_CREDIT.incomeCap
+  const rentPaid = monthly * monthCount
+  const rentBase = Math.min(rentPaid, RENT_CREDIT.limit)
+  const highBand = salary <= RENT_CREDIT.highCap && !input.highOtherIncome
+  const rate = overIncome ? 0 : highBand ? RENT_CREDIT.rateHigh : RENT_CREDIT.rateNormal
+  const credit = Math.round(rentBase * rate)
+  return {
+    overIncome,
+    rate,
+    rentPaid,
+    rentBase,
+    credit,
+    creditWithLocal: Math.round(credit * (1 + RENT_CREDIT.localTaxRate)),
+    beatsStandard: credit > RENT_CREDIT.standardCredit,
+    monthCount,
+  }
+}
+
 /* ------------------------------------------------------------------ 표시 도우미 */
 
 export function won(value: number): string {

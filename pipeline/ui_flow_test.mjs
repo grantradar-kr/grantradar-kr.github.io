@@ -198,7 +198,7 @@ await sleep(400)
 check('광고 끄기 토글 제거', !bodyText().includes('광고 표시'))
 check('광고 슬롯 미설정 시 빈 ins 없음', window.document.querySelectorAll('ins.adsbygoogle').length === 0)
 
-// 13) 모의계산기 3종 (로그인 없이 동작)
+// 13) 모의계산기 4종 (로그인 없이 동작)
 window.location.hash = '#/calculators'
 window.dispatchEvent(new window.Event('hashchange'))
 await sleep(500)
@@ -230,6 +230,12 @@ eitcTab?.click()
 await sleep(400)
 check('근로장려금 계산기 열림', bodyText().includes('정기신청 예상 합계'))
 check('기한 후 신청 비교 노출', bodyText().includes('기한 후 신청'))
+
+const rentTab = findButton('월세 공제')
+rentTab?.click()
+await sleep(400)
+check('월세 세액공제 계산기 열림', bodyText().includes('공제 대상 월세') && bodyText().includes('표준세액공제'))
+check('월세 기본 결과(1,428,000원)', bodyText().includes('1,428,000원'))
 
 // 14) 가이드 화면의 계산기 바로가기
 window.location.hash = '#/guides'

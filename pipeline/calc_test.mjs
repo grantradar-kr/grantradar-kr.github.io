@@ -89,7 +89,37 @@ check('재산 2.4억 이상 제외', calc.calcEitc({ household: 'dual', totalInc
 check('단독가구 자녀장려금 0', calc.calcEitc({ household: 'single', totalIncome: 10000000, children: 2, assetBand: 'under' }).regularChild, 0)
 check('자녀장려금 총소득 7,000만 이상 0', calc.calcEitc({ household: 'dual', totalIncome: 70000000, children: 2, assetBand: 'under' }).regularChild, 0)
 
-console.log('\n=== 4) 정적 HTML 인라인 계산기 실측 ===')
+console.log('\n=== 4) 월세 세액공제 ===')
+const r1 = calc.calcRentCredit({ totalSalary: 48000000, monthlyRent: 700000, months: 12 })
+check('17% 구간 판정', r1.rate, 0.17)
+check('연간 월세 840만', r1.rentPaid, 8400000)
+check('공제액 1,428,000', r1.credit, 1428000)
+check('지방소득세 포함 1,570,800', r1.creditWithLocal, 1570800)
+check('표준세액공제보다 유리', r1.beatsStandard, true)
+
+const r2 = calc.calcRentCredit({ totalSalary: 65000000, monthlyRent: 700000, months: 12 })
+check('6,500만은 15%', r2.rate, 0.15)
+check('공제액 1,260,000', r2.credit, 1260000)
+
+const r3 = calc.calcRentCredit({ totalSalary: 50000000, monthlyRent: 1000000, months: 12 })
+check('한도 1,000만 적용', r3.rentBase, 10000000)
+check('최대 공제 1,700,000', r3.credit, 1700000)
+
+const r4 = calc.calcRentCredit({ totalSalary: 50000000, monthlyRent: 300000, months: 6 })
+check('납부 6개월만 계산', r4.rentPaid, 1800000)
+check('18만의 17% = 306,000', r4.credit, 306000)
+
+const r5 = calc.calcRentCredit({ totalSalary: 90000000, monthlyRent: 700000, months: 12 })
+check('총급여 8,000만 초과 → 0원', r5.credit, 0)
+check('초과 판정', r5.overIncome, true)
+
+const r6 = calc.calcRentCredit({ totalSalary: 50000000, monthlyRent: 400000, months: 12, highOtherIncome: true })
+check('종합소득 4,500만 초과 → 15%', r6.rate, 0.15)
+
+const r7 = calc.calcRentCredit({ totalSalary: 40000000, monthlyRent: 50000, months: 12 })
+check('공제액 10만 2천은 표준세액공제보다 불리', r7.beatsStandard, false)
+
+console.log('\n=== 5) 정적 HTML 인라인 계산기 실측 ===')
 const setValue = (window, id, value) => {
   const el = window.document.getElementById(id)
   if (!el) throw new Error(`#${id} 없음`)
@@ -146,6 +176,22 @@ const open = (file) => {
   check('정적 근로장려금: 기한 후 2,755,000원', out.includes('2,755,000원'), true)
   setValue(w, 'et-asset', 'over')
   check('정적 근로장려금: 재산 초과 0원 안내', text(w, 'et-out').includes('0원'), true)
+  w.close()
+}
+
+{
+  const w = open('public/calculators/monthly-rent.html')
+  setValue(w, 'mr-salary', 48000000)
+  setValue(w, 'mr-rent', 700000)
+  setValue(w, 'mr-months', 12)
+  const out = text(w, 'mr-out')
+  check('정적 월세: 17% 적용', out.includes('17%'), true)
+  check('정적 월세: 1,428,000원', out.includes('1,428,000원'), true)
+  check('정적 월세: 지방세 포함 1,570,800원', out.includes('1,570,800원'), true)
+  setValue(w, 'mr-salary', 65000000)
+  check('정적 월세: 15% 전환 1,260,000원', text(w, 'mr-out').includes('1,260,000원'), true)
+  setValue(w, 'mr-salary', 90000000)
+  check('정적 월세: 총급여 초과 안내', text(w, 'mr-out').includes('대상이 아닙니다'), true)
   w.close()
 }
 

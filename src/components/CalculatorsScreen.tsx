@@ -10,8 +10,10 @@ import {
   INSURED_BANDS,
   MEDIAN_THRESHOLDS,
   REGION_LABEL,
+  RENT_CREDIT,
   calcEitc,
   calcMedianIncome,
+  calcRentCredit,
   calcUnemployment,
   manwon,
   percent,
@@ -22,7 +24,7 @@ import {
   type RegionKey,
 } from '../lib/calculators'
 
-export type CalcKey = 'median-income' | 'unemployment-benefit' | 'eitc'
+export type CalcKey = 'median-income' | 'unemployment-benefit' | 'eitc' | 'monthly-rent'
 
 export const CALCULATORS: { key: CalcKey; title: string; short: string; emoji: string; summary: string }[] = [
   {
@@ -46,6 +48,13 @@ export const CALCULATORS: { key: CalcKey; title: string; short: string; emoji: s
     emoji: '💸',
     summary: '가구 유형과 부부합산 총급여, 부양자녀 수, 재산 구간으로 근로·자녀장려금 예상액과 재산 감액·기한 후 5% 감액을 비교합니다.',
   },
+  {
+    key: 'monthly-rent',
+    title: '월세 세액공제 계산기 (2026년 귀속)',
+    short: '월세 공제',
+    emoji: '🏠',
+    summary: '총급여와 월세로 연말정산 세액공제액을 17%·15% 함께 계산하고, 표준세액공제 13만 원과 비교해 유리한 쪽을 보여 줍니다.',
+  },
 ]
 
 const SOURCES: Record<CalcKey, { label: string; url: string }[]> = {
@@ -64,6 +73,11 @@ const SOURCES: Record<CalcKey, { label: string; url: string }[]> = {
     { label: '국세청 보도자료 — 2025년 귀속 신청·기한 후 신청', url: 'https://www.nts.go.kr/nts/na/ntt/selectNttInfo.do?mi=2201&nttSn=1355806' },
     { label: '국세청 홈택스 — 근로·자녀장려금', url: 'https://www.hometax.go.kr/' },
   ],
+  'monthly-rent': [
+    { label: '국세청 — 월세액 세액공제 안내', url: 'https://nts.go.kr/nts/cm/cntnts/cntntsView.do?cntntsId=239025' },
+    { label: '국세청 상담사례 — 월세세액공제 Q&A', url: 'https://call.nts.go.kr/call/qna/selectQnaInfo.do?ctgId=CTG11906&mi=1318' },
+    { label: '국세청 — 연말정산 종합 안내', url: 'https://www.nts.go.kr/nts/cm/cntnts/cntntsView.do?cntntsId=7874&mi=2304' },
+  ],
 }
 
 const RELATED: Record<CalcKey, { slug: string; title: string }[]> = {
@@ -78,6 +92,10 @@ const RELATED: Record<CalcKey, { slug: string; title: string }[]> = {
   eitc: [
     { slug: 'earned-income-tax-credit', title: '2026 근로장려금·자녀장려금 총정리' },
     { slug: 'rejection-reasons', title: '지원금 신청이 탈락하는 10가지 이유' },
+  ],
+  'monthly-rent': [
+    { slug: 'monthly-rent-tax-credit', title: '월세 세액공제 17%·15% 조건' },
+    { slug: 'year-end-tax-refund', title: '연말정산 환급금 언제 들어오나' },
   ],
 }
 
@@ -504,6 +522,95 @@ function EitcCalculator({ onOpenGuide, onGoHome }: { onOpenGuide: (slug: string)
   )
 }
 
+/* ------------------------------------------------------------------ 4) 월세 세액공제 */
+function RentCalculator({ onOpenGuide, onGoHome }: { onOpenGuide: (slug: string) => void; onGoHome: () => void }) {
+  const [salary, setSalary] = useState('48000000')
+  const [rent, setRent] = useState('700000')
+  const [months, setMonths] = useState('12')
+  const [highOtherIncome, setHighOtherIncome] = useState(false)
+
+  const result = useMemo(
+    () =>
+      calcRentCredit({
+        totalSalary: Number(salary || 0),
+        monthlyRent: Number(rent || 0),
+        months: Number(months || 0),
+        highOtherIncome,
+      }),
+    [salary, rent, months, highOtherIncome],
+  )
+
+  const rateLabel = result.rate === RENT_CREDIT.rateHigh ? '17%' : '15%'
+
+  return (
+    <section className="card px-4 py-4">
+      <h2 className="text-[16px] font-extrabold tracking-tight text-ink-900">🏠 월세 세액공제 계산기</h2>
+      <p className="mt-1 text-[12px] leading-relaxed text-ink-500">
+        2026년 귀속(2027년 초 연말정산) 기준입니다. 총급여 8,000만 원 이하 무주택 세대주와 요건을 갖춘 세대원이 대상이고,
+        공제 대상 월세는 연 1,000만 원까지입니다.
+      </p>
+
+      <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+        <Field label="총급여 (연, 원)" hint="비과세 소득을 뺀 금액 · 5,500만 원 이하면 17%">
+          <NumberInput value={salary} onChange={setSalary} placeholder="예: 48000000" suffix="원" />
+        </Field>
+        <Field label="월세 (월, 원)" hint="관리비·보증금 제외, 실제로 지급한 월세">
+          <NumberInput value={rent} onChange={setRent} placeholder="예: 700000" suffix="원" />
+        </Field>
+        <Field label="납부 개월 수" hint="그해 실제로 월세를 낸 달만 계산합니다(최대 12개월)">
+          <NumberInput value={months} onChange={setMonths} placeholder="예: 12" suffix="개월" />
+        </Field>
+        <label className="flex items-center gap-2 self-end pb-1 text-[12px] font-bold text-ink-600">
+          <input
+            type="checkbox"
+            checked={highOtherIncome}
+            onChange={(event) => setHighOtherIncome(event.target.checked)}
+            className="h-4 w-4 accent-brand-600"
+          />
+          종합소득금액 4,500만 원 초과
+        </label>
+      </div>
+
+      <ResultBox>
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <p className="text-[11.5px] font-bold text-brand-800">예상 세액공제액</p>
+          <p className="text-[20px] font-black leading-none text-brand-900">{won(result.credit)}</p>
+          <p className="text-[11px] font-semibold text-brand-700">
+            {result.overIncome ? '총급여 8,000만 원 초과 — 대상 아님' : `월세의 ${rateLabel}`}
+          </p>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="rounded-xl bg-white px-3 py-2 ring-1 ring-brand-100">
+            <p className="text-[10.5px] font-bold text-ink-400">공제 대상 월세</p>
+            <p className="mt-0.5 text-[15px] font-extrabold text-ink-900">{won(result.rentBase)}</p>
+            <p className="mt-0.5 text-[10px] text-ink-300">실제 납부 {won(result.rentPaid)}</p>
+          </div>
+          <div className="rounded-xl bg-white px-3 py-2 ring-1 ring-brand-100">
+            <p className="text-[10.5px] font-bold text-ink-400">지방소득세 포함</p>
+            <p className="mt-0.5 text-[15px] font-extrabold text-ink-900">{won(result.creditWithLocal)}</p>
+            <p className="mt-0.5 text-[10px] text-ink-300">소득세의 10% 함께 감소</p>
+          </div>
+        </div>
+        <p className="mt-2.5 text-[11.5px] leading-relaxed text-brand-900/90">
+          {result.overIncome
+            ? '총급여가 8,000만 원을 넘으면 월세 세액공제 대상이 아닙니다. 부양가족 공제와 카드 소득공제를 먼저 확인하세요.'
+            : result.beatsStandard
+              ? `표준세액공제(13만 원)보다 ${won(result.credit - RENT_CREDIT.standardCredit)} 유리합니다. 다만 결정세액이 ${won(result.credit)}보다 적으면 그만큼만 공제됩니다.`
+              : '공제액이 표준세액공제 13만 원보다 적습니다. 특별세액공제를 포기하고 표준세액공제를 받는 편이 유리할 수 있습니다.'}
+        </p>
+      </ResultBox>
+
+      <p className="mt-2 text-[10.5px] leading-relaxed text-ink-400">
+        공제 대상 월세는 연 1,000만 원까지이며, 납부 개월 수가 12개월을 넘으면 12개월로 계산합니다.
+        2026년 지급분부터 무주택 주말부부는 부부 합산 1,000만 원 한도 안에서 각자 공제받을 수 있습니다.
+      </p>
+
+      <Disclaimer calc="monthly-rent" />
+      <Links calc="monthly-rent" onOpenGuide={onOpenGuide} onGoHome={onGoHome} />
+    </section>
+  )
+}
+
 /* ------------------------------------------------------------------ 목록·라우팅 */
 export default function CalculatorsScreen({ initial, onSelect, onOpenGuide, onGoHome }: Props) {
   const active: CalcKey | null = initial ?? null
@@ -512,7 +619,7 @@ export default function CalculatorsScreen({ initial, onSelect, onOpenGuide, onGo
     return (
       <div className="space-y-4">
         <button type="button" onClick={() => onSelect(null)} className="text-[12.5px] font-bold text-brand-700 hover:underline">
-          ← 계산기 3종
+          ← 계산기 4종
         </button>
         <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
           {CALCULATORS.map((item) => (
@@ -529,6 +636,7 @@ export default function CalculatorsScreen({ initial, onSelect, onOpenGuide, onGo
         {active === 'median-income' ? <MedianCalculator onOpenGuide={onOpenGuide} onGoHome={onGoHome} /> : null}
         {active === 'unemployment-benefit' ? <UnemploymentCalculator onOpenGuide={onOpenGuide} onGoHome={onGoHome} /> : null}
         {active === 'eitc' ? <EitcCalculator onOpenGuide={onOpenGuide} onGoHome={onGoHome} /> : null}
+        {active === 'monthly-rent' ? <RentCalculator onOpenGuide={onOpenGuide} onGoHome={onGoHome} /> : null}
         <p className="text-[10.5px] text-ink-300">기준 확인일 {CALC_UPDATED} · 보조금 레이더 편집</p>
         <AdSlot label="광고" />
       </div>
@@ -545,7 +653,7 @@ export default function CalculatorsScreen({ initial, onSelect, onOpenGuide, onGo
         </p>
       </section>
 
-      <div className="grid gap-2.5 sm:grid-cols-3">
+      <div className="grid gap-2.5 sm:grid-cols-2">
         {CALCULATORS.map((item) => (
           <button
             key={item.key}
@@ -568,6 +676,7 @@ export default function CalculatorsScreen({ initial, onSelect, onOpenGuide, onGo
           <li>· 기본재산액 대도시 1억 3,500만 원 · 중소도시 8,500만 원 · 농어촌 7,250만 원</li>
           <li>· 구직급여 상한 1일 {won(68100)} · 하한 최저임금 {won(10320)}의 80%</li>
           <li>· 근로장려금 최대 단독 165만 · 홑벌이 285만 · 맞벌이 330만 원</li>
+          <li>· 월세 세액공제 한도 연 1,000만 원 · 17%(총급여 5,500만 원 이하) 또는 15%</li>
         </ul>
         <p className="mt-2 rounded-xl bg-slate-50 px-3 py-2 text-[11px] leading-relaxed text-ink-500">{CALC_DISCLAIMER}</p>
       </section>

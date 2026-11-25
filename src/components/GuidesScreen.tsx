@@ -16,13 +16,14 @@ interface Props {
   onBackToGuides: () => void
   onGoHome: () => void
   onOpenCalculators: () => void
-  onOpenCalculator: (key: 'median-income' | 'unemployment-benefit' | 'eitc') => void
+  onOpenCalculator: (key: 'median-income' | 'unemployment-benefit' | 'eitc' | 'monthly-rent') => void
 }
 
-const CALC_LINKS: { key: 'median-income' | 'unemployment-benefit' | 'eitc'; emoji: string; label: string; desc: string }[] = [
+const CALC_LINKS: { key: 'median-income' | 'unemployment-benefit' | 'eitc' | 'monthly-rent'; emoji: string; label: string; desc: string }[] = [
   { key: 'median-income', emoji: '📊', label: '중위소득 판정', desc: '내 소득이 몇 %인지' },
   { key: 'unemployment-benefit', emoji: '🧾', label: '실업급여', desc: '1일 급여·수령일수' },
   { key: 'eitc', emoji: '💸', label: '근로장려금', desc: '예상 지급액 계산' },
+  { key: 'monthly-rent', emoji: '🏠', label: '월세 공제', desc: '연말정산 세액공제' },
 ]
 
 function MetaLine({ guide }: { guide: Guide }) {
