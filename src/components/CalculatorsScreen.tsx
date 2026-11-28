@@ -635,7 +635,15 @@ function RentCalculator({ onOpenGuide, onGoHome }: { onOpenGuide: (slug: string)
 }
 
 /* ------------------------------------------------------------------ 5) 연말정산 절세 시뮬레이터 */
-function YearEndSimulator({ onOpenGuide, onGoHome }: { onOpenGuide: (slug: string) => void; onGoHome: () => void }) {
+function YearEndSimulator({
+  onOpenGuide,
+  onGoHome,
+  onSelect,
+}: {
+  onOpenGuide: (slug: string) => void
+  onGoHome: () => void
+  onSelect: (key: CalcKey | null) => void
+}) {
   const [gross, setGross] = useState('48000000')
   const [dependents, setDependents] = useState('0')
   const [children, setChildren] = useState('0')
@@ -760,7 +768,7 @@ function YearEndSimulator({ onOpenGuide, onGoHome }: { onOpenGuide: (slug: strin
 
       <p className={sectionTitle}>4. 월세·의료비·교육비</p>
       <div className="mt-1.5 grid gap-2.5 sm:grid-cols-2">
-        <Field label="월세 (월, 원)" hint="무주택 세대주·세대원. 관리비 제외">
+        <Field label="월세 (월, 원)" hint="무주택 세대주·세대원. 관리비 제외 — 요건은 월세 세액공제 계산기에서 확인">
           <NumberInput value={rentMonthly} onChange={setRentMonthly} placeholder="예: 700000" suffix="원" />
         </Field>
         <Field label="월세 납부 개월 수" hint="최대 12개월">
@@ -776,6 +784,14 @@ function YearEndSimulator({ onOpenGuide, onGoHome }: { onOpenGuide: (slug: strin
           <NumberInput value={paidTax} onChange={setPaidTax} placeholder="모르면 비워 두세요" suffix="원" />
         </Field>
       </div>
+
+      <button
+        type="button"
+        onClick={() => onSelect('monthly-rent')}
+        className="mt-2 rounded-full bg-white px-3 py-1.5 text-[11.5px] font-bold text-brand-700 ring-1 ring-brand-100 hover:bg-brand-50"
+      >
+        월세 17%·15% 공제액 자세히 계산하기 →
+      </button>
 
       <ResultBox>
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -920,7 +936,9 @@ export default function CalculatorsScreen({ initial, onSelect, onOpenGuide, onGo
           ))}
         </div>
         {active === 'median-income' ? <MedianCalculator onOpenGuide={onOpenGuide} onGoHome={onGoHome} /> : null}
-        {active === 'year-end-tax' ? <YearEndSimulator onOpenGuide={onOpenGuide} onGoHome={onGoHome} /> : null}
+        {active === 'year-end-tax' ? (
+          <YearEndSimulator onOpenGuide={onOpenGuide} onGoHome={onGoHome} onSelect={onSelect} />
+        ) : null}
         {active === 'unemployment-benefit' ? <UnemploymentCalculator onOpenGuide={onOpenGuide} onGoHome={onGoHome} /> : null}
         {active === 'eitc' ? <EitcCalculator onOpenGuide={onOpenGuide} onGoHome={onGoHome} /> : null}
         {active === 'monthly-rent' ? <RentCalculator onOpenGuide={onOpenGuide} onGoHome={onGoHome} /> : null}
