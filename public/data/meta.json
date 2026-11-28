@@ -1,12 +1,12 @@
 {
  "app": "보조금 레이더",
  "app_en": "GrantRadar KR",
- "generated_at": "2026-11-28T06:59:55+09:00",
- "started_at": "2026-11-28T06:43:49+09:00",
+ "generated_at": "2026-11-28T18:55:46+09:00",
+ "started_at": "2026-11-28T18:43:33+09:00",
  "today": "2026-11-28",
  "total": 17035,
  "raw_total": 20681,
- "expired_filtered": 2127,
+ "expired_filtered": 2116,
  "by_source": {
   "kstartup": 43,
   "bizinfo": 120,
@@ -90,38 +90,38 @@
    "ok": true,
    "count": 3997,
    "cached": false,
-   "elapsed_sec": 46.85
+   "elapsed_sec": 34.03
   },
   {
    "source": "bokjiro",
    "ok": true,
    "count": 5628,
    "cached": false,
-   "elapsed_sec": 784.74
+   "elapsed_sec": 594.25
   },
   {
    "source": "bizinfo",
    "ok": true,
    "count": 120,
    "cached": false,
-   "elapsed_sec": 32.84
+   "elapsed_sec": 23.46
   },
   {
    "source": "kstartup",
    "ok": true,
    "count": 45,
    "cached": false,
-   "elapsed_sec": 6.87
+   "elapsed_sec": 4.95
   },
   {
    "source": "gov24",
    "ok": true,
    "count": 10891,
    "cached": false,
-   "elapsed_sec": 94.06
+   "elapsed_sec": 75.36
   }
  ],
- "elapsed_sec": 966.44,
+ "elapsed_sec": 733.11,
  "data_bytes": 13558441,
  "license": "공공데이터포털·온통청년·복지로·기업마당·K-Startup 공개 데이터 기반 (민간 정보 매칭 서비스)"
 }
