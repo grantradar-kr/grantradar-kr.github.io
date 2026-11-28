@@ -15,7 +15,7 @@ import path from 'node:path'
 
 const EXEC = process.env.CHROMIUM_PATH ||
   `${process.env.HOME}/.cache/ms-playwright/chromium-1255/chrome-linux64/chrome`
-const SITE = 'https://grantradar-kr.github.io'
+const SITE = process.env.SITE || 'https://grantradar-kr.github.io'
 const OUT = path.resolve('qa-mobile')
 fs.mkdirSync(OUT, { recursive: true })
 
@@ -173,6 +173,17 @@ check('app-calculators', '계산기 허브 제목 노출', (await page.locator('
 shots.push(await shot('03-app-calculators'))
 await auditLayout('app-calculators')
 
+// ---------------------------------------------------------------- 2-b) 앱 연말정산 시뮬레이터
+await visit(`${SITE}/#/calculators/year-end-tax`, 2800)
+{
+  const appText = await page.locator('body').innerText()
+  check('app-year-end', '절세 시뮬레이터 결과 노출', appText.includes('지금 챙기면 세금이'), '')
+  check('app-year-end', '결정세액·카드 현황 노출', appText.includes('예상 결정세액') && appText.includes('총급여 25% 문턱'))
+  check('app-year-end', '막판 절세 액션 노출', appText.includes('막판 절세 TOP 액션'))
+  shots.push(await shot('09-app-year-end'))
+  await auditLayout('app-year-end')
+}
+
 // ---------------------------------------------------------------- 3) 앱 가이드
 await visit(`${SITE}/#/guides`, 2500)
 check('app-guides', '가이드 목록 제목 노출', (await page.locator('body').innerText()).includes('신청 전에 읽는 보조금 가이드'))
@@ -227,6 +238,7 @@ await auditLayout('onboarding-from-calculators')
 
 // ---------------------------------------------------------------- 5) 정적 계산기 3종 (입력 → 결과)
 const calcCases = [
+  { slug: 'year-end-tax', name: 'calc-year-end', marker: '막판 절세 TOP 액션' },
   { slug: 'median-income', name: 'calc-median', marker: '56.0%', after: '93.3%' },
   { slug: 'unemployment-benefit', name: 'calc-unemployment', marker: '66,048원' },
   { slug: 'eitc', name: 'calc-eitc', marker: '2,900,000원' },

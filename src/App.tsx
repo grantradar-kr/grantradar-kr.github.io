@@ -407,6 +407,7 @@ export default function App() {
             onOpenGuides={() => navigate('guides')}
             onOpenGuide={openGuide}
             onOpenCalculator={() => openCalculator(null)}
+            onOpenCalculatorKey={openCalculator}
           />
         )}
 

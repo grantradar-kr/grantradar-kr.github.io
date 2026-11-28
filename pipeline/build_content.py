@@ -719,7 +719,7 @@ def calculators_hub_page() -> str:
         {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            "name": "보조금 모의계산기 4종",
+            "name": "보조금 모의계산기 5종",
             "description": "기준중위소득 판정, 2026 실업급여, 근로·자녀장려금, 월세 세액공제를 로그인 없이 계산하는 무료 모의계산기 모음입니다.",
             "url": url,
             "inLanguage": "ko-KR",
@@ -737,8 +737,8 @@ def calculators_hub_page() -> str:
         }
     ) + jsonld(breadcrumb_ld([("홈", f"{SITE}/"), ("모의계산기", url)]))
     return page(
-        f"보조금 모의계산기 4종 — 중위소득·실업급여·근로장려금·월세 세액공제 | {BRAND}",
-        "기준중위소득 판정, 2026 실업급여(구직급여), 근로·자녀장려금, 월세 세액공제를 회원가입 없이 바로 계산하는 무료 모의계산기 모음입니다.",
+        f"보조금 모의계산기 5종 — 연말정산·중위소득·실업급여·근로장려금·월세 세액공제 | {BRAND}",
+        "2026 연말정산 절세·환급 시뮬레이터, 기준중위소득 판정, 2026 실업급여(구직급여), 근로·자녀장려금, 월세 세액공제를 회원가입 없이 바로 계산하는 무료 모의계산기 모음입니다.",
         hub_body(),
         "../",
         extra + jsonld_head_css(),
@@ -769,7 +769,7 @@ def calculator_page(slug: str) -> str:
             "inLanguage": "ko-KR",
             "isAccessibleForFree": True,
             "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"},
-            "featureList": ["가구원 수·소득·재산 입력", "2026년 고시 기준", "계산 결과와 기준선 비교"],
+            "featureList": meta.get("features", ["가구원 수·소득·재산 입력", "2026년 고시 기준", "계산 결과와 기준선 비교"]),
             "publisher": {"@type": "Organization", "name": BRAND, "email": CONTACT, "url": f"{SITE}/"},
         }
     )
@@ -1249,11 +1249,11 @@ def rss_xml(guides: list[dict], meta: dict, updated: str) -> str:
         )
     items.append(
         "<item>"
-        f"<title>보조금 모의계산기 4종 — 중위소득·실업급여·근로장려금·월세 세액공제</title>"
+        f"<title>보조금 모의계산기 5종 — 연말정산·중위소득·실업급여·근로장려금·월세 세액공제</title>"
         f"<link>{esc(SITE + '/calculators/')}</link>"
         f"<guid isPermaLink=\"true\">{esc(SITE + '/calculators/')}</guid>"
         "<category>모의계산기</category>"
-        "<description>로그인 없이 쓰는 모의계산기 모음입니다. 기준중위소득 판정, 2026 실업급여, 근로·자녀장려금 예상액을 바로 계산합니다.</description>"
+        "<description>로그인 없이 쓰는 모의계산기 모음입니다. 2026 연말정산 절세·환급 시뮬레이터, 기준중위소득 판정, 2026 실업급여, 근로·자녀장려금, 월세 세액공제를 바로 계산합니다.</description>"
         f"<pubDate>{pubdate(updated)}</pubDate>"
         "</item>"
     )

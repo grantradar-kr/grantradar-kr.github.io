@@ -91,6 +91,7 @@ if (startBtn) {
   await sleep(600)
 }
 check('조건 저장 후 추천 화면', bodyText().includes('완벽 일치') || bodyText().includes('내 조건 추천'))
+check('홈 연말정산 시즌 배너 노출', bodyText().includes('연말정산 절세 시뮬레이터') && bodyText().includes('12월 막판 체크리스트'))
 check('온보딩 닫힘', !bodyText().includes('내 보조금 보기'))
 
 // 2-b) 상단 로그인 · 회원가입 버튼 (비로그인 게스트 상태)
@@ -236,6 +237,23 @@ rentTab?.click()
 await sleep(400)
 check('월세 세액공제 계산기 열림', bodyText().includes('공제 대상 월세') && bodyText().includes('표준세액공제'))
 check('월세 기본 결과(1,428,000원)', bodyText().includes('1,428,000원'))
+
+const yeTab = findButton('연말정산')
+yeTab?.click()
+await sleep(500)
+check('연말정산 시뮬레이터 열림', bodyText().includes('2026 연말정산 절세 시뮬레이터') && bodyText().includes('예상 결정세액'))
+check('연말정산 절세액 표시', bodyText().includes('지금 챙기면 세금이'))
+check('막판 절세 TOP 액션 표시', bodyText().includes('막판 절세 TOP 액션'))
+check('카드 소득공제 현황 표시', bodyText().includes('총급여 25% 문턱'))
+const yePension = [...window.document.querySelectorAll('input[type="number"]')]
+const pensionInput = yePension[9]
+if (pensionInput) {
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
+  setter.call(pensionInput, '6000000')
+  pensionInput.dispatchEvent(new window.Event('input', { bubbles: true }))
+  await sleep(300)
+}
+check('연금 한도 변경 → 결과 갱신', bodyText().includes('990,000원') || bodyText().includes('1,485,000원'))
 
 // 14) 가이드 화면의 계산기 바로가기
 window.location.hash = '#/guides'

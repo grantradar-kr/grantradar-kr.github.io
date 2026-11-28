@@ -119,6 +119,79 @@ check('종합소득 4,500만 초과 → 15%', r6.rate, 0.15)
 const r7 = calc.calcRentCredit({ totalSalary: 40000000, monthlyRent: 50000, months: 12 })
 check('공제액 10만 2천은 표준세액공제보다 불리', r7.beatsStandard, false)
 
+console.log('\n=== 4-b) 연말정산 절세 시뮬레이터 (2026년 귀속) ===')
+check('근로소득공제 4,800만 → 12,150,000', calc.earnedIncomeDeduction(48000000), 12150000)
+check('근로소득공제 3,000만 → 9,750,000', calc.earnedIncomeDeduction(30000000), 9750000)
+check('근로소득공제 1억 5,000만 → 15,750,000', calc.earnedIncomeDeduction(150000000), 15750000)
+check('근로소득공제 한도 2,000만', calc.earnedIncomeDeduction(500000000), 20000000)
+check('기본세율 2,869.8만 산출세액', calc.grossIncomeTax(28698000), 3044700)
+check('근로소득세액공제 한도 66만(총급여 4,800만)', calc.laborIncomeTaxCredit(48000000, 3044700), 660000)
+check('자녀세액공제 1명 25만', calc.childTaxCredit(1), 250000)
+check('자녀세액공제 2명 55만', calc.childTaxCredit(2), 550000)
+check('자녀세액공제 3명 95만', calc.childTaxCredit(3), 950000)
+check('자녀세액공제 4명 135만', calc.childTaxCredit(4), 1350000)
+
+const cardA = calc.calcCardDeduction({ gross: 48000000, children: 0, credit: 12000000, check: 3000000, market: 0, transit: 600000 })
+check('카드 문턱 1,200만', cardA.threshold, 12000000)
+check('카드 소득공제 1,140,000', cardA.deduction, 1140000)
+check('카드 기본 한도 300만', cardA.baseLimit, 3000000)
+const cardB = calc.calcCardDeduction({ gross: 48000000, children: 2, credit: 12000000, check: 3000000, market: 0, transit: 600000 })
+check('자녀 2명 기본 한도 400만', cardB.baseLimit, 4000000)
+const cardC = calc.calcCardDeduction({ gross: 50000000, children: 0, credit: 12500000, check: 0, market: 0, transit: 0 })
+check('문턱과 정확히 같으면 공제 0', cardC.deduction, 0)
+const cardD = calc.calcCardDeduction({ gross: 80000000, children: 0, credit: 40000000, check: 0, market: 0, transit: 0 })
+check('7,000만 초과 기본 한도 250만', cardD.baseLimit, 2500000)
+check('한도 초과분은 우대 사용분 없으면 더해지지 않음', cardD.deduction, 2500000)
+const cardE = calc.calcCardDeduction({ gross: 80000000, children: 0, credit: 40000000, check: 0, market: 1000000, transit: 0 })
+check('전통시장 추가 한도 반영', cardE.deduction, 2500000 + 400000)
+
+check('연금저축만 900만 → 600만 인정', calc.calcPensionCredit(48000000, 9000000, 0).base, 6000000)
+check('IRP 900만 → 900만 인정', calc.calcPensionCredit(48000000, 0, 9000000).base, 9000000)
+check('연금 900만 16.5% = 1,485,000', calc.calcPensionCredit(48000000, 6000000, 3000000).credit, 1485000)
+check('총급여 6,000만은 13.2% = 1,188,000', calc.calcPensionCredit(60000000, 6000000, 3000000).credit, 1188000)
+
+check('고향사랑 10만 → 100,000', calc.calcHometownCredit(100000), 100000)
+check('고향사랑 20만 → 144,000', calc.calcHometownCredit(200000), 144000)
+check('고향사랑 30만 → 160,500', calc.calcHometownCredit(300000), 160500)
+check('고향사랑 100만 → 276,000', calc.calcHometownCredit(1000000), 276000)
+
+const y1 = calc.calcYearEndTax({
+  gross: 48000000, dependents: 0, children: 0, insurance: 0,
+  cardCredit: 12000000, cardCheck: 3000000, cardMarket: 0, cardTransit: 600000,
+  remainingSpend: 1000000, pensionSavings: 2000000, pensionIrp: 0, hometown: 0,
+  rentMonthly: 700000, rentMonths: 12, medical: 1500000, education: 0, paidTax: 2400000,
+})
+check('4,800만 4대보험 추정 4,512,000', y1.insuranceDeduction, 4512000)
+check('과세표준 28,698,000', y1.taxableBase, 28698000)
+check('산출세액 3,044,700', y1.grossTax, 3044700)
+check('월세 세액공제 1,428,000', y1.rentCredit, 1428000)
+check('의료비 3% 초과분 15% = 9,000', y1.medicalCredit, 9000)
+check('결정세액 617,700', y1.decisionTax, 617700)
+check('지방소득세 포함 679,470', y1.totalTax, 679470)
+check('공제 미적용 대비 절세 1,988,800', y1.saving, 1988800)
+check('기납부 2,400,000 → 환급 1,782,300', y1.refund, 1782300)
+check('연금 남은 한도 700만', y1.pensionLeft, 7000000)
+check('TOP 액션 첫 항목은 월세', y1.actions[0].key, 'rent')
+
+const y2 = calc.calcYearEndTax({
+  gross: 30000000, dependents: 2, children: 1, insurance: 2400000,
+  cardCredit: 6000000, cardCheck: 4000000, cardMarket: 1200000, cardTransit: 300000,
+  remainingSpend: 800000, pensionSavings: 6000000, pensionIrp: 3000000, hometown: 100000,
+  rentMonthly: 0, rentMonths: 0, medical: 400000, education: 3000000, paidTax: 0,
+})
+check('세액공제가 산출세액을 넘으면 결정세액 0', y2.decisionTax, 0)
+check('결정세액 0이면 추가 절세 여력 0', y2.headroom, 0)
+check('환급 미입력이면 null', y2.refund, null)
+
+const y3 = calc.calcYearEndTax({
+  gross: 20000000, dependents: 0, children: 0, insurance: 0,
+  cardCredit: 0, cardCheck: 0, cardMarket: 0, cardTransit: 0,
+  remainingSpend: 0, pensionSavings: 0, pensionIrp: 0, hometown: 0,
+  rentMonthly: 0, rentMonths: 0, medical: 0, education: 0, paidTax: 0,
+})
+check('공제 없는 경우 표준세액공제 13만 적용', y3.standardApplied, true)
+check('표준세액공제 반영 금액', y3.creditsTotal, y3.laborCredit + 130000)
+
 console.log('\n=== 5) 정적 HTML 인라인 계산기 실측 ===')
 const setValue = (window, id, value) => {
   const el = window.document.getElementById(id)
@@ -192,6 +265,39 @@ const open = (file) => {
   check('정적 월세: 15% 전환 1,260,000원', text(w, 'mr-out').includes('1,260,000원'), true)
   setValue(w, 'mr-salary', 90000000)
   check('정적 월세: 총급여 초과 안내', text(w, 'mr-out').includes('대상이 아닙니다'), true)
+  w.close()
+}
+
+{
+  const w = open('public/calculators/year-end-tax.html')
+  setValue(w, 'ye-gross', 48000000)
+  setValue(w, 'ye-dependents', 0)
+  setValue(w, 'ye-children', 0)
+  setValue(w, 'ye-insurance', '')
+  setValue(w, 'ye-card-credit', 12000000)
+  setValue(w, 'ye-card-check', 3000000)
+  setValue(w, 'ye-card-market', 0)
+  setValue(w, 'ye-card-transit', 600000)
+  setValue(w, 'ye-remaining', 1000000)
+  setValue(w, 'ye-pension-savings', 2000000)
+  setValue(w, 'ye-pension-irp', 0)
+  setValue(w, 'ye-hometown', 0)
+  setValue(w, 'ye-rent', 700000)
+  setValue(w, 'ye-months', 12)
+  setValue(w, 'ye-medical', 1500000)
+  setValue(w, 'ye-education', 0)
+  setValue(w, 'ye-paid', 2400000)
+  const out = text(w, 'ye-out')
+  check('정적 연말정산: 절세 1,988,800원', out.includes('1,988,800원'), true)
+  check('정적 연말정산: 결정세액 617,700원', out.includes('617,700원'), true)
+  check('정적 연말정산: 환급 1,782,300원', out.includes('1,782,300원'), true)
+  check('정적 연말정산: 카드 공제 1,140,000원', out.includes('1,140,000원'), true)
+  check('정적 연말정산: 연금 세액공제 330,000원', out.includes('330,000원'), true)
+  check('정적 연말정산: TOP 액션 노출', out.includes('막판 절세 TOP 액션'), true)
+  setValue(w, 'ye-hometown', 100000)
+  check('정적 연말정산: 고향사랑 10만 공제', text(w, 'ye-out').includes('고향사랑기부 100,000원'), true)
+  setValue(w, 'ye-children', 2)
+  check('정적 연말정산: 자녀 2명 반영', text(w, 'ye-out').includes('자녀 2명'), true)
   w.close()
 }
 

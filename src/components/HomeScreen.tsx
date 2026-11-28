@@ -6,6 +6,7 @@ import { DOMAINS } from '../lib/labels'
 import { filterScored, sortScored, summarize, type SortKey } from '../lib/matcher'
 import type { DomainKey, Meta, Profile, ScoredPolicy, Verdict } from '../lib/types'
 import { profileSummary } from '../lib/matcher'
+import type { CalcKey } from './CalculatorsScreen'
 
 interface Props {
   scored: ScoredPolicy[]
@@ -19,6 +20,7 @@ interface Props {
   onOpenGuides: () => void
   onOpenGuide: (slug: string) => void
   onOpenCalculator: () => void
+  onOpenCalculatorKey: (key: CalcKey) => void
 }
 
 const VERDICT_TABS: { key: Verdict | 'all'; label: string }[] = [
@@ -39,6 +41,7 @@ export default function HomeScreen({
   onOpenGuides,
   onOpenGuide,
   onOpenCalculator,
+  onOpenCalculatorKey,
 }: Props) {
   const [query, setQuery] = useState('')
   const [verdict, setVerdict] = useState<Verdict | 'all'>('all')
@@ -46,6 +49,15 @@ export default function HomeScreen({
   const [onlyUrgent, setOnlyUrgent] = useState(false)
   const [sort, setSort] = useState<SortKey>('match')
   const [visible, setVisible] = useState(24)
+
+  // 연말정산 시즌(11~12월)에만 12월 31일까지 남은 일수를 보여 준다.
+  const keepDday = useMemo(() => {
+    const now = new Date()
+    if (now.getMonth() < 10) return null
+    const end = new Date(now.getFullYear(), 11, 31)
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    return Math.max(0, Math.round((end.getTime() - today.getTime()) / 86400000))
+  }, [])
 
   const stats = useMemo(() => summarize(scored), [scored])
 
@@ -107,6 +119,39 @@ export default function HomeScreen({
             className="ml-auto rounded-full bg-white px-3 py-1.5 text-[11.5px] font-extrabold text-brand-800 transition hover:bg-brand-50"
           >
             조건 수정
+          </button>
+        </div>
+      </section>
+
+      {/* 2026 연말정산 시즌 배너 */}
+      <section className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-brand-50/60 px-4 py-3.5">
+        <div className="flex items-baseline justify-between gap-2">
+          <p className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-amber-700">2026 연말정산 시즌</p>
+          <span className="shrink-0 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-extrabold text-amber-700">
+            {keepDday === null ? '시즌' : `D-${keepDday}`}
+          </span>
+        </div>
+        <h2 className="mt-1 text-[14px] font-extrabold leading-snug text-ink-900">
+          🎄 연말정산 절세 시뮬레이터 &amp; 12월 막판 체크리스트
+        </h2>
+        <p className="mt-1 text-[11.5px] leading-relaxed text-ink-500">
+          연금저축·IRP 납입과 고향사랑기부, 카드 결제수단 전환은 12월 31일이 마감입니다. 내 총급여로 얼마가 줄어드는지 먼저 계산해
+          보세요.
+        </p>
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          <button
+            type="button"
+            onClick={() => onOpenCalculatorKey('year-end-tax')}
+            className="rounded-full bg-ink-900 px-3.5 py-1.5 text-[11.5px] font-extrabold text-white transition hover:bg-ink-800"
+          >
+            절세 시뮬레이터 →
+          </button>
+          <button
+            type="button"
+            onClick={() => onOpenGuide('year-end-tax-checklist')}
+            className="rounded-full bg-white px-3.5 py-1.5 text-[11.5px] font-bold text-ink-700 ring-1 ring-amber-200 transition hover:bg-amber-50"
+          >
+            12월 체크리스트
           </button>
         </div>
       </section>
@@ -215,19 +260,21 @@ export default function HomeScreen({
             onClick={onOpenCalculator}
             className="shrink-0 text-[11.5px] font-bold text-brand-700 hover:underline"
           >
-            계산기 3종 →
+            계산기 5종 →
           </button>
         </div>
         <div className="mt-2 grid grid-cols-3 gap-1.5">
           {[
-            { emoji: '📊', label: '중위소득 판정' },
-            { emoji: '🧾', label: '실업급여' },
-            { emoji: '💸', label: '근로장려금' },
+            { emoji: '🎄', label: '연말정산 절세', key: 'year-end-tax' as CalcKey },
+            { emoji: '📊', label: '중위소득 판정', key: 'median-income' as CalcKey },
+            { emoji: '🧾', label: '실업급여', key: 'unemployment-benefit' as CalcKey },
+            { emoji: '💸', label: '근로장려금', key: 'eitc' as CalcKey },
+            { emoji: '🏠', label: '월세 세액공제', key: 'monthly-rent' as CalcKey },
           ].map((item) => (
             <button
-              key={item.label}
+              key={item.key}
               type="button"
-              onClick={onOpenCalculator}
+              onClick={() => onOpenCalculatorKey(item.key)}
               className="rounded-xl bg-white px-2 py-2.5 text-center ring-1 ring-brand-100 transition hover:bg-brand-50"
             >
               <span className="text-[16px]">{item.emoji}</span>
